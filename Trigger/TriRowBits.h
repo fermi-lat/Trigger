@@ -2,7 +2,7 @@
  * @file TriRowBits.h
  * @brief header for class TriRowBits
 
- $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriRowBits.h,v 1.2 2004/09/23 19:53:44 lreyes Exp $
+ $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/Attic/TriRowBits.h,v 1.2 2004/09/23 19:53:44 lreyes Exp $
  * @author Luis C. Reyes - lreyes@milkyway.gsfc.nasa.gov
 */
 
