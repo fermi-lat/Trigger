@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: chehtman  Tue Jun 19 16:14:33 PDT 2001
+trigger/src Level1.cxx
+
+Modified Files:
+	Level1.cxx 
+Log Message:
+ 3-in-a-row logic implemented for HiCal trigger.
+    *
+------------------------------------------------------------
 User: burnett  Sat Jun 16 21:43:24 PDT 2001
 trigger/src Level1.cxx
 
