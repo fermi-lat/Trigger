@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Wed Sep  8 15:07:13 PDT 2004
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx 
+Log Message:
+setting equivalent trigger bits in the Gem summary word if it is not set; change livetime to cumulative.
+    *
+------------------------------------------------------------
 User: burnett  Wed Sep  8 11:13:09 PDT 2004
 Trigger/src
 
