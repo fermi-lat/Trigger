@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: burnett  Fri May 31 12:27:19 PDT 2002
+Trigger/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+
+tagging v3r3, following change to set bits in EventHeader
+    *
+------------------------------------------------------------
 User: burnett  Sat May 25 12:59:32 PDT 2002
 Trigger/src
 
