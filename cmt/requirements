@@ -1,5 +1,5 @@
 package trigger
-version v1r3
+version v1r6
 
 # --------------------------
 # define trigger algorithms
@@ -12,7 +12,7 @@ branches src cmt doc
 
 apply_pattern packageShr
 
-apply_pattern ld_library_path
+
 
 #=============================================================
 private
