@@ -1,5 +1,15 @@
 ------------------------------------------------------------
 User: cohen  Tue Mar 29 15:15:41 PST 2005
+Trigger/src
+
+Modified Files:
+	ThrottleAlg.cxx ThrottleAlg.h 
+Log Message:
+use the enums for ThrottleAlg instead of local THROTTLE_SET=32 definition, and preparing to tag
+
+    *
+------------------------------------------------------------
+User: cohen  Tue Mar 29 15:15:41 PST 2005
 Trigger/doc
 
 Modified Files:
