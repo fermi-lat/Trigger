@@ -2,10 +2,11 @@
  * @file ThrottleAlg.cxx
  * @brief implementation for class ThrottleAlg
 
- $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/ThrottleAlg.h,v 1.2 2004/07/25 21:13:59 burnett Exp $
+ $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/ThrottleAlg.cxx,v 1.2 2004/09/08 18:13:09 burnett Exp $
  * @author David Wren - dnwren@milkyway.gsfc.nasa.gov
 */
 #include "ThrottleAlg.h"
+#include "enums/TriggerBits.h"
 #include <cmath>
 #include <map>
 #include <cassert>
@@ -52,7 +53,7 @@ unsigned int ThrottleAlg::calculate(const Event::EventHeader& header,
 	}
 	if (m_throttle){
         m_throttle=false;
-		return THROTTLE_SET;
+		return enums::b_THROTTLE;
 	}
 	
 	return 0;
