@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Mon Nov 18 23:47:49 PST 2002
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx 
+Log Message:
+preliminary fix to apply tracker trigger properly, keep tower stats
+    *
+------------------------------------------------------------
 User: chehtman  Wed Nov 13 14:32:26 PST 2002
 Trigger/doc
 
