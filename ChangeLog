@@ -1,4 +1,27 @@
 ------------------------------------------------------------
+TAG
+Tag name: v3r15, operation: add
+Package: Trigger
+User: burnett  Tue Jan 18 08:39:20 2005
+Files:
+  Trigger/.cvsignore  1.2
+  Trigger/ChangeLog  1.154
+  Trigger/Trigger/TriRowBits.h  1.2
+  Trigger/cmt/.cvsignore  1.1.1.1
+  Trigger/cmt/requirements  1.39
+  Trigger/cmt/Makefile  1.1.1.1
+  Trigger/doc/release.notes  1.31
+  Trigger/src/mainpage.h  1.5
+  Trigger/src/jobOptions.txt  1.1.1.2
+  Trigger/src/Trigger_load.cxx  1.6
+  Trigger/src/TriggerAlg.cxx  1.40
+  Trigger/src/ThrottleAlg.h  1.4
+  Trigger/src/ThrottleAlg.cxx  1.2
+  Trigger/src/Trigger_dll.cxx  1.5
+  Trigger/src/test/jobOptions.txt  1.2
+
+    *
+------------------------------------------------------------
 User: burnett  Tue Jan 18 08:38:47 PST 2005
 Trigger/doc
 
