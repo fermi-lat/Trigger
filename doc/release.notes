@@ -2,7 +2,8 @@
  * @brief package Trigger
  * package manager:T.Burnett 
   <pre>
- *  v3r9   11-aug-04 THB set Gem trigger bits if MC; deadtime now cumulative
+ *  v3r9p1 09-sep-04 THB fix include path
+ *  v3r9   08-sep-04 THB set Gem trigger bits if MC; deadtime now cumulative
  *  v3r8   11-aug-04 THB add deadtime accounting
  *  v3r7   22-jul-04 THB Fix Gaudi interface to use macro
  *  v3r6   09-mar-04 DNW added new throttle code that appends a bit to the GltWord
