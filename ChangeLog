@@ -1,4 +1,18 @@
 ------------------------------------------------------------
+User: burnett  Mon May 28 16:47:37 PDT 2001
+trigger/src Level1.cxx trigger_dll.cxx trigger_load.cxx TriggerAlg.cxx
+
+Modified Files:
+	trigger_load.cxx 
+Added Files:
+	Level1.cxx trigger_dll.cxx 
+Removed Files:
+	TriggerAlg.cxx 
+Log Message:
+Rename algoritm, implement varous trigger bits using AO bit definitions.
+
+    *
+------------------------------------------------------------
 User: burnett  Mon May 28 16:47:36 PDT 2001
 trigger/cmt requirements
 
