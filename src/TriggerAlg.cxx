@@ -1,8 +1,8 @@
-/** 
+/**
 * @file TriggerAlg.cxx
 * @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.30 2004/09/14 22:09:21 burnett Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.31 2004/09/22 23:46:16 burnett Exp $
 */
 
 // Include files
@@ -33,17 +33,19 @@
 
 
 #include "ThrottleAlg.h"
+#include "TriRowBits.h"
 
 #include <map>
 
 namespace { // local definitions of convenient inline functions
-    inline bool three_in_a_row(unsigned bits)
+    inline unsigned three_in_a_row(unsigned bits)
     {
-        while( bits ) {
-            if( (bits & 7) ==7) return true;
-            bits >>= 1;
-        }
-        return false;
+        unsigned bitword = 0;
+	for(int i=0; i<16; i++){
+	       if((bits&7)==7)  bitword |= 1 << i;
+	       bits >>= 1;
+            }
+        return bitword;
     }
     inline unsigned layer_bit(int layer){ return 1 << layer;}
 }
@@ -298,7 +300,7 @@ StatusCode TriggerAlg::execute()
         trigger_bits |= gemBits(trigger_bits) << 8;
 
         if( static_cast<int>(h.trigger())==-1 ){
-            // expect it to be zero if not set. 
+            // expect it to be zero if not set.
             h.setTrigger(trigger_bits);
         }else  if (h.trigger() != 0xbaadf00d && trigger_bits != h.trigger() ) {
             // trigger bits already set: reading digiRoot file.
@@ -334,7 +336,8 @@ unsigned int TriggerAlg::gemBits(unsigned int  trigger_bits)
 //------------------------------------------------------------------------------
 unsigned int TriggerAlg::tracker(const Event::TkrDigiCol&  planes)
 {
-    // purpose and method: determine if there is tracker trigger, 3-in-a-row
+    // purpose and method: determine if there is tracker trigger, any 3-in-a-row, 
+    //and fill out the TDS class TriRowBits, with the complete 3-in-a-row information
 
     using namespace Event;
 
@@ -352,26 +355,39 @@ unsigned int TriggerAlg::tracker(const Event::TkrDigiCol&  planes)
         layer_bits[std::make_pair(t.getTower(), t.getView())] |= layer_bit(t.getBilayer());
     }
 
+    //!Creating Object in TDS.
+    //!Documentation of three_in_a_row_bits available in Trigger/TriRowBits.h
+    TriRowBitsTds::TriRowBits *rowbits= new TriRowBitsTds::TriRowBits;
+    eventSvc()->registerObject("/Event/Digi/TriRowBits", rowbits);
+
+    bool tkr_trig_flag = false;
     // now look for a three in a row in x-y coincidence
     for( Map::iterator itr = layer_bits.begin(); itr !=layer_bits.end(); ++ itr){
 
         Key theKey=(*itr).first;
         idents::TowerId tower = theKey.first;
-        if( theKey.second==idents::GlastAxis::X) { 
+        if( theKey.second==idents::GlastAxis::X) {
             // found an x: and with corresponding Y (if exists)
-            unsigned int 
+            unsigned int
                 xbits = (*itr).second,
                 ybits = layer_bits[std::make_pair(tower, idents::GlastAxis::Y)];
 
+            //!Calculating the TriRowBits - 16 possible 3-in-a-row signals for 18 layers
+            unsigned int bitword=three_in_a_row(xbits & ybits);
+	    rowbits->setTriRowBits(tower.id(), bitword);
 
-            if( three_in_a_row( xbits & ybits) ){
-                // OK: tag the tower for stats
-                m_tower_trigger_count[tower]++;
-                return b_Track;
-            }
+	    if(bitword) {
+	        // OK: tag the tower for stats, but just one tower per event
+                if(!tkr_trig_flag) m_tower_trigger_count[tower]++;
+		//remember there was a 3-in-a-row but keep looking in other towers
+		tkr_trig_flag=true;
+             }
+
         }
     }
-    return 0;
+
+       if(tkr_trig_flag) return b_Track;
+            else return 0;
 }
 //------------------------------------------------------------------------------
 unsigned int TriggerAlg::calorimeter(const Event::CalDigiCol& calDigi)
