@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: burnett  Thu Jun 21 13:50:35 PDT 2001
+trigger/src Level1.cxx
+
+Modified Files:
+	Level1.cxx 
+Log Message:
+reassing the cal trigger bits.
+
+    *
+------------------------------------------------------------
 User: chehtman  Tue Jun 19 16:14:33 PDT 2001
 trigger/src Level1.cxx
 
