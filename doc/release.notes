@@ -3,6 +3,7 @@
  * package manager:T.Burnett 
   
  *
+ *  v3r3p1 07jun-02 THB do not EventHeader if set by RootIo
  *  v3r3  31-may-02 THB set bits in EventHeader
  *  v3r2  24-may-02 THB cal trigger included; set run, event no if trigger
  *  v3r1  13-may-02 THB add ACD as bit 1
