@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/trigger/src/ACDthrottle.cxx,v 1.1 2001/08/08 17:25:36 burnett Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/trigger/src/ACDthrottle.cxx,v 1.2 2001/10/01 20:02:34 heather Exp $
 
 // Include files
 // Gaudi system includes
@@ -412,7 +412,7 @@ StatusCode ACDthrottle::fillNtuple() {
 	   // Here we are adding to our ROOT ntuple
     
     // setup the entries to our tuple
-    if ((sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "ACD_Throttle", m_vetoword)).isFailure()) return sc;
+    if ((sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "ACD_Throttle_Bits", m_vetoword)).isFailure()) return sc;
     if ((sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "ACD_No_Face0", m_nhitface0)).isFailure()) return sc;
     if ((sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "ACD_No_Face1", m_nhitface1)).isFailure()) return sc;
     if ((sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "ACD_No_Face2", m_nhitface2)).isFailure()) return sc;
