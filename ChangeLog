@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: chehtman  Wed Nov 13 14:19:25 PST 2002
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx 
+Log Message:
+HICAL trigger modified from 3-in-a-row algorithm to simple OR of all discriminators.
+ Unnecessary conversion GeV => MeV suppressed.
+    *
+------------------------------------------------------------
 User: burnett  Tue Sep 10 18:08:59 PDT 2002
 Trigger/doc
 
