@@ -1,15 +1,4 @@
 ------------------------------------------------------------
-User: burnett  Fri Aug 29 06:36:35 PDT 2003
-Trigger/src
-
-Modified Files:
-	TriggerAlg.cxx Trigger_load.cxx 
-Removed Files:
-	ACDthrottle.cxx 
-Log Message:
-remove obsolete code; lower output level 
-    *
-------------------------------------------------------------
 User: burnett  Thu Jun 12 17:06:56 PDT 2003
 Trigger/src
 
