@@ -2,6 +2,7 @@
  * @brief package Trigger
  * package manager:T.Burnett 
   <pre>
+ *  v3r7   22-jul-04 THB Fix Gaudi interface to use macro
  *  v3r6   09-mar-04 DNW added new throttle code that appends a bit to the GltWord
  *  v3r5p3 29-aug-03 THB remove obsolete throttle code; lower output level per event
  *  v3r5p2 15-jun-03 THB fix test for trigger bits inconsistency (requires it to be initially zero)
