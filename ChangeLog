@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: dnwren  Mon Mar 15 19:31:52 PST 2004
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx 
+Log Message:
+moved throttle code to seperate class
+
+    *
+------------------------------------------------------------
 User: dnwren  Mon Mar 15 18:54:38 PST 2004
 Trigger/src
 
