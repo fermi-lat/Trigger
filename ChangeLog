@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: burnett  Wed Aug  8 10:25:36 PDT 2001
+trigger/src ACDthrottle.cxx trigger_load.cxx
+
+Modified Files:
+	trigger_load.cxx 
+Added Files:
+	ACDthrottle.cxx 
+Log Message:
+insert SR's ACD throttle code
+    *
+------------------------------------------------------------
 User: kyoung  Wed Jul 18 13:08:47 PDT 2001
 trigger/cmt requirements
 
