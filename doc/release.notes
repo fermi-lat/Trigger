@@ -2,6 +2,8 @@
  * @brief package Trigger
  * package manager:T.Burnett 
   <pre>
+ *  v3r12em1 18-nov-04 HMK Apply fix to set throttle only when ACD and TKR data
+ *                     exists
  *  v3r12em0 10-nov-04 HMK Move TriRowBits.h to new public header directory
  *  v3r12   04-oct-04 THB new trigger info added to TDS by Luis Reyes. See changelog.
  *  v3r11p1 22-sep-04 THB fix Linux warnings.
