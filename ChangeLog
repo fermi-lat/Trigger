@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: burnett  Tue Sep 14 10:18:24 PDT 2004
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx 
+Log Message:
+set upper bits in GltWord form eitther GEM or copy; taggin v3r11
+    *
+------------------------------------------------------------
+User: burnett  Tue Sep 14 10:18:24 PDT 2004
 Trigger/doc
 
 Modified Files:
