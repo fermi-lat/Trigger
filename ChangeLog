@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Wed Sep  8 11:13:09 PDT 2004
+Trigger/src
+
+Modified Files:
+	ThrottleAlg.cxx ThrottleAlg.h 
+Log Message:
+move implementation code from header to .cxx file.
+    *
+------------------------------------------------------------
 User: burnett  Wed Aug 11 13:57:41 PDT 2004
 Trigger/src
 
