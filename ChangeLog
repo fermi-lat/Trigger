@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Mon Jan  3 14:54:02 PST 2005
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx 
+Log Message:
+define CLID and update TDS path for TriRowBits
+    *
+------------------------------------------------------------
 User: heather  Mon Jan  3 14:53:52 PST 2005
 Trigger/Trigger
 
