@@ -2,7 +2,7 @@
  * @file TriRowBits.h
  * @brief header for class TriRowBits
 
- $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriRowBits.h,v 1.2 2004/09/23 19:53:44 lreyes Exp $
+ $Header: /nfs/slac/g/glast/ground/cvs/Trigger/Trigger/TriRowBits.h,v 1.1 2004/11/10 22:03:55 heather Exp $
  * @author Luis C. Reyes - lreyes@milkyway.gsfc.nasa.gov
 */
 
@@ -24,6 +24,8 @@
 * @brief TDS for storing all the possible 3-in-a-row trigger conditions per tower
 * author Luis C. Reyes   lreyes@milkyway.gsfc.nasa.gov
 */
+ 
+static const CLID& CLID_TriRowBitsTds = InterfaceID("TriRowBitsTds", 1, 0);
 
 
 namespace TriRowBitsTds{
