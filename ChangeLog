@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: burnett  Tue Nov 30 17:11:34 PST 2004
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx 
+Log Message:
+allow for consecuitive events with the same time
+    *
+------------------------------------------------------------
+User: burnett  Tue Nov 30 17:11:34 PST 2004
 Trigger/doc
 
 Modified Files:
