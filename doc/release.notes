@@ -2,7 +2,8 @@
  * @brief package Trigger
  * package manager:T.Burnett 
   <pre>
- *
+ *  v3r5p1 14-jan-03 THB fixes for vsnet consistency (Gaudi problem with format in log)
+
  *  v3r4   19-nov-02 Fix tracker 3-in-a-row to be properly an x-y coincidence: put in stats 
  *  v3r3p6 13-nov-02 AC HICAL trigger modified: 3-in-a-row logic and unnecessary conversion GeV=>MeV suppressed.  
  *  v3r3p4 10-sep-02 THB Event, GlastSvc version
