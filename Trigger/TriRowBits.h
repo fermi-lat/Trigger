@@ -2,12 +2,12 @@
  * @file TriRowBits.h
  * @brief header for class TriRowBits
 
- $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/Attic/TriRowBits.h,v 1.2 2004/09/23 19:53:44 lreyes Exp $
+ $Header: /nfs/slac/g/glast/ground/cvs/Trigger/Trigger/TriRowBits.h,v 1.1.2.1 2004/11/10 22:09:34 heather Exp $
  * @author Luis C. Reyes - lreyes@milkyway.gsfc.nasa.gov
 */
 
 #ifndef TRIROWBITS_H
-#define TRIROWBITSS_H
+#define TRIROWBITS_H
 
 #include <iostream>
 
@@ -25,6 +25,7 @@
 * author Luis C. Reyes   lreyes@milkyway.gsfc.nasa.gov
 */
 
+static const CLID& CLID_TriRowBitsTds = InterfaceID("TriRowBitsTds", 1, 0);
 
 namespace TriRowBitsTds{
       class TriRowBits : public DataObject{
