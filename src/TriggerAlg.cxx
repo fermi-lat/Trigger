@@ -25,6 +25,10 @@
 #include "Event/TopLevel/EventModel.h"
 #include "Event/TopLevel/Event.h"
 
+//JCT
+#include "Event/Digi/GltDigi.h"
+#include <vector>
+
 #include "Event/Digi/TkrDigi.h"
 #include "Event/Digi/CalDigi.h"
 #include "Event/Digi/AcdDigi.h"
@@ -110,7 +114,9 @@ private:
 
     std::map<idents::TowerId, int> m_tower_trigger_count;
     
-    
+  //JCT
+  Event::GltDigi* pGltDigi;
+ 
 };
 
 //------------------------------------------------------------------------------
@@ -200,13 +206,25 @@ StatusCode TriggerAlg::execute()
     SmartDataPtr<Event::AcdDigiCol> acd(eventSvc(), EventModel::Digi::AcdDigiCol);
     if( acd==0 ) log << MSG::DEBUG << "No acd digis found" << endreq;
     
-    // set bits in the trigger word
+    //JCT
+     pGltDigi = new Event::GltDigi;
+
+   // set bits in the trigger word
     
     unsigned int trigger_bits = 
         (tkr? tracker(tkr) : 0 )
         | (cal? calorimeter(cal) : 0 )
         | (acd? anticoincidence(acd) : 0);
     
+    //JCT
+    for(int tower_id=0;tower_id<16;++tower_id)
+      {
+	std::cout<<"Tower Id: "<<tower_id<<std::endl;
+ 	std::cout<<"3inRow: "<<(pGltDigi->getTkrThreeInRow())[tower_id]<<std::endl;
+ 	std::cout<<"CAL_LO: "<<(pGltDigi->getCAL_LO())[tower_id]<<std::endl;
+ 	std::cout<<"CAL_HI: "<<(pGltDigi->getCAL_HI())[tower_id]<<std::endl;
+      }
+    delete pGltDigi;
     
     m_total++;
     m_counts[trigger_bits] = m_counts[trigger_bits]+1;
@@ -275,6 +293,11 @@ unsigned int TriggerAlg::tracker(const Event::TkrDigiCol&  planes)
         layer_bits[std::make_pair(t.getTower(), t.getView())] |= layer_bit(t.getBilayer());
     }
     
+    //JCT
+    bool flag(false);
+    idents::TowerId first_tower = -1;    
+    std::vector<bool> ThreeInRow_vec(16,false);
+
     // now look for a three in a row in x-y coincidence
     for( Map::iterator itr = layer_bits.begin(); itr !=layer_bits.end(); ++ itr){
 
@@ -286,16 +309,26 @@ unsigned int TriggerAlg::tracker(const Event::TkrDigiCol&  planes)
                 xbits = (*itr).second,
                 ybits = layer_bits[std::make_pair(tower, idents::GlastAxis::Y)];
 
-
-            if( three_in_a_row( xbits & ybits) ){
-                // OK: tag the tower for stats
-                m_tower_trigger_count[tower]++;
-                return b_Track;
-            }
+	    //JCT
+//             if( three_in_a_row( xbits & ybits) ){
+//                 // OK: tag the tower for stats
+//                 m_tower_trigger_count[tower]++;
+//                 return b_Track;
+//             }
+	    bool ThreeInRow = three_in_a_row( xbits & ybits);
+	    if(ThreeInRow)
+	      {
+		flag = true;
+		first_tower = tower;
+		ThreeInRow_vec[tower.id()] = ThreeInRow;
+	      }
         }
     }
-    return 0;
-    
+    //JCT
+    //    return 0;
+    pGltDigi->setTkrThreeInRow(ThreeInRow_vec);
+    if(flag) m_tower_trigger_count[first_tower]++;
+    return flag? b_Track : 0;    
 }
 //------------------------------------------------------------------------------
 unsigned int TriggerAlg::calorimeter(const Event::CalDigiCol& calDigi)
@@ -310,7 +343,11 @@ unsigned int TriggerAlg::calorimeter(const Event::CalDigiCol& calDigi)
     
     m_local = false;
     m_hical = false;
-    
+
+    //JCT    
+    std::vector<bool> CAL_LO(16,false);
+    std::vector<bool> CAL_HI(16,false);
+
     for( CalDigiCol::const_iterator it = calDigi.begin(); it != calDigi.end(); ++it ){
         
         idents::CalXtalId xtalId = (*it)->getPackedId();
@@ -332,13 +369,27 @@ unsigned int TriggerAlg::calorimeter(const Event::CalDigiCol& calDigi)
         double eneP = m_maxEnergy[rangeP]*(adcP-m_pedestal)/(m_maxAdc-m_pedestal);
         double eneM = m_maxEnergy[rangeM]*(adcM-m_pedestal)/(m_maxAdc-m_pedestal);
         
-        
-        if(eneP> m_LOCALthreshold || eneM > m_LOCALthreshold) m_local = true;
-        if(eneP> m_HICALthreshold || eneM > m_HICALthreshold) m_hical = true; 
+	//JCT 
+// 	  if(eneP> m_LOCALthreshold || eneM > m_LOCALthreshold) m_local = true;
+//        if(eneP> m_HICALthreshold || eneM > m_HICALthreshold) m_hical = true; 
+ 
+        if(eneP> m_LOCALthreshold || eneM > m_LOCALthreshold) 
+	  {
+	    m_local = true;
+	    CAL_LO[towid] = true;
+	  }
+        if(eneP> m_HICALthreshold || eneM > m_HICALthreshold) 
+	  {
+	    m_hical = true;
+	    CAL_HI[towid] = true;
+	  } 
         
     }
-        
-    
+
+    //JCT    
+    pGltDigi->setCAL_HI(CAL_HI);
+    pGltDigi->setCAL_LO(CAL_LO);
+
     return (m_local ? b_LO_CAL:0) | (m_hical ? b_HI_CAL:0);
     
 }
@@ -381,7 +432,7 @@ StatusCode TriggerAlg::finalize() {
     it != m_tower_trigger_count.end(); ++ it ){
         log.stream() << setw(30) << (*it).first.id() << setw(10) << (*it).second << std::endl;
     }
-    log << endreq;
+    log <<endreq;
     return StatusCode::SUCCESS;
 }
 //------------------------------------------------------------------------------
