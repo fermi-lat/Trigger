@@ -3,7 +3,7 @@
  * @brief header for class TriRowBits
 
  $Header:$
- * @author David Wren - dnwren@milkyway.gsfc.nasa.gov
+ * @author Luis C. Reyes - lreyes@milkyway.gsfc.nasa.gov
 */
 
 #ifndef TRIROWBITS_H
