@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Tue Dec  7 11:55:27 PST 2004
+Trigger/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+Allow time to decrease if not applying livetime cut; tagging v3r14p1
+    *
+------------------------------------------------------------
 TAG
 Tag name: v3r12gr2, operation: add
 Package: Trigger
