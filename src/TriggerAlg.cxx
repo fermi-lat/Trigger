@@ -2,7 +2,7 @@
 * @file TriggerAlg.cxx
 * @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.31 2004/09/22 23:46:16 burnett Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.32 2004/09/23 15:36:18 lreyes Exp $
 */
 
 // Include files
@@ -66,10 +66,10 @@ public:
         //! definition of  trigger bits
 
         b_ACDL =     1,  ///>  set if cover or side veto, low threshold
-        b_ACDH =     2,  ///>  cover or side veto, high threshold
-        b_Track=     4,  ///>  3 consecutive x-y layers hit
-        b_LO_CAL=    8,  ///>  single log above low threshold
-        b_HI_CAL=   16,  ///> single log above high threshold
+        b_Track=     2,  ///>  3 consecutive x-y layers hit
+        b_LO_CAL=    4,  ///>  single log above low threshold
+        b_HI_CAL=    8,  ///> single log above high threshold
+        b_ACDH =    16,  ///>  cover or side veto, high threshold ("CNO")
         b_THROTTLE= 32,  ///> Ritz throttle
 
         number_of_trigger_bits = 6, ///> for size of table
