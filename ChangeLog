@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Tue Dec  7 15:04:31 PST 2004
+Trigger/src
+
+Modified Files:
+      Tag: GlastRelease-v4r6
+	TriggerAlg.cxx 
+Log Message:
+apply Toby's fix to skip deadtime when reading data in
+    *
+------------------------------------------------------------
 User: heather  Tue Dec  7 15:01:37 PST 2004
 Trigger/doc
 
