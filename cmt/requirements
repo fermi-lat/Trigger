@@ -13,6 +13,8 @@ branches src cmt doc
 
 apply_pattern packageShr
 
+apply_pattern ld_library_path
+
 #=============================================================
 private
 
