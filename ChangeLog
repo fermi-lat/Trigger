@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: burnett  Wed Aug 15 15:35:05 PDT 2001
+trigger/src trigger_dll.cxx
+
+Modified Files:
+	trigger_dll.cxx 
+Log Message:
+
+removed dependence on glastDigi; put in WARNING and FATAL funtions in case need (by unix?)
+    *
+------------------------------------------------------------
 User: burnett  Wed Aug 15 15:35:04 PDT 2001
 trigger/cmt requirements
 
