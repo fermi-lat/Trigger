@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: burnett  Sat Jun 16 21:43:24 PDT 2001
+trigger/src Level1.cxx
+
+Modified Files:
+	Level1.cxx 
+Log Message:
+implement test for mask: if zero no test.
+
+    *
+------------------------------------------------------------
 User: burnett  Sat Jun 16 21:43:23 PDT 2001
 trigger/cmt requirements
 
