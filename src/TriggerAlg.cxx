@@ -2,7 +2,7 @@
 * @file TriggerAlg.cxx
 * @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.10 2002/06/06 21:52:41 burnett Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.11 2002/06/07 03:58:51 burnett Exp $
 */
 
 // Include files
@@ -327,7 +327,7 @@ unsigned int TriggerAlg::calorimeter(const Event::CalDigiCol& calDigi)
         
     }
     
-    for(j=0; j<16; ++j) m_hical = m_hical || three_in_a_row(m_hical_bits[j]);
+    for(int j=0; j<16; ++j) m_hical = m_hical || three_in_a_row(m_hical_bits[j]);
     
     
     return (m_local ? b_LO_CAL:0) | (m_hical ? b_HI_CAL:0);
