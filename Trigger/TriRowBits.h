@@ -2,12 +2,12 @@
  * @file TriRowBits.h
  * @brief header for class TriRowBits
 
- $Header: /nfs/slac/g/glast/ground/cvs/Trigger/Trigger/TriRowBits.h,v 1.1 2004/11/10 22:03:55 heather Exp $
+ $Header: /nfs/slac/g/glast/ground/cvs/Trigger/Trigger/TriRowBits.h,v 1.2 2005/01/03 22:53:52 heather Exp $
  * @author Luis C. Reyes - lreyes@milkyway.gsfc.nasa.gov
 */
 
 #ifndef TRIROWBITS_H
-#define TRIROWBITSS_H
+#define TRIROWBITS_H
 
 #include <iostream>
 
