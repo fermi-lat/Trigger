@@ -2,7 +2,7 @@
 * @file TriggerAlg.cxx
 * @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.14 2002/11/13 22:19:25 chehtman Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.15 2002/11/19 07:47:49 burnett Exp $
 */
 
 // Include files
@@ -280,11 +280,11 @@ unsigned int TriggerAlg::tracker(const Event::TkrDigiCol&  planes)
 
         Key theKey=(*itr).first;
         idents::TowerId tower = theKey.first;
-        if( theKey.second==idents::GlastAxis.X) { 
+        if( theKey.second==idents::GlastAxis::X) { 
             // found an x: and with corresponding Y (if exists)
             unsigned int 
                 xbits = (*itr).second,
-                ybits = layer_bits[std::make_pair(tower, idents::GlastAxis.Y)];
+                ybits = layer_bits[std::make_pair(tower, idents::GlastAxis::Y)];
 
 
             if( three_in_a_row( xbits & ybits) ){
@@ -375,11 +375,13 @@ StatusCode TriggerAlg::finalize() {
     bitSummary(log.stream());
     log << endreq;
 
-    log << MSG::INFO << "Tower trigger summary\n  Tower    count " <<std::endl;
+    //TODO: format this nicely, as a 4x4 table
+    log << MSG::INFO << "Tower trigger summary\n" << setw(30) << "Tower    count " ;
     for( std::map<idents::TowerId, int>::const_iterator it = m_tower_trigger_count.begin();
     it != m_tower_trigger_count.end(); ++ it ){
-        log.stream() << setw(10) << (*it).first.id() << setw(10) << (*it).second << std::endl;
+        log.stream() << setw(30) << (*it).first.id() << setw(10) << (*it).second << std::endl;
     }
+    log << endreq;
     return StatusCode::SUCCESS;
 }
 //------------------------------------------------------------------------------
