@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: lreyes  Thu Sep 23 08:36:18 PDT 2004
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx 
+Log Message:
+New TriRowBits class with more complete 3-in-a-row information. See TriRowBits.h
+    *
+------------------------------------------------------------
 User: lreyes  Thu Sep 23 08:29:25 PDT 2004
 Trigger/src
 
