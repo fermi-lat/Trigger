@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Wed Aug 11 13:57:41 PDT 2004
+Trigger/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+monitor livetime, with new bit in the triggerword. tag v3r8
+    *
+------------------------------------------------------------
 User: burnett  Sun Jul 25 14:13:59 PDT 2004
 Trigger/src
 
