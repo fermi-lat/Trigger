@@ -2,13 +2,13 @@
  * @file ThrottleAlg.h
  * @brief header for class ThrottleAlg
 
- $Header$
+ $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/ThrottleAlg.h,v 1.2 2004/07/25 21:13:59 burnett Exp $
  * @author David Wren - dnwren@milkyway.gsfc.nasa.gov
 */
 
 #ifndef THROTTLE_ALG_H
 #define THROTTLE_ALG_H
-
+#if 0 //THB: this is not a gaudi algorithm, none of these are needed
 #include "GaudiKernel/MsgStream.h"
 #include "GaudiKernel/AlgFactory.h"
 #include "GaudiKernel/IDataProviderSvc.h"
@@ -25,26 +25,19 @@
 #include "CLHEP/Vector/LorentzVector.h"
 
 #include "Event/TopLevel/EventModel.h"
+#endif
 #include "Event/TopLevel/Event.h"
 
 #include "Event/Digi/TkrDigi.h"
 #include "Event/Digi/CalDigi.h"
 #include "Event/Digi/AcdDigi.h"
 
+#if 0 // THB--moved to implementation file
 #include <map>
 #include <cassert>
+#endif
 
-namespace {
-    inline bool three_in_a_row(unsigned bits)
-    {
-        while( bits ) {
-            if( (bits & 7) ==7) return true;
-            bits >>= 1;
-        }
-        return false;
-    }
-    inline unsigned layer_bit(int layer){ return 1 << layer;}
-}
+
 
 
 /** @class ThrottleAlg
@@ -84,10 +77,10 @@ private:
 	//! gets the tower ID and mask, then calls the functions
 	//! that do the checking
 	bool compare();
-
+#if 0 //THB not used in the implementation
     /// access to the Glast Detector Service to read in geometry constants from XML files
     IGlastDetSvc *m_glastDetSvc;
-
+#endif
 	bool m_throttle;
     unsigned short m_triggered_towers, m_number_triggered;
 	unsigned int m_trigger_word, m_acdtop, m_acdX, m_acdY,
