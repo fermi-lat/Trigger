@@ -1,0 +1,41 @@
+//##############################################################
+//
+//=========================================================================
+ApplicationMgr.HistogramPersistency = "ROOT";
+// Persistency service setup:
+EventPersistencySvc.CnvServices = {"EventCnvSvc"};
+
+ApplicationMgr.DLLs = {  "GlastSvc",  "RootHistCnv"};
+
+
+ApplicationMgr.ExtSvc = { 
+    "GlastDetSvc", 
+    "GlastEventSelector/EventSelector" ,    
+    "EventCnvSvc"};  
+     
+ApplicationMgr.TopAlg = {   "Level1"};
+
+
+// basic glast dlls
+ApplicationMgr.DLLs += {  "trigger"};
+
+
+
+//------------------------------------------
+//          tuple setup
+//------------------------------------------
+ApplicationMgr.DLLs  += { "ntupleWriterSvc" };
+ApplicationMgr.ExtSvc+= { "ntupleWriterSvc" };
+
+ntupleWriterSvc.tuple_name = { "TEST" };
+Level1.tupleName =      "TEST";
+NTupleSvc.Output = {    "TEST DATAFILE='test_trigger.root' OPT='NEW'"};
+
+// will read an IRF and check for trigger.
+
+EventSelector.Input="IRFFILE $(INSTRUMENTROOT)/src/test/vertical_muons.irf";
+
+// Set output level threshold (2=DEBUG, 3=INFO, 4=WARNING, 5=ERROR, 6=FATAL )
+MessageSvc.OutputLevel      = 2;
+
+ApplicationMgr.EvtMax = 20;

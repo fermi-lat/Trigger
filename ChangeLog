@@ -1,0 +1,24 @@
+------------------------------------------------------------
+User: burnett  Wed May 23 07:56:24 PDT 2001
+trigger - Imported sources
+
+Log Message:
+initil import of new package to make trigger calculations. One alg to start with.
+
+Status:
+
+Vendor Tag:	GLAST
+Release Tags:	v0
+		
+N trigger/.cvsignore
+N trigger/cmt/.cvsignore
+N trigger/cmt/Makefile
+N trigger/cmt/requirements
+N trigger/src/jobOptions.txt
+N trigger/src/mainpage.h
+N trigger/src/TriggerAlg.cxx
+N trigger/src/trigger_load.cxx
+
+No conflicts created by this import
+
+    *
