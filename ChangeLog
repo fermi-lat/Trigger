@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Wed Nov 10 14:03:55 PST 2004
+Trigger/Trigger
+
+Added Files:
+	TriRowBits.h 
+Log Message:
+move TriRowBits.h to new public header directory
+    *
+------------------------------------------------------------
 User: heather  Wed Nov 10 14:02:47 PST 2004
 Trigger/Trigger
 
