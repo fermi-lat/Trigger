@@ -2,7 +2,7 @@
 * @file TriggerAlg.cxx
 * @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.26 2004/08/11 20:57:41 burnett Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.27 2004/09/08 22:07:13 burnett Exp $
 */
 
 // Include files
@@ -69,9 +69,8 @@ public:
         b_LO_CAL=    8,  ///  single log above low threshold
         b_HI_CAL=   16,  /// single log above high threshold
         b_THROTTLE= 32,  /// Ritz throttle
-        b_LIVETIME= 64,  /// happened after livetime threshold (and it is >0)
 
-        number_of_trigger_bits = 7 ///> for size of table
+        number_of_trigger_bits = 6 ///> for size of table
 
     };
 
@@ -120,6 +119,7 @@ private:
     // for statistics
     int m_total;
     int m_triggered;
+    int m_deadtimeLoss; //!< lost due to deadtime
     std::map<int,int> m_counts; //map of values for each bit pattern
 
     std::map<idents::TowerId, int> m_tower_trigger_count;
@@ -134,8 +134,9 @@ const IAlgFactory& TriggerAlgFactory = Factory;
 //------------------------------------------------------------------------------
 /// 
 TriggerAlg::TriggerAlg(const std::string& name, ISvcLocator* pSvcLocator) :
-Algorithm(name, pSvcLocator), m_event(0) ,m_total(0), 
-m_triggered(0), m_lastTriggerTime(0), m_liveTime(0)
+Algorithm(name, pSvcLocator), m_event(0),
+m_lastTriggerTime(0), m_liveTime(0), m_total(0), 
+m_triggered(0), m_deadtimeLoss(0)
 {
     declareProperty("mask"     ,  m_mask=0xffffffff); // trigger mask
     declareProperty("run"      ,  m_run =0 );
@@ -159,7 +160,9 @@ StatusCode TriggerAlg::initialize()
     log << MSG::INFO;
     if(log.isActive()) {
         if (m_mask==-1) log.stream() << "No trigger requirement";
-        else            log.stream() << "Applying trigger mask: " <<  std::setbase(16) <<m_mask ;
+        else            log.stream() << "Applying trigger mask: " <<  std::setbase(16) <<m_mask <<std::setbase(10);
+
+        if( m_deadtime>0) log.stream() <<", applying deadtime of " << m_deadtime*1E6 << "u sec ";
     }
     log << endreq;
 
@@ -254,15 +257,22 @@ StatusCode TriggerAlg::execute()
     }
 
     // check for deadtime: set flag only if applying deadtime
-    if( m_deadtime >0 && alive(header->time()) )  trigger_bits   |=  b_LIVETIME ; 
+    bool killedByDeadtime =  ! alive(header->time()); 
+    if( killedByDeadtime) {
+        ++ m_deadtimeLoss; // keep track of these for output summary
+    }else {
 
-    m_total++;
-    m_counts[trigger_bits] = m_counts[trigger_bits]+1;
+        m_total++;
+        m_counts[trigger_bits] = m_counts[trigger_bits]+1;
+    }
 
     // apply filter for subsequent processing.
-    if( m_mask!=0 && ( trigger_bits & m_mask) == 0) {
+    if( m_mask!=0 && ( trigger_bits & m_mask) == 0  ) {
         setFilterPassed( false );
         log << MSG::DEBUG << "Event did not trigger" << endreq;
+    }else if( killedByDeadtime ){
+        setFilterPassed( false );
+        log << MSG::DEBUG << "Event killed by deadtime limit" << endreq;
     }else {
         m_triggered++;
         double now = header->time();
@@ -459,7 +469,10 @@ StatusCode TriggerAlg::finalize() {
     MsgStream log(msgSvc(), name());
     log << MSG::INFO << "Totals triggered/ processed: " << m_triggered << "/" << m_total ; 
 
-    if(log.isActive()) bitSummary(log.stream());
+    if( m_deadtime>0 )  log << "\n\t\tLost to deadtime: " << m_deadtimeLoss ;
+ 
+    if(log.isActive() ) bitSummary(log.stream());
+
     log << endreq;
 
     //TODO: format this nicely, as a 4x4 table
