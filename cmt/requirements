@@ -1,8 +1,8 @@
 package Trigger
-version v3r12
+version v3r14
 
 author T. Burnett <tburnett@u.washington.edu>
-# $Id: requirements,v 1.35 2004/10/05 02:33:52 burnett Exp $
+# $Id: requirements,v 1.36 2004/11/10 22:02:11 heather Exp $
 
 # --------------------------
 # define trigger algorithms
