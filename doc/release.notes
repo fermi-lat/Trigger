@@ -3,6 +3,7 @@
  * package manager:T.Burnett 
   <pre>
 
+ *  v3r16p1 15-mar-05 THB Set ACDH tbit.
  *  v3r16   18-feb-05 THB Use enums to define trigger bits
  *  v3r15   18-jan-05 THB 
  *          03-jan-05 HMK Define TriRowBits CLID and modify TDS path

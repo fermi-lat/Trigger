@@ -2,7 +2,7 @@
 * @file TriggerAlg.cxx
 * @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.40 2005/01/03 22:54:01 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.41 2005/02/18 21:55:55 burnett Exp $
 */
 
 
@@ -438,8 +438,12 @@ unsigned int TriggerAlg::anticoincidence(const Event::AcdDigiCol& tiles)
     log << MSG::DEBUG << tiles.size() << " tiles found with hits" << endreq;
     unsigned int ret=0;
     for( AcdDigiCol::const_iterator it = tiles.begin(); it !=tiles.end(); ++it){
+        // if it is here, assume it has a bit.
         ret |= enums::b_ACDL; 
-        //TODO: check threshold, set high bit
+        // now trigger high if either PMT is above threshold
+        const AcdDigi& digi = **it;
+        if (   digi.getHighDiscrim(Event::AcdDigi::A) 
+            || digi.getHighDiscrim(Event::AcdDigi::B) ) ret |= enums::b_ACDH;
     } 
     return ret;
 }
