@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Thu Oct 14 09:41:37 PDT 2004
+Trigger/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+recast tests for smart pointers
+    *
+------------------------------------------------------------
 User: burnett  Thu Oct 14 09:40:10 PDT 2004
 Trigger/src
 
