@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Wed Nov 10 14:09:06 PST 2004
+Trigger/doc
+
+Modified Files:
+      Tag: GlastRelease-v4r6
+	release.notes 
+Log Message:
+move TriRowBits.h to new public header directory
+    *
+------------------------------------------------------------
 User: heather  Wed Nov 10 14:08:58 PST 2004
 Trigger/cmt
 
