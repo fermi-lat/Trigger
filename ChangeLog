@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Sat Jun  8 20:15:03 PDT 2002
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx 
+Log Message:
+fix warnings
+    *
+------------------------------------------------------------
 User: burnett  Fri Jun  7 07:47:37 PDT 2002
 Trigger/src/test
 
