@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Thu Oct  4 14:42:48 PDT 2001
+trigger/cmt requirements
+
+Modified Files:
+	requirements 
+Log Message:
+wait for new pattern
+    *
+------------------------------------------------------------
 User: heather  Tue Oct  2 06:12:38 PDT 2001
 trigger/src ACDthrottle.cxx
 
