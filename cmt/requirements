@@ -1,16 +1,12 @@
 package Trigger
-version v3r8
+version v3r9
 
 author T. Burnett <tburnett@u.washington.edu>
-# $Id: requirements,v 1.28 2004/07/22 13:34:26 burnett Exp $
+# $Id: requirements,v 1.29 2004/08/11 20:57:41 burnett Exp $
 
 # --------------------------
 # define trigger algorithms
 # --------------------------
-
-
-use Event *
-use GlastSvc *
 
 
 branches src cmt doc
@@ -18,9 +14,12 @@ branches src cmt doc
 apply_pattern packageShr
 
 
-
 #=============================================================
 private
+
+use Event *
+use GlastSvc *
+use LdfEvent *
 
 # get flags to build shared library
 
