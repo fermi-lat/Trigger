@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Mon Oct 11 14:19:24 PDT 2004
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx 
+Log Message:
+rearrange bits in the trigger word to correspond to GEM.
+    *
+------------------------------------------------------------
 User: burnett  Mon Oct  4 19:33:53 PDT 2004
 Trigger/doc
 
