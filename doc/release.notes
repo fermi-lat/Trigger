@@ -2,6 +2,7 @@
  * @brief package Trigger
  * package manager:T.Burnett 
   <pre>
+ *  v3r12em4 03-jan-05 HMK Modify TriRowBits TDS path and CLID definition
  *  v3r12em3 07-dec-04 HMK Apply Toby's fix to skip deadtime when in read data mode
  *  v3r12gr2 01-dec-04 HMK Fix to TriggerAlg::alive to allow identical times
  *  v3r12gr1 18-nov-04 HMK Apply fix to set throttle only when ACD and TKR data
