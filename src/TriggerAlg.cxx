@@ -2,7 +2,7 @@
 * @file TriggerAlg.cxx
 * @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.32 2004/09/23 15:36:18 lreyes Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.32.2.1 2004/11/10 22:10:02 heather Exp $
 */
 
 // Include files
@@ -256,7 +256,9 @@ StatusCode TriggerAlg::execute()
         StatusCode temp_sc;
         double s_vetoThresholdMeV;
         temp_sc = m_glastDetSvc->getNumericConstByName("acd.vetoThreshold", &s_vetoThresholdMeV);
-        trigger_bits |= Throttle.calculate(header,tkr,acd, s_vetoThresholdMeV);
+        if( tkr!=0 && acd !=0 ) { 
+            trigger_bits |= Throttle.calculate(header,tkr,acd, s_vetoThresholdMeV); 
+        } 
     }
     else{
         log << MSG::ERROR << " could not find the event header" << endreq;
