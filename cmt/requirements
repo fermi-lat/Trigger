@@ -1,8 +1,8 @@
 package Trigger
-version v3r15
+version v3r16
 
 author T. Burnett <tburnett@u.washington.edu>
-# $Id: requirements,v 1.38 2004/12/07 19:55:27 burnett Exp $
+# $Id: requirements,v 1.39 2005/01/18 16:38:46 burnett Exp $
 
 # --------------------------
 # define trigger algorithms
@@ -12,6 +12,7 @@ author T. Burnett <tburnett@u.washington.edu>
 branches src cmt doc
 
 use GlastPolicy *
+use enums *
 apply_pattern packageShr
 
 apply_pattern package_include
