@@ -1,4 +1,37 @@
 ------------------------------------------------------------
+User: dnwren  Mon Mar 15 19:35:42 PST 2004
+Trigger
+
+Log Message:
+moved throttle code into a seperate class
+
+Status:
+
+Vendor Tag:	GLAST
+Release Tags:	v3r6
+		
+U Trigger/.cvsignore
+C Trigger/ChangeLog
+U Trigger/cmt/.cvsignore
+U Trigger/cmt/Makefile
+C Trigger/cmt/requirements
+C Trigger/doc/release.notes
+U Trigger/src/jobOptions.txt
+C Trigger/src/mainpage.h
+N Trigger/src/ThrottleAlg.cxx
+N Trigger/src/ThrottleAlg.h
+C Trigger/src/TriggerAlg.cxx
+C Trigger/src/Trigger_dll.cxx
+C Trigger/src/Trigger_load.cxx
+C Trigger/src/test/jobOptions.txt
+
+8 conflicts created by this import.
+Use the following command to help the merge:
+
+	cvs checkout -jGLAST:yesterday -jGLAST Trigger
+
+    *
+------------------------------------------------------------
 User: dnwren  Mon Mar 15 19:31:52 PST 2004
 Trigger/src
 
