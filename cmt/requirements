@@ -26,4 +26,4 @@ library trigger  *.cxx *.h
 
 private
 
-application test_trigger ${Main}  *.cxx $(jobOptions) 
+#application test_trigger ${Main}  *.cxx $(jobOptions) 
