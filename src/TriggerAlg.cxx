@@ -2,7 +2,7 @@
 * @file TriggerAlg.cxx
 * @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.25 2004/07/25 21:13:59 burnett Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.26 2004/08/11 20:57:41 burnett Exp $
 */
 
 // Include files
@@ -29,10 +29,24 @@
 #include "Event/Digi/CalDigi.h"
 #include "Event/Digi/AcdDigi.h"
 
+#include "LdfEvent/Gem.h"
+
+
 #include "ThrottleAlg.h"
 
 #include <map>
 
+namespace { // local definitions of convenient inline functions
+    inline bool three_in_a_row(unsigned bits)
+    {
+        while( bits ) {
+            if( (bits & 7) ==7) return true;
+            bits >>= 1;
+        }
+        return false;
+    }
+    inline unsigned layer_bit(int layer){ return 1 << layer;}
+}
 //------------------------------------------------------------------------------
 /*! \class TriggerAlg
 \brief  alg that sets trigger information
@@ -99,7 +113,9 @@ private:
     int m_run;
     int m_event;
     DoubleProperty m_deadtime;
-    double m_lastTriggerTime;
+
+    double m_lastTriggerTime; //! time of last trigger, for calculated live time
+    double m_liveTime; //! cumulative live time
 
     // for statistics
     int m_total;
@@ -118,7 +134,8 @@ const IAlgFactory& TriggerAlgFactory = Factory;
 //------------------------------------------------------------------------------
 /// 
 TriggerAlg::TriggerAlg(const std::string& name, ISvcLocator* pSvcLocator) :
-Algorithm(name, pSvcLocator), m_event(0) ,m_total(0), m_triggered(0), m_lastTriggerTime(0)
+Algorithm(name, pSvcLocator), m_event(0) ,m_total(0), 
+m_triggered(0), m_lastTriggerTime(0), m_liveTime(0)
 {
     declareProperty("mask"     ,  m_mask=0xffffffff); // trigger mask
     declareProperty("run"      ,  m_run =0 );
@@ -132,7 +149,6 @@ Algorithm(name, pSvcLocator), m_event(0) ,m_total(0), m_triggered(0), m_lastTrig
 StatusCode TriggerAlg::initialize() 
 {
 
-
     StatusCode sc = StatusCode::SUCCESS;
 
     MsgStream log(msgSvc(), name());
@@ -141,8 +157,9 @@ StatusCode TriggerAlg::initialize()
     setProperties();
 
     log << MSG::INFO;
-    if(log.isActive()) { log.stream() <<"Applying trigger mask: " <<  std::setbase(16) <<m_mask 
-        << "initializing run number " << m_run;
+    if(log.isActive()) {
+        if (m_mask==-1) log.stream() << "No trigger requirement";
+        else            log.stream() << "Applying trigger mask: " <<  std::setbase(16) <<m_mask ;
     }
     log << endreq;
 
@@ -167,11 +184,7 @@ StatusCode TriggerAlg::caltrigsetup()
 {
     // purpose and method: extracting double constants for calorimeter trigger
 
-    IGlastDetSvc* detSvc;
-    StatusCode sc = service("GlastDetSvc", detSvc);
-    if( sc.isFailure() ) return sc;
     MsgStream   log( msgSvc(), name() );
-
 
     typedef std::map<double*,std::string> DPARAMAP;
     DPARAMAP dparam;
@@ -185,7 +198,7 @@ StatusCode TriggerAlg::caltrigsetup()
     dparam[&m_maxAdc]=std::string("cal.maxAdcValue");
 
     for(DPARAMAP::iterator dit=dparam.begin(); dit!=dparam.end();dit++){
-        if(!detSvc->getNumericConstByName((*dit).second,(*dit).first)) {
+        if(!m_glastDetSvc->getNumericConstByName((*dit).second,(*dit).first)) {
             log << MSG::ERROR << " constant " <<(*dit).second << " not defined" << endreq;
             return StatusCode::FAILURE;
         } 
@@ -253,8 +266,10 @@ StatusCode TriggerAlg::execute()
     }else {
         m_triggered++;
         double now = header->time();
+        // this is where we lose the deadtime.
+        m_liveTime +=  now-m_lastTriggerTime - m_deadtime;
         
-        header->setLivetime(now-m_lastTriggerTime);
+        header->setLivetime(m_liveTime);
         m_lastTriggerTime = now;
 
         Event::EventHeader& h = header;
@@ -270,7 +285,7 @@ StatusCode TriggerAlg::execute()
                 << std::setbase(16) << (m_mask==0?trigger_bits:trigger_bits& m_mask);
             log << endreq;
         }else {
-            // assume set by reading digiRoot file
+            // header info already set.
             log << MSG::DEBUG ;
             if(log.isActive()) log.stream() << "Read run/event " << h.run() << "/" << h.event() << " trigger & mask "
                 << std::setbase(16) << (m_mask==0 ? trigger_bits : trigger_bits & m_mask);
@@ -279,12 +294,48 @@ StatusCode TriggerAlg::execute()
             if(h.trigger()==0){
                 h.setTrigger(trigger_bits);
             }else  if (h.trigger() != 0xbaadf00d && trigger_bits != h.trigger() ) {
+                // trigger bits already set: reading digiRoot file.
                 log << MSG::WARNING;
                 if(log.isActive()) log.stream() << "Trigger bits read back do not agree with recalculation! " 
                     << std::setbase(16) <<trigger_bits << " vs. " << h.trigger();
                 log << endreq;
             }
-        }      
+        }  
+
+        // set appropriate bits in Gem summary if this is MC, that is, the Gem is not present
+        SmartDataPtr<LdfEvent::Gem> gem(eventSvc(), "/Event/Gem"); 
+        if ( gem==0) {
+            LdfEvent::Gem * newgem = new LdfEvent::Gem;
+            sc = eventSvc()->registerObject("/Event/Gem", newgem);
+            if(sc.isFailure()) {
+			log << MSG::ERROR << "/Event/Gem  could not be registered on data store" << endreq;
+			delete newgem;
+			return sc;
+		}
+            LdfEvent::GemTileList tilelist; // empty for arglist below
+
+
+            /* meaning of bits to set here
+            
+bit 0   ROI            Meaning depends on whether ACD is being used as veto or trigger
+bit 1   TKR           OR of 3-in-a-row for each tower
+bit 2   CAL  (LE)  OR of CAL low energy for each tower
+bit 3   CAL  (HE)  OR of CAL high energy for each tower
+bit 4   CNO          OR of 12 ACD CNO inputs
+bit 5   Periodic       set for periodic trigger
+bit 6   Solicited      set for solicited trigger.
+*/
+            int summary = 
+                  (( trigger_bits & b_Track) !=0 ? 2 : 0)
+                  |((trigger_bits & b_LO_CAL)!=0 ? 4 : 0)
+                  |((trigger_bits & b_HI_CAL)!=0 ? 8 : 0)
+                  |((trigger_bits & b_ACDH)  !=0 ?16 : 0) ;
+
+            newgem->initTrigger(0, 0, 0, 0, 0, summary, tilelist);
+
+        }
+
+
 
     }
 
