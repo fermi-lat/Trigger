@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: cohen  Tue Dec  3 00:48:42 PST 2002
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx 
+Log Message:
+replace std::cout by log (sorry)
+    *
+------------------------------------------------------------
 User: cohen  Mon Dec  2 12:51:19 PST 2002
 Trigger/src
 
