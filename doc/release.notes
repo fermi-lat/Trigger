@@ -3,6 +3,7 @@
  * package manager:T.Burnett 
   
  *
+ *  v3r3p6 13-nov-02 AC HICAL trigger modified: 3-in-a-row logic and unnecessary conversion GeV=>MeV suppressed.  
  *  v3r3p4 10-sep-02 THB Event, GlastSvc version
  *  v3r3p3 10-jun-02 THB for scope fix
  *  v3r3p1 07jun-02 THB do not EventHeader if set by RootIo
