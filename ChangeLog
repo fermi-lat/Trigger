@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: burnett  Wed Aug 11 13:57:41 PDT 2004
+Trigger/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+monitor livetime, with new bit in the triggerword. tag v3r8
+    *
+------------------------------------------------------------
+User: burnett  Wed Aug 11 13:57:41 PDT 2004
 Trigger/cmt
 
 Modified Files:
