@@ -2,7 +2,7 @@
 * @file TriggerAlg.cxx
 * @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.38 2004/12/01 01:11:34 burnett Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.39 2004/12/07 19:55:27 burnett Exp $
 */
 
 
@@ -363,7 +363,7 @@ unsigned int TriggerAlg::tracker(const Event::TkrDigiCol&  planes)
     //!Creating Object in TDS.
     //!Documentation of three_in_a_row_bits available in Trigger/TriRowBits.h
     TriRowBitsTds::TriRowBits *rowbits= new TriRowBitsTds::TriRowBits;
-    eventSvc()->registerObject("/Event/Digi/TriRowBits", rowbits);
+    eventSvc()->registerObject("/Event/TriRowBits", rowbits);
 
     bool tkr_trig_flag = false;
     // now look for a three in a row in x-y coincidence
