@@ -1,0 +1,28 @@
+package trigger
+version v1
+
+# --------------------------
+# define trigger algorithms
+# --------------------------
+
+use GlastSvc
+branches src cmt doc
+
+# define link options
+apply_pattern packageShr
+
+#=============================================================
+private
+
+# get flags to build shared library
+
+apply_pattern package_Cshlibflags
+
+library trigger  *.cxx *.h Dll/*.cxx
+
+
+# build this for testing 
+
+private
+
+application test_trigger ${Main}  *.cxx $(jobOptions) 
