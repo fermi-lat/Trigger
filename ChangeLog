@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: burnett  Sun Jul 25 14:13:59 PDT 2004
+Trigger/src
+
+Modified Files:
+	ThrottleAlg.h TriggerAlg.cxx Trigger_dll.cxx Trigger_load.cxx 
+	mainpage.h 
+Log Message:
+doxygen fix or enhancement
+    *
+------------------------------------------------------------
 User: burnett  Thu Jul 22 06:34:26 PDT 2004
 Trigger/doc
 
