@@ -2,6 +2,10 @@
  * @brief package Trigger
  * package manager:T.Burnett 
   <pre>
+
+ *          30-nov-04 THB allow consecutive events to have the same time 
+            10-nov-04 HMK move TriRowBits.h to new public header directory
+ *  v3r13   14-oct-04 THB
             10-nov-04 HMK move TriRowBits.h to new public header directory
             14-oct-04 THB recast test for missing smart pointers     
             11-oct-o4 THB rearrange bits in trigger word 

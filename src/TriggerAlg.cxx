@@ -2,10 +2,9 @@
 * @file TriggerAlg.cxx
 * @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.36 2004/10/15 03:34:55 burnett Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.37 2004/11/10 22:04:00 heather Exp $
 */
 
-// Include files
 
 #include "GaudiKernel/MsgStream.h"
 #include "GaudiKernel/AlgFactory.h"
@@ -219,7 +218,7 @@ StatusCode TriggerAlg::caltrigsetup()
 
 bool TriggerAlg::alive(double current_time)
 { 
-    return (current_time-m_lastTriggerTime >m_deadtime);
+    return (current_time-m_lastTriggerTime >=m_deadtime);
 }
 
 //------------------------------------------------------------------------------
