@@ -2,7 +2,7 @@
 * @file TriggerAlg.cxx
 * @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.17 2002/12/02 20:51:19 cohen Exp $
+*  $Header: /home/cvs/SLAC/GlastRelease/Trigger/src/TriggerAlg.cxx,v 1.17 2002/12/14 17:01:38 burnett Exp $
 */
 
 // Include files
@@ -24,10 +24,6 @@
 
 #include "Event/TopLevel/EventModel.h"
 #include "Event/TopLevel/Event.h"
-
-//JCT
-#include "Event/Digi/GltDigi.h"
-#include <vector>
 
 #include "Event/Digi/TkrDigi.h"
 #include "Event/Digi/CalDigi.h"
@@ -114,9 +110,7 @@ private:
 
     std::map<idents::TowerId, int> m_tower_trigger_count;
     
-  //JCT
-  Event::GltDigi* pGltDigi;
- 
+    
 };
 
 //------------------------------------------------------------------------------
@@ -146,8 +140,11 @@ StatusCode TriggerAlg::initialize()
     // Use the Job options service to set the Algorithm's parameters
     setProperties();
     
-    log << MSG::INFO <<"Applying trigger mask: " <<  std::setbase(16) <<m_mask 
-        << "initializing run number " << m_run  << endreq;
+    log << MSG::INFO;
+    if(log.isActive()) { log.stream() <<"Applying trigger mask: " <<  std::setbase(16) <<m_mask 
+        << "initializing run number " << m_run;
+    }
+    log << endreq;
     
     
     sc = caltrigsetup();
@@ -206,25 +203,13 @@ StatusCode TriggerAlg::execute()
     SmartDataPtr<Event::AcdDigiCol> acd(eventSvc(), EventModel::Digi::AcdDigiCol);
     if( acd==0 ) log << MSG::DEBUG << "No acd digis found" << endreq;
     
-    //JCT
-     pGltDigi = new Event::GltDigi;
-
-   // set bits in the trigger word
+    // set bits in the trigger word
     
     unsigned int trigger_bits = 
         (tkr? tracker(tkr) : 0 )
         | (cal? calorimeter(cal) : 0 )
         | (acd? anticoincidence(acd) : 0);
     
-    //JCT
-    for(int tower_id=0;tower_id<16;++tower_id)
-      {
-	log<<MSG::DEBUG<<"Tower Id: "<<tower_id<<endreq;
- 	log<<MSG::DEBUG<<"3inRow: "<<(pGltDigi->getTkrThreeInRow())[tower_id]<<endreq;
- 	log<<MSG::DEBUG<<"CAL_LO: "<<(pGltDigi->getCAL_LO())[tower_id]<<endreq;
- 	log<<MSG::DEBUG<<"CAL_HI: "<<(pGltDigi->getCAL_HI())[tower_id]<<endreq;
-      }
-    delete pGltDigi;
     
     m_total++;
     m_counts[trigger_bits] = m_counts[trigger_bits]+1;
@@ -249,16 +234,22 @@ StatusCode TriggerAlg::execute()
                 h.setRun(m_run);
                 h.setEvent(++m_event);
                 h.setTrigger(trigger_bits);
-                log << MSG::INFO << "Creating run/event " << m_run <<"/"<<m_event  << " trigger & mask "  
-                    << std::setbase(16) << (m_mask==0?trigger_bits:trigger_bits& m_mask) << endreq;
+                log << MSG::INFO; 
+                if(log.isActive() ) log.stream() << "Creating run/event " << m_run <<"/"<<m_event  << " trigger & mask "  
+                    << std::setbase(16) << (m_mask==0?trigger_bits:trigger_bits& m_mask);
+                log << endreq;
             }else {
                 // assume set by reading digiRoot file
-                log << MSG::INFO << "Read run/event " << h.run() << "/" << h.event() << " trigger & mask "
-                    << std::setbase(16) << (m_mask==0 ? trigger_bits : trigger_bits & m_mask) << endreq;
+                log << MSG::INFO ;
+                if(log.isActive()) log.stream() << "Read run/event " << h.run() << "/" << h.event() << " trigger & mask "
+                    << std::setbase(16) << (m_mask==0 ? trigger_bits : trigger_bits & m_mask);
+                log << endreq;
                 
                 if (h.trigger() != 0xbaadf00d && trigger_bits != h.trigger() ) {
-                    log << MSG::WARNING << "Trigger bits read back do not agree with recalculation! " 
-                        << std::setbase(16) <<trigger_bits << " vs. " << h.trigger() << endreq;
+                    log << MSG::WARNING;
+                    if(log.isActive()) log.stream() << "Trigger bits read back do not agree with recalculation! " 
+                        << std::setbase(16) <<trigger_bits << " vs. " << h.trigger();
+                    log << endreq;
                 }
             }
             
@@ -293,11 +284,6 @@ unsigned int TriggerAlg::tracker(const Event::TkrDigiCol&  planes)
         layer_bits[std::make_pair(t.getTower(), t.getView())] |= layer_bit(t.getBilayer());
     }
     
-    //JCT
-    bool flag(false);
-    idents::TowerId first_tower = -1;    
-    std::vector<bool> ThreeInRow_vec(16,false);
-
     // now look for a three in a row in x-y coincidence
     for( Map::iterator itr = layer_bits.begin(); itr !=layer_bits.end(); ++ itr){
 
@@ -309,26 +295,16 @@ unsigned int TriggerAlg::tracker(const Event::TkrDigiCol&  planes)
                 xbits = (*itr).second,
                 ybits = layer_bits[std::make_pair(tower, idents::GlastAxis::Y)];
 
-	    //JCT
-//             if( three_in_a_row( xbits & ybits) ){
-//                 // OK: tag the tower for stats
-//                 m_tower_trigger_count[tower]++;
-//                 return b_Track;
-//             }
-	    bool ThreeInRow = three_in_a_row( xbits & ybits);
-	    if(ThreeInRow)
-	      {
-		flag = true;
-		first_tower = tower;
-		ThreeInRow_vec[tower.id()] = ThreeInRow;
-	      }
+
+            if( three_in_a_row( xbits & ybits) ){
+                // OK: tag the tower for stats
+                m_tower_trigger_count[tower]++;
+                return b_Track;
+            }
         }
     }
-    //JCT
-    //    return 0;
-    pGltDigi->setTkrThreeInRow(ThreeInRow_vec);
-    if(flag) m_tower_trigger_count[first_tower]++;
-    return flag? b_Track : 0;    
+    return 0;
+    
 }
 //------------------------------------------------------------------------------
 unsigned int TriggerAlg::calorimeter(const Event::CalDigiCol& calDigi)
@@ -343,11 +319,7 @@ unsigned int TriggerAlg::calorimeter(const Event::CalDigiCol& calDigi)
     
     m_local = false;
     m_hical = false;
-
-    //JCT    
-    std::vector<bool> CAL_LO(16,false);
-    std::vector<bool> CAL_HI(16,false);
-
+    
     for( CalDigiCol::const_iterator it = calDigi.begin(); it != calDigi.end(); ++it ){
         
         idents::CalXtalId xtalId = (*it)->getPackedId();
@@ -369,27 +341,13 @@ unsigned int TriggerAlg::calorimeter(const Event::CalDigiCol& calDigi)
         double eneP = m_maxEnergy[rangeP]*(adcP-m_pedestal)/(m_maxAdc-m_pedestal);
         double eneM = m_maxEnergy[rangeM]*(adcM-m_pedestal)/(m_maxAdc-m_pedestal);
         
-	//JCT 
-// 	  if(eneP> m_LOCALthreshold || eneM > m_LOCALthreshold) m_local = true;
-//        if(eneP> m_HICALthreshold || eneM > m_HICALthreshold) m_hical = true; 
- 
-        if(eneP> m_LOCALthreshold || eneM > m_LOCALthreshold) 
-	  {
-	    m_local = true;
-	    CAL_LO[towid] = true;
-	  }
-        if(eneP> m_HICALthreshold || eneM > m_HICALthreshold) 
-	  {
-	    m_hical = true;
-	    CAL_HI[towid] = true;
-	  } 
+        
+        if(eneP> m_LOCALthreshold || eneM > m_LOCALthreshold) m_local = true;
+        if(eneP> m_HICALthreshold || eneM > m_HICALthreshold) m_hical = true; 
         
     }
-
-    //JCT    
-    pGltDigi->setCAL_HI(CAL_HI);
-    pGltDigi->setCAL_LO(CAL_LO);
-
+        
+    
     return (m_local ? b_LO_CAL:0) | (m_hical ? b_HI_CAL:0);
     
 }
@@ -423,16 +381,19 @@ StatusCode TriggerAlg::finalize() {
     MsgStream log(msgSvc(), name());
     log << MSG::INFO << "Totals triggered/ processed: " << m_triggered << "/" << m_total ; 
     
-    bitSummary(log.stream());
+    if(log.isActive()) bitSummary(log.stream());
     log << endreq;
 
     //TODO: format this nicely, as a 4x4 table
-    log << MSG::INFO << "Tower trigger summary\n" << setw(30) << "Tower    count " ;
-    for( std::map<idents::TowerId, int>::const_iterator it = m_tower_trigger_count.begin();
-    it != m_tower_trigger_count.end(); ++ it ){
-        log.stream() << setw(30) << (*it).first.id() << setw(10) << (*it).second << std::endl;
+    log << MSG::INFO ;
+    if(log.isActive() ){
+        log.stream() << "Tower trigger summary\n" << setw(30) << "Tower    count " ;
+        for( std::map<idents::TowerId, int>::const_iterator it = m_tower_trigger_count.begin();
+            it != m_tower_trigger_count.end(); ++ it ){
+                log.stream() << setw(30) << (*it).first.id() << setw(10) << (*it).second << std::endl;
+            }
     }
-    log <<endreq;
+    log << endreq;
     return StatusCode::SUCCESS;
 }
 //------------------------------------------------------------------------------
@@ -470,6 +431,3 @@ void TriggerAlg::bitSummary(std::ostream& out){
 
 
 //------------------------------------------------------------------------------
-
-
-
