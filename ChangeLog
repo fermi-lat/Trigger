@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: lreyes  Thu Sep 23 08:29:25 PDT 2004
+Trigger/src
+
+Added Files:
+	TriRowBits.h 
+Log Message:
+Header file for TDS class TriRowBits, initial revision
+    *
+------------------------------------------------------------
 User: burnett  Wed Sep 22 16:47:26 PDT 2004
 Trigger/doc
 
