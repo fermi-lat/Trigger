@@ -2,7 +2,7 @@
 * @file TriggerAlg.cxx
 * @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.5 2002/05/14 02:38:39 burnett Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.6 2002/05/22 22:01:29 chehtman Exp $
 */
 
 // Include files
@@ -23,6 +23,9 @@
 #include "CLHEP/Vector/LorentzVector.h"
 
 #include "Event/TopLevel/EventModel.h"
+#include "Event/TopLevel/Event.h"
+#include "Event/TopLevel/Event.h"
+
 #include "Event/Digi/TkrDigi.h"
 #include "Event/Digi/CalDigi.h"
 #include "Event/Digi/AcdDigi.h"
@@ -50,16 +53,16 @@ class TriggerAlg : public Algorithm {
     
 public:
     enum  {
-           // definition of  trigger bits
-
-            b_ACDL =     1,  //  set if cover or side veto, low threshold
+        // definition of  trigger bits
+        
+        b_ACDL =     1,  //  set if cover or side veto, low threshold
             b_ACDH =     2,   //  cover or side veto, high threshold
             b_Track=     4,   //  3 consecutive x-y layers hit
             b_LO_CAL=    8,  //  single log above low threshold
             b_HI_CAL=   16   //  3 cal layers in a row above high threshold
             
     };
-
+    
     //! Constructor of this form must be provided
     TriggerAlg(const std::string& name, ISvcLocator* pSvcLocator); 
     
@@ -71,7 +74,8 @@ private:
     unsigned int  tracker(const Event::TkrDigiCol&  planes);
     unsigned int  calorimeter(const Event::CalDigiCol&  planes);
     unsigned int  anticoincidence(const Event::AcdDigiCol&  planes);
-
+    StatusCode caltrigsetup();
+    
     unsigned int m_mask;
     int m_acd_hits;
     int m_log_hits;
@@ -81,9 +85,13 @@ private:
     
     double m_pedestal;
     double m_maxAdc;
-	double m_maxEnergy[4];
-	double m_LOCALthreshold;
-	double m_HICALthreshold;
+    double m_maxEnergy[4];
+    double m_LOCALthreshold;
+    double m_HICALthreshold;
+    
+    int m_run;
+    int m_event;
+    
     
 };
 
@@ -93,10 +101,10 @@ const IAlgFactory& TriggerAlgFactory = Factory;
 //------------------------------------------------------------------------------
 /// 
 TriggerAlg::TriggerAlg(const std::string& name, ISvcLocator* pSvcLocator) :
-Algorithm(name, pSvcLocator){
+Algorithm(name, pSvcLocator), m_event(0){
     declareProperty("mask"     ,  m_mask=0xffffffff); // trigger mask
-    
-    
+    declareProperty("run"      ,  m_run =0 );  
+   
 }
 
 //------------------------------------------------------------------------------
@@ -112,11 +120,23 @@ StatusCode TriggerAlg::initialize() {
     setProperties();
     
     log << MSG::INFO <<"Applying mask: " <<  std::setbase(16) <<m_mask <<  endreq;
-
     
+    
+    sc = caltrigsetup();
+    log << MSG::INFO << "initializing run number " << m_run  << endreq;
+
+    return sc;
+}
+
+//------------------------------------------------------------------------------
+StatusCode TriggerAlg::caltrigsetup()
+{
     // extracting double constants for calorimeter trigger
     IGlastDetSvc* detSvc;
-    sc = service("GlastDetSvc", detSvc);
+    StatusCode sc = service("GlastDetSvc", detSvc);
+    if( sc.isFailure() ) return sc;
+        MsgStream   log( msgSvc(), name() );
+
     
     typedef std::map<double*,std::string> DPARAMAP;
     DPARAMAP dparam;
@@ -137,48 +157,61 @@ StatusCode TriggerAlg::initialize() {
     }
     
     for (int r=0; r<4;r++) m_maxEnergy[r] *= 1000.; // from GeV to MeV
-		
-	m_LOCALthreshold *= 1000.;
-	m_HICALthreshold *= 1000.;
-	
-	return sc;
+    
+    m_LOCALthreshold *= 1000.;
+    m_HICALthreshold *= 1000.;
+    return StatusCode::SUCCESS;
 }
-
 
 
 //------------------------------------------------------------------------------
 StatusCode TriggerAlg::execute() {
     
-
+    
     StatusCode  sc = StatusCode::SUCCESS;
     MsgStream   log( msgSvc(), name() );
     
     SmartDataPtr<Event::TkrDigiCol> tkr(eventSvc(), EventModel::Digi::TkrDigiCol);
     if( tkr==0 ) log << MSG::DEBUG << "No tkr digis found" << endreq;
-
+    
     SmartDataPtr<Event::CalDigiCol> cal(eventSvc(), EventModel::Digi::CalDigiCol);
     if( cal==0 ) log << MSG::DEBUG << "No cal digis found" << endreq;
-
+    
     SmartDataPtr<Event::AcdDigiCol> acd(eventSvc(), EventModel::Digi::AcdDigiCol);
     if( acd==0 ) log << MSG::DEBUG << "No acd digis found" << endreq;
-
+    
     // set bits in the trigger word
-
+    
     unsigned int trigger_bits = 
-          (tkr? tracker(tkr) : 0 )
+        (tkr? tracker(tkr) : 0 )
         | (cal? calorimeter(cal) : 0 )
         | (acd? anticoincidence(acd) : 0);
     
-     
+    
     // apply filter for subsequent processing.
     if( m_mask!=0 && ( trigger_bits & m_mask) == 0) {
         setFilterPassed( false );
-        log << MSG::INFO << "Event did not trigger" << endreq;
+        log << MSG::DEBUG << "Event did not trigger" << endreq;
     }else {
-        log << MSG::INFO << "Event triggered, masked bits = "
-            << std::setbase(16) << (m_mask==0?trigger_bits:trigger_bits& m_mask) << endreq;
-    }
+        
+        SmartDataPtr<Event::EventHeader> header(eventSvc(), EventModel::EventHeader);
+        
+       
+        if(header) {
+            Event::EventHeader& h = header;
+            h.setRun(m_run);
+            h.setEvent(++m_event);
+            
+            log << MSG::DEBUG << "Begin event " << m_event  << " trigger bits "  
+                << std::setbase(16) << (m_mask==0?trigger_bits:trigger_bits& m_mask) << endreq;
+            
+        } else { 
+            log << MSG::WARNING << " could not find the event header" << endreq;
+            return StatusCode::FAILURE;
+        }
 
+    }
+    
     return sc;
 }
 
@@ -186,10 +219,10 @@ StatusCode TriggerAlg::execute() {
 unsigned int TriggerAlg::tracker(const Event::TkrDigiCol&  planes){
     using namespace Event;
     // purpose: determine if there is tracker trigger, 3-in-a-row
-
+    
     MsgStream   log( msgSvc(), name() );
     log << MSG::DEBUG << planes.size() << " tracker planes found with hits" << endreq;
-
+    
     // define a map to sort hit planes according to tower and plane axis
     typedef std::pair<idents::TowerId, idents::GlastAxis::axis> Key;
     typedef std::map<Key, unsigned int> Map;
@@ -199,13 +232,13 @@ unsigned int TriggerAlg::tracker(const Event::TkrDigiCol&  planes){
         const TkrDigi& t = **it;
         layer_bits[std::make_pair(t.getTower(), t.getView())] |= layer_bit(t.getBilayer());
     }
-
+    
     // now look for a three in a row
     for( Map::iterator itr = layer_bits.begin(); itr !=layer_bits.end(); ++ itr){
         if( three_in_a_row((*itr).second) ) return b_Track;
     }
     return 0;
-
+    
 }
 //------------------------------------------------------------------------------
 unsigned int TriggerAlg::calorimeter(const Event::CalDigiCol& calDigi){
@@ -213,43 +246,43 @@ unsigned int TriggerAlg::calorimeter(const Event::CalDigiCol& calDigi){
     // purpose: set calorimeter trigger bits
     MsgStream   log( msgSvc(), name() );
     log << MSG::DEBUG << calDigi.size() << " crystals found with hits" << endreq;
-
-	m_local = false;
-	m_hical = false;
-    for( int j=0; j<16; ++j) m_hical_bits[j] = 0;
-
-    for( CalDigiCol::const_iterator it = calDigi.begin(); it != calDigi.end(); ++it ){
-
-        idents::CalXtalId xtalId = (*it)->getPackedId();
-	   int lyr = xtalId.getLayer();
-	   int towid = xtalId.getTower();
-	   int icol  = xtalId.getColumn();
     
-
-	const Event::CalDigi::CalXtalReadoutCol& readoutCol = (*it)->getReadoutCol();
-		
-	 Event::CalDigi::CalXtalReadoutCol::const_iterator itr = readoutCol.begin();
-
-	int rangeP = itr->getRange(idents::CalXtalId::POS); 
-	int rangeM = itr->getRange(idents::CalXtalId::NEG); 
-
-	double adcP = itr->getAdc(idents::CalXtalId::POS);	
-	double adcM = itr->getAdc(idents::CalXtalId::NEG);	
-
-	double eneP = m_maxEnergy[rangeP]*(adcP-m_pedestal)/(m_maxAdc-m_pedestal);
-	double eneM = m_maxEnergy[rangeM]*(adcM-m_pedestal)/(m_maxAdc-m_pedestal);
-
-
-	if(eneP> m_LOCALthreshold || eneM > m_LOCALthreshold) m_local = true;
-	if(eneP> m_HICALthreshold || eneM > m_HICALthreshold) m_hical_bits[towid] |= layer_bit(lyr); 
-	
-	}
-
+    m_local = false;
+    m_hical = false;
+    for( int j=0; j<16; ++j) m_hical_bits[j] = 0;
+    
+    for( CalDigiCol::const_iterator it = calDigi.begin(); it != calDigi.end(); ++it ){
+        
+        idents::CalXtalId xtalId = (*it)->getPackedId();
+        int lyr = xtalId.getLayer();
+        int towid = xtalId.getTower();
+        int icol  = xtalId.getColumn();
+        
+        
+        const Event::CalDigi::CalXtalReadoutCol& readoutCol = (*it)->getReadoutCol();
+        
+        Event::CalDigi::CalXtalReadoutCol::const_iterator itr = readoutCol.begin();
+        
+        int rangeP = itr->getRange(idents::CalXtalId::POS); 
+        int rangeM = itr->getRange(idents::CalXtalId::NEG); 
+        
+        double adcP = itr->getAdc(idents::CalXtalId::POS);	
+        double adcM = itr->getAdc(idents::CalXtalId::NEG);	
+        
+        double eneP = m_maxEnergy[rangeP]*(adcP-m_pedestal)/(m_maxAdc-m_pedestal);
+        double eneM = m_maxEnergy[rangeM]*(adcM-m_pedestal)/(m_maxAdc-m_pedestal);
+        
+        
+        if(eneP> m_LOCALthreshold || eneM > m_LOCALthreshold) m_local = true;
+        if(eneP> m_HICALthreshold || eneM > m_HICALthreshold) m_hical_bits[towid] |= layer_bit(lyr); 
+        
+    }
+    
     for(j=0; j<16; ++j) m_hical = m_hical || three_in_a_row(m_hical_bits[j]);
-
-
+    
+    
     return (m_local ? b_LO_CAL:0) | (m_hical ? b_HI_CAL:0);
-
+    
 }
 //------------------------------------------------------------------------------
 unsigned int TriggerAlg::anticoincidence(const Event::AcdDigiCol& tiles){
