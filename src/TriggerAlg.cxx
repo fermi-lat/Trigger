@@ -2,7 +2,7 @@
 * @file TriggerAlg.cxx
 * @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.32.2.1 2004/11/10 22:10:02 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.32.2.2 2004/11/18 18:14:03 heather Exp $
 */
 
 // Include files
@@ -219,7 +219,7 @@ StatusCode TriggerAlg::caltrigsetup()
 
 bool TriggerAlg::alive(double current_time)
 { 
-    return (current_time-m_lastTriggerTime >m_deadtime);
+    return (current_time-m_lastTriggerTime >= m_deadtime);
 }
 
 //------------------------------------------------------------------------------
