@@ -2,7 +2,7 @@
 * @file TriggerAlg.cxx
 * @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.15 2002/11/19 07:47:49 burnett Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.17 2002/12/02 20:51:19 cohen Exp $
 */
 
 // Include files
@@ -219,10 +219,10 @@ StatusCode TriggerAlg::execute()
     //JCT
     for(int tower_id=0;tower_id<16;++tower_id)
       {
-	std::cout<<"Tower Id: "<<tower_id<<std::endl;
- 	std::cout<<"3inRow: "<<(pGltDigi->getTkrThreeInRow())[tower_id]<<std::endl;
- 	std::cout<<"CAL_LO: "<<(pGltDigi->getCAL_LO())[tower_id]<<std::endl;
- 	std::cout<<"CAL_HI: "<<(pGltDigi->getCAL_HI())[tower_id]<<std::endl;
+	log<<MSG::DEBUG<<"Tower Id: "<<tower_id<<endreq;
+ 	log<<MSG::DEBUG<<"3inRow: "<<(pGltDigi->getTkrThreeInRow())[tower_id]<<endreq;
+ 	log<<MSG::DEBUG<<"CAL_LO: "<<(pGltDigi->getCAL_LO())[tower_id]<<endreq;
+ 	log<<MSG::DEBUG<<"CAL_HI: "<<(pGltDigi->getCAL_HI())[tower_id]<<endreq;
       }
     delete pGltDigi;
     
