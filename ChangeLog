@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Tue Nov 19 07:54:06 PST 2002
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx 
+Log Message:
+fix bad code caught by gcc
+    *
+------------------------------------------------------------
 User: burnett  Mon Nov 18 23:47:49 PST 2002
 Trigger/src
 
