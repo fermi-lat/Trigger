@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Thu Oct 14 09:40:10 PDT 2004
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx 
+Log Message:
+recast tests for smart pointers
+    *
+------------------------------------------------------------
 User: burnett  Mon Oct 11 14:31:41 PDT 2004
 Trigger/doc
 
