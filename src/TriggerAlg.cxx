@@ -2,7 +2,7 @@
 * @file TriggerAlg.cxx
 * @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.21 2003/08/29 13:36:34 burnett Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.24 2004/03/16 03:31:52 dnwren Exp $
 */
 
 // Include files
@@ -37,7 +37,7 @@
 /*! \class TriggerAlg
 \brief  alg that sets trigger information
 
-  @Section Attributes for job options:
+  @section Attributes for job options:
   @param run [0] For setting the run number
   @param mask [-1] mask to apply to trigger word. -1 means any, 0 means all.
 

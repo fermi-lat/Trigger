@@ -1,6 +1,8 @@
 /**
- * @class ThrottleAlg
- * @brief Algorithm to determine whether the throttle is active
+ * @file ThrottleAlg.h
+ * @brief header for class ThrottleAlg
+
+ $Header$
  * @author David Wren - dnwren@milkyway.gsfc.nasa.gov
 */
 
@@ -47,6 +49,9 @@ namespace {
 
 /** @class ThrottleAlg
 @brief alg that determines whether the throttle is activated.
+
+* @author David Wren - dnwren@milkyway.gsfc.nasa.gov
+
 */
 class ThrottleAlg{
 public:
@@ -91,10 +96,10 @@ private:
 
 };
 
-#endif
-//------------------------------------------------------------------------------
-/*
-Throttle Documentation
+
+/** @page throttledoc Throttle Documentation
+
+@verbatim
 
 author: David Wren, dnwren@milkyway.gsfc.nasa.gov
 date: 9 March 2004
@@ -390,6 +395,8 @@ below.
 		m_maskY = 0x0C63;    //0000 0000 0000 0000 0000 1100 0110 0011
 		return;
 	}
+        @endverbatim
 */
 
+#endif
 
