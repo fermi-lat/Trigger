@@ -1,4 +1,16 @@
 ------------------------------------------------------------
+User: cohen  Tue Mar 29 15:21:12 PST 2005
+Trigger/cmt
+
+Modified Files:
+	.cvsignore 
+Removed Files:
+	Makefile 
+Log Message:
+cosmetic : remove Makefile from repository and fix cmt/.cvsignore
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: v3r16p2, operation: add
 Package: Trigger
