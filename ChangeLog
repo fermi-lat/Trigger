@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: kyoung  Wed Jul 18 13:08:47 PDT 2001
+trigger/cmt requirements
+
+Modified Files:
+	requirements 
+Log Message:
+Added ld_library_path
+    *
+------------------------------------------------------------
 User: kyoung  Wed Jul 18 12:49:48 PDT 2001
 trigger/cmt requirements
 
