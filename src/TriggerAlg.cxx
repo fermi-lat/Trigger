@@ -2,7 +2,7 @@
 * @file TriggerAlg.cxx
 * @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.4 2002/05/11 23:16:14 burnett Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.5 2002/05/14 02:38:39 burnett Exp $
 */
 
 // Include files
@@ -16,6 +16,8 @@
 
 #include "GaudiKernel/SmartDataPtr.h"
 #include "GaudiKernel/StatusCode.h"
+
+#include "GlastSvc/GlastDetSvc/IGlastDetSvc.h"
 
 #include "CLHEP/Geometry/Point3D.h"
 #include "CLHEP/Vector/LorentzVector.h"
@@ -53,7 +55,7 @@ public:
             b_ACDL =     1,  //  set if cover or side veto, low threshold
             b_ACDH =     2,   //  cover or side veto, high threshold
             b_Track=     4,   //  3 consecutive x-y layers hit
-            b_CAL=       8,  //  single log above low threshold
+            b_LO_CAL=    8,  //  single log above low threshold
             b_HI_CAL=   16   //  3 cal layers in a row above high threshold
             
     };
@@ -77,8 +79,11 @@ private:
     bool m_hical;
     unsigned m_hical_bits[16];
     
-
-
+    double m_pedestal;
+    double m_maxAdc;
+	double m_maxEnergy[4];
+	double m_LOCALthreshold;
+	double m_HICALthreshold;
     
 };
 
@@ -107,7 +112,36 @@ StatusCode TriggerAlg::initialize() {
     setProperties();
     
     log << MSG::INFO <<"Applying mask: " <<  std::setbase(16) <<m_mask <<  endreq;
-    return sc;
+
+    
+    // extracting double constants for calorimeter trigger
+    IGlastDetSvc* detSvc;
+    sc = service("GlastDetSvc", detSvc);
+    
+    typedef std::map<double*,std::string> DPARAMAP;
+    DPARAMAP dparam;
+    dparam[m_maxEnergy]=std::string("cal.maxResponse0");
+    dparam[m_maxEnergy+1]=std::string("cal.maxResponse1");
+    dparam[m_maxEnergy+2]=std::string("cal.maxResponse2");
+    dparam[m_maxEnergy+3]=std::string("cal.maxResponse3");
+    dparam[&m_LOCALthreshold]=std::string("trigger.LOCALthreshold");
+    dparam[&m_HICALthreshold]=std::string("trigger.HICALthreshold");
+    dparam[&m_pedestal]=std::string("cal.pedestal");
+    dparam[&m_maxAdc]=std::string("cal.maxAdcValue");
+    
+    for(DPARAMAP::iterator dit=dparam.begin(); dit!=dparam.end();dit++){
+        if(!detSvc->getNumericConstByName((*dit).second,(*dit).first)) {
+            log << MSG::ERROR << " constant " <<(*dit).second << " not defined" << endreq;
+            return StatusCode::FAILURE;
+        } 
+    }
+    
+    for (int r=0; r<4;r++) m_maxEnergy[r] *= 1000.; // from GeV to MeV
+		
+	m_LOCALthreshold *= 1000.;
+	m_HICALthreshold *= 1000.;
+	
+	return sc;
 }
 
 
@@ -174,15 +208,47 @@ unsigned int TriggerAlg::tracker(const Event::TkrDigiCol&  planes){
 
 }
 //------------------------------------------------------------------------------
-unsigned int TriggerAlg::calorimeter(const Event::CalDigiCol& logs){
+unsigned int TriggerAlg::calorimeter(const Event::CalDigiCol& calDigi){
     using namespace Event;
     // purpose: set calorimeter trigger bits
     MsgStream   log( msgSvc(), name() );
-    log << MSG::DEBUG << logs.size() << " crystals found with hits" << endreq;
+    log << MSG::DEBUG << calDigi.size() << " crystals found with hits" << endreq;
 
-    for( CalDigiCol::const_iterator it = logs.begin(); it != logs.end(); ++it ){
-    }
-    return 0;
+	m_local = false;
+	m_hical = false;
+    for( int j=0; j<16; ++j) m_hical_bits[j] = 0;
+
+    for( CalDigiCol::const_iterator it = calDigi.begin(); it != calDigi.end(); ++it ){
+
+        idents::CalXtalId xtalId = (*it)->getPackedId();
+	   int lyr = xtalId.getLayer();
+	   int towid = xtalId.getTower();
+	   int icol  = xtalId.getColumn();
+    
+
+	const Event::CalDigi::CalXtalReadoutCol& readoutCol = (*it)->getReadoutCol();
+		
+	 Event::CalDigi::CalXtalReadoutCol::const_iterator itr = readoutCol.begin();
+
+	int rangeP = itr->getRange(idents::CalXtalId::POS); 
+	int rangeM = itr->getRange(idents::CalXtalId::NEG); 
+
+	double adcP = itr->getAdc(idents::CalXtalId::POS);	
+	double adcM = itr->getAdc(idents::CalXtalId::NEG);	
+
+	double eneP = m_maxEnergy[rangeP]*(adcP-m_pedestal)/(m_maxAdc-m_pedestal);
+	double eneM = m_maxEnergy[rangeM]*(adcM-m_pedestal)/(m_maxAdc-m_pedestal);
+
+
+	if(eneP> m_LOCALthreshold || eneM > m_LOCALthreshold) m_local = true;
+	if(eneP> m_HICALthreshold || eneM > m_HICALthreshold) m_hical_bits[towid] |= layer_bit(lyr); 
+	
+	}
+
+    for(j=0; j<16; ++j) m_hical = m_hical || three_in_a_row(m_hical_bits[j]);
+
+
+    return (m_local ? b_LO_CAL:0) | (m_hical ? b_HI_CAL:0);
 
 }
 //------------------------------------------------------------------------------
