@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: cohen  Tue Mar 29 20:00:17 PST 2005
+Trigger/src
+
+Modified Files:
+	ThrottleAlg.h ThrottleAlg.cxx 
+Log Message:
+removing unused argument in calculate method
+
+    *
+------------------------------------------------------------
 User: cohen  Tue Mar 29 15:21:12 PST 2005
 Trigger/cmt
 
