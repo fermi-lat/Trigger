@@ -2,7 +2,7 @@
 * @file TriggerAlg.cxx
 * @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.29 2004/09/14 17:18:24 burnett Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.30 2004/09/14 22:09:21 burnett Exp $
 */
 
 // Include files
@@ -164,7 +164,7 @@ StatusCode TriggerAlg::initialize()
 
     log << MSG::INFO;
     if(log.isActive()) {
-        if (m_mask==-1) log.stream() << "No trigger requirement";
+        if (m_mask==0xffffffff) log.stream() << "No trigger requirement";
         else            log.stream() << "Applying trigger mask: " <<  std::setbase(16) <<m_mask <<std::setbase(10);
 
         if( m_deadtime>0) log.stream() <<", applying deadtime of " << m_deadtime*1E6 << "u sec ";
@@ -297,7 +297,7 @@ StatusCode TriggerAlg::execute()
         // or in the gem trigger bits, either from hardware, or derived from trigger
         trigger_bits |= gemBits(trigger_bits) << 8;
 
-        if(h.trigger()==-1){
+        if( static_cast<int>(h.trigger())==-1 ){
             // expect it to be zero if not set. 
             h.setTrigger(trigger_bits);
         }else  if (h.trigger() != 0xbaadf00d && trigger_bits != h.trigger() ) {
@@ -325,10 +325,10 @@ unsigned int TriggerAlg::gemBits(unsigned int  trigger_bits)
     // kudos to Heather for creating a typedef
 
     return 
-        (( trigger_bits & b_Track) !=0 ? Gem::Summary::TKR   : 0)
-        |((trigger_bits & b_LO_CAL)!=0 ? Gem::Summary::CALLE : 0)
-        |((trigger_bits & b_HI_CAL)!=0 ? Gem::Summary::CALHE : 0)
-        |((trigger_bits & b_ACDH)  !=0 ? Gem::Summary::CNO   : 0) ;
+        (( trigger_bits & b_Track) !=0 ? LdfEvent::Gem::TKR   : 0)
+        |((trigger_bits & b_LO_CAL)!=0 ? LdfEvent::Gem::CALLE : 0)
+        |((trigger_bits & b_HI_CAL)!=0 ? LdfEvent::Gem::CALHE : 0)
+        |((trigger_bits & b_ACDH)  !=0 ? LdfEvent::Gem::CNO   : 0) ;
 
 }
 //------------------------------------------------------------------------------
@@ -390,10 +390,11 @@ unsigned int TriggerAlg::calorimeter(const Event::CalDigiCol& calDigi)
     for( CalDigiCol::const_iterator it = calDigi.begin(); it != calDigi.end(); ++it ){
 
         idents::CalXtalId xtalId = (*it)->getPackedId();
+#if 0 // for debug only: not used, so comment out to avoid warnings
         int lyr = xtalId.getLayer();
         int towid = xtalId.getTower();
         int icol  = xtalId.getColumn();
-
+#endif
 
         const Event::CalDigi::CalXtalReadoutCol& readoutCol = (*it)->getReadoutCol();
 

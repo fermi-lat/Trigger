@@ -2,7 +2,7 @@
  * @file ThrottleAlg.h
  * @brief header for class ThrottleAlg
 
- $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/ThrottleAlg.h,v 1.2 2004/07/25 21:13:59 burnett Exp $
+ $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/ThrottleAlg.h,v 1.3 2004/09/08 18:13:09 burnett Exp $
  * @author David Wren - dnwren@milkyway.gsfc.nasa.gov
 */
 
@@ -77,15 +77,11 @@ private:
 	//! gets the tower ID and mask, then calls the functions
 	//! that do the checking
 	bool compare();
-#if 0 //THB not used in the implementation
-    /// access to the Glast Detector Service to read in geometry constants from XML files
-    IGlastDetSvc *m_glastDetSvc;
-#endif
 	bool m_throttle;
     unsigned short m_triggered_towers, m_number_triggered;
 	unsigned int m_trigger_word, m_acdtop, m_acdX, m_acdY,
 		         m_maskTop, m_maskX, m_maskY;
-	const static unsigned int THROTTLE_SET = 32;
+	static const unsigned int THROTTLE_SET = 32;
 
 };
 
