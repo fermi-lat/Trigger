@@ -2,7 +2,7 @@
 * @file TriggerAlg.cxx
 * @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.41 2005/02/18 21:55:55 burnett Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.42 2005/03/15 15:36:51 burnett Exp $
 */
 
 
@@ -28,6 +28,7 @@
 #include "Event/Digi/CalDigi.h"
 #include "Event/Digi/AcdDigi.h"
 
+#include "LdfEvent/DiagnosticData.h"
 #include "LdfEvent/Gem.h"
 #include "enums/TriggerBits.h"
 
@@ -87,6 +88,8 @@ private:
 
     /// set gem bits in trigger word, either from real condition summary, or from bits
     unsigned int gemBits(unsigned int  trigger_bits);
+  
+  void computeTrgReqTriRowBits(TriRowBitsTds::TriRowBits&);
 
     unsigned int m_mask;
     int m_acd_hits;
@@ -245,7 +248,7 @@ StatusCode TriggerAlg::execute()
         double s_vetoThresholdMeV;
         temp_sc = m_glastDetSvc->getNumericConstByName("acd.vetoThreshold", &s_vetoThresholdMeV);
         if( tkr!=0 && acd !=0 ) {
-            trigger_bits |= Throttle.calculate(header,tkr,acd, s_vetoThresholdMeV);
+            trigger_bits |= Throttle.calculate(tkr,acd, s_vetoThresholdMeV);
         }
     }
     else{
@@ -294,7 +297,7 @@ StatusCode TriggerAlg::execute()
             h.setTrigger(trigger_bits);
         }else  if (h.trigger() != 0xbaadf00d && trigger_bits != h.trigger() ) {
             // trigger bits already set: reading digiRoot file.
-            log << MSG::WARNING;
+            log << MSG::INFO;
             if(log.isActive()) log.stream() << "Trigger bits read back do not agree with recalculation! " 
                 << std::setbase(16) <<trigger_bits << " vs. " << h.trigger();
             log << endreq;
@@ -364,7 +367,7 @@ unsigned int TriggerAlg::tracker(const Event::TkrDigiCol&  planes)
 
             //!Calculating the TriRowBits - 16 possible 3-in-a-row signals for 18 layers
             unsigned int bitword=three_in_a_row(xbits & ybits);
-	    rowbits->setTriRowBits(tower.id(), bitword);
+	    rowbits->setDigiTriRowBits(tower.id(), bitword);
 
 	    if(bitword) {
 	        // OK: tag the tower for stats, but just one tower per event
@@ -376,6 +379,17 @@ unsigned int TriggerAlg::tracker(const Event::TkrDigiCol&  planes)
         }
     }
 
+    //Now we compute the 3 in a row combinations based on the trigger requests
+    computeTrgReqTriRowBits(*rowbits);
+    
+    //    SmartDataPtr<TriRowBitsTds::TriRowBits> newrowbits(eventSvc(), "/Event/TriRowBits");
+
+    
+    log << MSG::DEBUG;
+    if(log.isActive()) log.stream() << *rowbits;
+    log <<endreq;
+
+    //returns the digi base word, for consistency with the cal and acd.
        if(tkr_trig_flag) return enums::b_Track;
             else return 0;
 }
@@ -476,7 +490,7 @@ StatusCode TriggerAlg::finalize() {
             }
     }
     log << endreq;
-    return StatusCode::SUCCESS;
+    return sc;
 }
 //------------------------------------------------------------------------------
 void TriggerAlg::bitSummary(std::ostream& out){
@@ -513,3 +527,70 @@ void TriggerAlg::bitSummary(std::ostream& out){
 
 
 //------------------------------------------------------------------------------
+
+void TriggerAlg::computeTrgReqTriRowBits(TriRowBitsTds::TriRowBits& rowbits)
+{
+  // Retrieve the Diagnostic data for this event
+  // note: here we would also have access to the CAL diagnostic data.
+  SmartDataPtr<LdfEvent::DiagnosticData> diagTds(eventSvc(), "/Event/Diagnostic");
+  //  SmartDataPtr<TriRowBitsTds::TriRowBits> rowbits(eventSvc(), "/Event/TriRowBits");
+  static const unsigned int NUM_TWR = 16; //this should come from the geometry.
+
+  //handle the case where there is no diagnostics in the TDS:
+  if(!diagTds) 
+    {
+      return;
+    }
+  typedef std::pair<unsigned int, unsigned int> Key;
+  typedef std::map<Key, unsigned int> Map;
+  Map trgReq_bits;
+  
+  int numTkrDiag = diagTds->getNumTkrDiagnostic();
+
+  for (int ind = 0; ind < numTkrDiag; ind++) 
+    {
+      LdfEvent::TkrDiagnosticData tkrDiagTds = diagTds->getTkrDiagnosticByIndex(ind);
+      unsigned int tower = tkrDiagTds.tower();
+      unsigned int gtcc  = tkrDiagTds.gtcc();
+      if(gtcc==2||gtcc==3) //X view even
+	{
+	  trgReq_bits[std::make_pair(tower,0)] |= tkrDiagTds.dataWord();
+	}
+      if(gtcc==0||gtcc==1) //Y view even
+	{
+	  trgReq_bits[std::make_pair(tower,1)] |= tkrDiagTds.dataWord();
+	}
+      if(gtcc==6||gtcc==7) //X view odd
+	{
+	  trgReq_bits[std::make_pair(tower,2)] |= tkrDiagTds.dataWord();
+	}
+      if(gtcc==4||gtcc==5) //Y view odd
+	{
+	  trgReq_bits[std::make_pair(tower,3)] |= tkrDiagTds.dataWord();
+	}
+    }
+  
+  unsigned int trgReq_bits_evenbilayers[NUM_TWR];
+  unsigned int trgReq_bits_oddbilayers[NUM_TWR];
+  for(unsigned int twr=0;twr<NUM_TWR;twr++)
+    {
+      unsigned bitword=0;
+      trgReq_bits_evenbilayers[twr]=0;
+      trgReq_bits_oddbilayers[twr]=0;
+      trgReq_bits_evenbilayers[twr] = trgReq_bits[std::make_pair(twr,0)] & trgReq_bits[std::make_pair(twr,1)];
+      trgReq_bits_oddbilayers[twr] = trgReq_bits[std::make_pair(twr,2)] & trgReq_bits[std::make_pair(twr,3)];
+      //and now compute the 3 in a row combinations:
+      int comb = 0;
+      while(comb<16)
+	{  
+	  bitword |=(((trgReq_bits_evenbilayers[twr]&3)==3) & ((trgReq_bits_oddbilayers[twr]&1)==1))<<comb; 
+	  bitword |=(((trgReq_bits_oddbilayers[twr]&3)==3) & ((trgReq_bits_evenbilayers[twr]&2)==2))<<comb+1; 
+	  
+	  trgReq_bits_evenbilayers[twr] >>= 1;
+	  trgReq_bits_oddbilayers[twr] >>= 1;
+	  comb = comb+2;
+	}
+      rowbits.setTrgReqTriRowBits(twr, bitword);
+    }
+  
+}
