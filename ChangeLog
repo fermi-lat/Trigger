@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Tue Nov 30 17:14:04 PST 2004
+Trigger/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+tagging v3r14 with fix for stopped time and new interface
+    *
+------------------------------------------------------------
 User: burnett  Tue Nov 30 17:11:34 PST 2004
 Trigger/src
 
