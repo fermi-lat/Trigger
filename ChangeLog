@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Wed Dec  1 10:40:41 PST 2004
+Trigger/cmt
+
+Modified Files:
+      Tag: GlastRelease-v4r6
+	requirements 
+Log Message:
+apply Toby's fix to TriggerAlg::alive for identical times for consecutive events
+    *
+------------------------------------------------------------
 User: burnett  Tue Nov 30 17:14:04 PST 2004
 Trigger/doc
 
