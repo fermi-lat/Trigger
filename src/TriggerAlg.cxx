@@ -2,7 +2,7 @@
 * @file TriggerAlg.cxx
 * @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.12 2002/06/09 03:15:03 burnett Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.13 2002/06/10 17:58:12 burnett Exp $
 */
 
 // Include files
@@ -62,7 +62,7 @@ public:
             b_ACDH =     2,   ///  cover or side veto, high threshold
             b_Track=     4,   //  3 consecutive x-y layers hit
             b_LO_CAL=    8,  ///  single log above low threshold
-            b_HI_CAL=   16,   ///  3 cal layers in a row above high threshold
+            b_HI_CAL=   16,   /// single log above high threshold
 
          number_of_trigger_bits = 5 ///> for size of table
             
@@ -93,7 +93,6 @@ private:
     int m_log_hits;
     bool m_local;
     bool m_hical;
-    unsigned m_hical_bits[16];
     
     double m_pedestal;
     double m_maxAdc;
@@ -178,10 +177,6 @@ StatusCode TriggerAlg::caltrigsetup()
         } 
     }
     
-    for (int r=0; r<4;r++) m_maxEnergy[r] *= 1000.; // from GeV to MeV
-    
-    m_LOCALthreshold *= 1000.;
-    m_HICALthreshold *= 1000.;
     return StatusCode::SUCCESS;
 }
 
@@ -298,8 +293,6 @@ unsigned int TriggerAlg::calorimeter(const Event::CalDigiCol& calDigi)
     
     m_local = false;
     m_hical = false;
-    int j;
-    for( j=0; j<16; ++j) m_hical_bits[j] = 0;
     
     for( CalDigiCol::const_iterator it = calDigi.begin(); it != calDigi.end(); ++it ){
         
@@ -324,12 +317,10 @@ unsigned int TriggerAlg::calorimeter(const Event::CalDigiCol& calDigi)
         
         
         if(eneP> m_LOCALthreshold || eneM > m_LOCALthreshold) m_local = true;
-        if(eneP> m_HICALthreshold || eneM > m_HICALthreshold) m_hical_bits[towid] |= layer_bit(lyr); 
+        if(eneP> m_HICALthreshold || eneM > m_HICALthreshold) m_hical = true; 
         
     }
-    
-    for(j=0; j<16; ++j) m_hical = m_hical || three_in_a_row(m_hical_bits[j]);
-    
+        
     
     return (m_local ? b_LO_CAL:0) | (m_hical ? b_HI_CAL:0);
     
