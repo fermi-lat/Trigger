@@ -2,7 +2,7 @@
 * @file TriggerAlg.cxx
 * @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.19 2003/01/15 21:17:10 burnett Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.20 2003/06/13 00:06:56 burnett Exp $
 */
 
 // Include files
@@ -240,7 +240,7 @@ StatusCode TriggerAlg::execute()
                 log << endreq;
             }else {
                 // assume set by reading digiRoot file
-                log << MSG::INFO ;
+                log << MSG::DEBUG ;
                 if(log.isActive()) log.stream() << "Read run/event " << h.run() << "/" << h.event() << " trigger & mask "
                     << std::setbase(16) << (m_mask==0 ? trigger_bits : trigger_bits & m_mask);
                 log << endreq;
