@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Mon Oct  1 13:02:34 PDT 2001
+trigger/src ACDthrottle.cxx
+
+Modified Files:
+	ACDthrottle.cxx 
+Log Message:
+modify the ntuple names and reformat
+    *
+------------------------------------------------------------
 User: burnett  Tue Sep  4 09:20:48 PDT 2001
 trigger/src/test jobOptions.txt
 
