@@ -2,7 +2,7 @@
 * @file TriggerAlg.cxx
 * @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /home/cvs/SLAC/GlastRelease/Trigger/src/TriggerAlg.cxx,v 1.17 2002/12/14 17:01:38 burnett Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.19 2003/01/15 21:17:10 burnett Exp $
 */
 
 // Include files
@@ -245,7 +245,9 @@ StatusCode TriggerAlg::execute()
                     << std::setbase(16) << (m_mask==0 ? trigger_bits : trigger_bits & m_mask);
                 log << endreq;
                 
-                if (h.trigger() != 0xbaadf00d && trigger_bits != h.trigger() ) {
+                if(h.trigger()==0){
+                    h.setTrigger(trigger_bits);
+                }else  if (h.trigger() != 0xbaadf00d && trigger_bits != h.trigger() ) {
                     log << MSG::WARNING;
                     if(log.isActive()) log.stream() << "Trigger bits read back do not agree with recalculation! " 
                         << std::setbase(16) <<trigger_bits << " vs. " << h.trigger();
@@ -387,7 +389,7 @@ StatusCode TriggerAlg::finalize() {
     //TODO: format this nicely, as a 4x4 table
     log << MSG::INFO ;
     if(log.isActive() ){
-        log.stream() << "Tower trigger summary\n" << setw(30) << "Tower    count " ;
+        log.stream() << "Tower trigger summary\n" << setw(30) << "Tower    count " << std::endl;;
         for( std::map<idents::TowerId, int>::const_iterator it = m_tower_trigger_count.begin();
             it != m_tower_trigger_count.end(); ++ it ){
                 log.stream() << setw(30) << (*it).first.id() << setw(10) << (*it).second << std::endl;
