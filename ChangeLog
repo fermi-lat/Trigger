@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Sat May 11 16:16:15 PDT 2002
+Trigger/src
+
+Added Files:
+	TriggerAlg.cxx 
+Log Message:
+new alg to do the (former Level 1) trigger
+    *
+------------------------------------------------------------
 User: burnett  Sat May 11 15:28:28 PDT 2002
 Trigger/doc
 
