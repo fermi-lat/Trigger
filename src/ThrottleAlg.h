@@ -2,7 +2,7 @@
  * @file ThrottleAlg.h
  * @brief header for class ThrottleAlg
 
- $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/ThrottleAlg.h,v 1.4 2004/09/22 23:46:16 burnett Exp $
+ $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/ThrottleAlg.h,v 1.5 2005/03/29 23:15:41 cohen Exp $
  * @author David Wren - dnwren@milkyway.gsfc.nasa.gov
 */
 
@@ -52,9 +52,9 @@ public:
     //! set parameters and attach to various perhaps useful services.
     void setup();
     //! process one event and return the value of bit enums::b_THROTTLE
-    unsigned int ThrottleAlg::calculate(const Event::EventHeader& header, 
-							            const Event::TkrDigiCol& tkr, 
-							            const Event::AcdDigiCol& acd,  double threshold);
+    unsigned int ThrottleAlg::calculate(const Event::TkrDigiCol& tkr, 
+					const Event::AcdDigiCol& acd,  
+					double threshold);
 private: 
     //! determine tracker trigger bits
     //! sets the triggered towers in the form of an unsigned short

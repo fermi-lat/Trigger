@@ -2,7 +2,7 @@
  * @file ThrottleAlg.cxx
  * @brief implementation for class ThrottleAlg
 
- $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/ThrottleAlg.cxx,v 1.2 2004/09/08 18:13:09 burnett Exp $
+ $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/ThrottleAlg.cxx,v 1.3 2005/03/29 23:15:41 cohen Exp $
  * @author David Wren - dnwren@milkyway.gsfc.nasa.gov
 */
 #include "ThrottleAlg.h"
@@ -36,9 +36,9 @@ void ThrottleAlg::setup(){
     return;
 }
 
-unsigned int ThrottleAlg::calculate(const Event::EventHeader& header, 
-							const Event::TkrDigiCol& tkr, 
-							const Event::AcdDigiCol& acd,  double threshold)
+unsigned int ThrottleAlg::calculate( const Event::TkrDigiCol& tkr, 
+				     const Event::AcdDigiCol& acd,  
+				     double threshold)
 {
 
 	//Get the list of triggered towers, and set the lists of acd tiles hit
