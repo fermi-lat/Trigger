@@ -1,5 +1,27 @@
-#include "ThrottleAlg.h"
+/**
+ * @file ThrottleAlg.cxx
+ * @brief implementation for class ThrottleAlg
 
+ $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/ThrottleAlg.h,v 1.2 2004/07/25 21:13:59 burnett Exp $
+ * @author David Wren - dnwren@milkyway.gsfc.nasa.gov
+*/
+#include "ThrottleAlg.h"
+#include <cmath>
+#include <map>
+#include <cassert>
+
+
+namespace {
+    inline bool three_in_a_row(unsigned bits)
+    {
+        while( bits ) {
+            if( (bits & 7) ==7) return true;
+            bits >>= 1;
+        }
+        return false;
+    }
+    inline unsigned layer_bit(int layer){ return 1 << layer;}
+}
 ThrottleAlg::ThrottleAlg(){
 }
 
