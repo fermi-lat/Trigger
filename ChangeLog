@@ -1,5 +1,15 @@
 ------------------------------------------------------------
 User: dnwren  Tue Mar  9 08:58:52 PST 2004
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx 
+Log Message:
+added new throttle code that appends a bit to the GltWord
+
+    *
+------------------------------------------------------------
+User: dnwren  Tue Mar  9 08:58:52 PST 2004
 Trigger/doc
 
 Modified Files:
