@@ -1,5 +1,15 @@
 ------------------------------------------------------------
 User: burnett  Fri May 24 20:20:06 PDT 2002
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx 
+Log Message:
+
+set release.notes: tagging v3r2
+    *
+------------------------------------------------------------
+User: burnett  Fri May 24 20:20:06 PDT 2002
 Trigger/doc
 
 Modified Files:
