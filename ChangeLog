@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: burnett  Mon May 28 16:57:26 PDT 2001
+trigger/src Level1.cxx
+
+Modified Files:
+	Level1.cxx 
+Log Message:
+
+compiles.
+    *
+------------------------------------------------------------
 User: burnett  Mon May 28 16:47:37 PDT 2001
 trigger/src Level1.cxx trigger_dll.cxx trigger_load.cxx TriggerAlg.cxx
 
