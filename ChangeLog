@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Tue Dec  7 15:01:20 PST 2004
+Trigger/cmt
+
+Modified Files:
+      Tag: GlastRelease-v4r6
+	requirements 
+Log Message:
+apply Toby's fix to skip deadtime when reading data in
+    *
+------------------------------------------------------------
 TAG
 Tag name: v3r14p1, operation: add
 Package: Trigger
