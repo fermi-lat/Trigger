@@ -2,7 +2,7 @@
 * @file TriggerAlg.cxx
 * @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.35 2004/10/14 16:44:51 burnett Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.36 2004/10/15 03:34:55 burnett Exp $
 */
 
 // Include files
@@ -33,7 +33,7 @@
 
 
 #include "ThrottleAlg.h"
-#include "TriRowBits.h"
+#include "Trigger/TriRowBits.h"
 
 #include <map>
 

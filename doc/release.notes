@@ -2,6 +2,7 @@
  * @brief package Trigger
  * package manager:T.Burnett 
   <pre>
+            10-nov-04 HMK move TriRowBits.h to new public header directory
             14-oct-04 THB recast test for missing smart pointers     
             11-oct-o4 THB rearrange bits in trigger word 
  *  v3r12   04-oct-04 THB new trigger info added to TDS by Luis Reyes. See changelog.
