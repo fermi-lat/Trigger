@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: chehtman  Wed May 22 15:03:38 PDT 2002
+Trigger/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+use GlastSvc added : needed for calorimeter trigger 
+    *
+------------------------------------------------------------
 User: chehtman  Wed May 22 15:01:30 PDT 2002
 Trigger/src
 
