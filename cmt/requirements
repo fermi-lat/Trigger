@@ -1,13 +1,13 @@
 package Trigger
-version v3r3p3
+version v3r3p4
 
 # --------------------------
 # define trigger algorithms
 # --------------------------
 
 
-use Event v8*
-use GlastSvc v8*
+use Event *
+use GlastSvc *
 use GaudiSvc
 
 branches src cmt doc
