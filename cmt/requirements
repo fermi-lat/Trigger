@@ -19,7 +19,7 @@ private
 
 apply_pattern package_Cshlibflags
 
-library trigger  *.cxx *.h Dll/*.cxx
+library trigger  *.cxx *.h 
 
 
 # build this for testing 
