@@ -1,13 +1,4 @@
 ------------------------------------------------------------
-User: burnett  Wed Sep 22 16:46:16 PDT 2004
-Trigger/src
-
-Modified Files:
-	ThrottleAlg.h TriggerAlg.cxx 
-Log Message:
-fix warnings, apparent error in accessing Gem condition summary.
-    *
-------------------------------------------------------------
 User: burnett  Tue Sep 14 15:09:21 PDT 2004
 Trigger/src
 
