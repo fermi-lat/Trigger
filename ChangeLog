@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: burnett  Wed Jan 15 13:17:10 PST 2003
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx 
+Log Message:
+log problem from gaudi workaround
+    *
+------------------------------------------------------------
+User: burnett  Wed Jan 15 13:17:10 PST 2003
 Trigger/doc
 
 Modified Files:
