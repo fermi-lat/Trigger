@@ -2,8 +2,9 @@
  * @brief package Trigger
  * package manager:T.Burnett 
   <pre>
-           11-oct-o4 THB rearrange bits in trigger word 
-*  v3r12   04-oct-04 THB new trigger info added to TDS by Luis Reyes. See changelog.
+            14-oct-04 THB recast test for missing smart pointers     
+            11-oct-o4 THB rearrange bits in trigger word 
+ *  v3r12   04-oct-04 THB new trigger info added to TDS by Luis Reyes. See changelog.
  *  v3r11p1 22-sep-04 THB fix Linux warnings.
  *  v3r11  09-sep-04 THB set GEM summary bits in next byte of GltWord.
  *  v3r10  09-sep-04 THB remove silly livetime trigger, just reject and keep track of number lost
