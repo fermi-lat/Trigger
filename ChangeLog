@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: heather  Wed Nov 10 14:04:00 PST 2004
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx 
+Removed Files:
+	TriRowBits.h 
+Log Message:
+move TriRowBits.h to new public header directory
+    *
+------------------------------------------------------------
 User: heather  Wed Nov 10 14:03:55 PST 2004
 Trigger/Trigger
 
