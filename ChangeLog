@@ -1,4 +1,27 @@
 ------------------------------------------------------------
+TAG
+Tag name: v3r12em1, operation: add
+Package: Trigger
+User: heather  Thu Nov 18 10:14:19 2004
+Files:
+  Trigger/.cvsignore  1.2
+  Trigger/ChangeLog  1.108
+  Trigger/Trigger/TriRowBits.h  1.1.2.1
+  Trigger/cmt/.cvsignore  1.1.1.1
+  Trigger/cmt/requirements  1.35.2.2
+  Trigger/cmt/Makefile  1.1.1.1
+  Trigger/doc/release.notes  1.23.2.2
+  Trigger/src/mainpage.h  1.5
+  Trigger/src/jobOptions.txt  1.1.1.2
+  Trigger/src/Trigger_load.cxx  1.6
+  Trigger/src/TriggerAlg.cxx  1.32.2.2
+  Trigger/src/ThrottleAlg.h  1.4
+  Trigger/src/ThrottleAlg.cxx  1.2
+  Trigger/src/Trigger_dll.cxx  1.5
+  Trigger/src/test/jobOptions.txt  1.2
+
+    *
+------------------------------------------------------------
 User: heather  Thu Nov 18 10:14:03 PST 2004
 Trigger/src
 
