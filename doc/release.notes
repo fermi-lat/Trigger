@@ -1,8 +1,9 @@
 /** @file release.notes
- * package Trigger
+ * @brief package Trigger
  * package manager:T.Burnett 
-  
+  <pre>
  *
+ *  v3r4   19-nov-02 Fix tracker 3-in-a-row to be properly an x-y coincidence: put in stats 
  *  v3r3p6 13-nov-02 AC HICAL trigger modified: 3-in-a-row logic and unnecessary conversion GeV=>MeV suppressed.  
  *  v3r3p4 10-sep-02 THB Event, GlastSvc version
  *  v3r3p3 10-jun-02 THB for scope fix
@@ -12,5 +13,5 @@
  *  v3r1  13-may-02 THB add ACD as bit 1
  *  v3r0  11-may-02 THB renamed from old trigger
  *
- 
+ </pre>
 */
