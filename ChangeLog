@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Tue Sep 14 15:09:21 PDT 2004
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx 
+Log Message:
+use Heather's wonderful enum!
+    *
+------------------------------------------------------------
 User: burnett  Tue Sep 14 10:18:24 PDT 2004
 Trigger/src
 
