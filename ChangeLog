@@ -1,13 +1,4 @@
 ------------------------------------------------------------
-User: burnett  Tue Sep 14 07:20:34 PDT 2004
-Trigger/src
-
-Modified Files:
-	TriggerAlg.cxx 
-Log Message:
-remove deatime trigger, always apply deadtime but count incoming particles lost
-    *
-------------------------------------------------------------
 User: burnett  Thu Sep  9 10:37:40 PDT 2004
 Trigger/doc
 
