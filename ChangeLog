@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: burnett  Thu Jun  6 20:58:51 PDT 2002
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx 
+Log Message:
+
+tuning to test for digiRootReader signature.
+    *
+------------------------------------------------------------
 User: burnett  Thu Jun  6 14:52:41 PDT 2002
 Trigger/src
 
