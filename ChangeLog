@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Tue Oct  2 06:12:38 PDT 2001
+trigger/src ACDthrottle.cxx
+
+Modified Files:
+	ACDthrottle.cxx 
+Log Message:
+renamed ACD_Throttle to ACD_Throttle_Bits
+    *
+------------------------------------------------------------
 User: heather  Mon Oct  1 13:02:34 PDT 2001
 trigger/src ACDthrottle.cxx
 
