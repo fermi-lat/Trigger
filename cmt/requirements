@@ -1,5 +1,5 @@
 package trigger
-version v1r6
+version v2r1
 
 # --------------------------
 # define trigger algorithms
@@ -26,4 +26,4 @@ apply_pattern package_headers
 library trigger  *.cxx ${trigger_headers}
 
 # uncomment when have pattern defined
-#apply_pattern package_test
+apply_pattern package_test
