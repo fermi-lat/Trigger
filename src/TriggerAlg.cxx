@@ -2,7 +2,7 @@
 * @file TriggerAlg.cxx
 * @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.27 2004/09/08 22:07:13 burnett Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.28 2004/09/14 14:20:34 burnett Exp $
 */
 
 // Include files
@@ -63,14 +63,16 @@ public:
     enum  {
         //! definition of  trigger bits
 
-        b_ACDL =     1,  ///  set if cover or side veto, low threshold
-        b_ACDH =     2,  ///  cover or side veto, high threshold
-        b_Track=     4,  ///  3 consecutive x-y layers hit
-        b_LO_CAL=    8,  ///  single log above low threshold
-        b_HI_CAL=   16,  /// single log above high threshold
-        b_THROTTLE= 32,  /// Ritz throttle
+        b_ACDL =     1,  ///>  set if cover or side veto, low threshold
+        b_ACDH =     2,  ///>  cover or side veto, high threshold
+        b_Track=     4,  ///>  3 consecutive x-y layers hit
+        b_LO_CAL=    8,  ///>  single log above low threshold
+        b_HI_CAL=   16,  ///> single log above high threshold
+        b_THROTTLE= 32,  ///> Ritz throttle
 
-        number_of_trigger_bits = 6 ///> for size of table
+        number_of_trigger_bits = 6, ///> for size of table
+
+        GEM_offset = 8  ///> offset to the GEM bits
 
     };
 
@@ -96,6 +98,9 @@ private:
 
     //// are we alive?
     bool alive(double current_time);
+
+    /// set gem bits in trigger word, either from real condition summary, or from bits
+    unsigned int gemBits(unsigned int  trigger_bits);
 
     unsigned int m_mask;
     int m_acd_hits;
@@ -278,80 +283,64 @@ StatusCode TriggerAlg::execute()
         double now = header->time();
         // this is where we lose the deadtime.
         m_liveTime +=  now-m_lastTriggerTime - m_deadtime;
-        
+
         header->setLivetime(m_liveTime);
         m_lastTriggerTime = now;
 
         Event::EventHeader& h = header;
 
-        if( h.run() < 0 || h.event() <0) {
+        log << MSG::DEBUG ;
+        if(log.isActive()) log.stream() << "Processing run/event " << h.run() << "/" << h.event() << " trigger & mask = "
+            << std::setbase(16) << (m_mask==0 ? trigger_bits : trigger_bits & m_mask);
+        log << endreq;
 
-            // event header info not set: create a new event  here
-            h.setRun(m_run);
-            h.setEvent(++m_event);
+        // or in the gem trigger bits, either from hardware, or derived from trigger
+        trigger_bits |= gemBits(trigger_bits) << 8;
+
+        if(h.trigger()==-1){
+            // expect it to be zero if not set. 
             h.setTrigger(trigger_bits);
-            log << MSG::INFO; 
-            if(log.isActive() ) log.stream() << "Creating run/event " << m_run <<"/"<<m_event  << " trigger & mask "  
-                << std::setbase(16) << (m_mask==0?trigger_bits:trigger_bits& m_mask);
+        }else  if (h.trigger() != 0xbaadf00d && trigger_bits != h.trigger() ) {
+            // trigger bits already set: reading digiRoot file.
+            log << MSG::WARNING;
+            if(log.isActive()) log.stream() << "Trigger bits read back do not agree with recalculation! " 
+                << std::setbase(16) <<trigger_bits << " vs. " << h.trigger();
             log << endreq;
-        }else {
-            // header info already set.
-            log << MSG::DEBUG ;
-            if(log.isActive()) log.stream() << "Read run/event " << h.run() << "/" << h.event() << " trigger & mask "
-                << std::setbase(16) << (m_mask==0 ? trigger_bits : trigger_bits & m_mask);
-            log << endreq;
-
-            if(h.trigger()==0){
-                h.setTrigger(trigger_bits);
-            }else  if (h.trigger() != 0xbaadf00d && trigger_bits != h.trigger() ) {
-                // trigger bits already set: reading digiRoot file.
-                log << MSG::WARNING;
-                if(log.isActive()) log.stream() << "Trigger bits read back do not agree with recalculation! " 
-                    << std::setbase(16) <<trigger_bits << " vs. " << h.trigger();
-                log << endreq;
-            }
-        }  
-
-        // set appropriate bits in Gem summary if this is MC, that is, the Gem is not present
-        SmartDataPtr<LdfEvent::Gem> gem(eventSvc(), "/Event/Gem"); 
-        if ( gem==0) {
-            LdfEvent::Gem * newgem = new LdfEvent::Gem;
-            sc = eventSvc()->registerObject("/Event/Gem", newgem);
-            if(sc.isFailure()) {
-			log << MSG::ERROR << "/Event/Gem  could not be registered on data store" << endreq;
-			delete newgem;
-			return sc;
-		}
-            LdfEvent::GemTileList tilelist; // empty for arglist below
-
-
-            /* meaning of bits to set here
-            
-bit 0   ROI            Meaning depends on whether ACD is being used as veto or trigger
-bit 1   TKR           OR of 3-in-a-row for each tower
-bit 2   CAL  (LE)  OR of CAL low energy for each tower
-bit 3   CAL  (HE)  OR of CAL high energy for each tower
-bit 4   CNO          OR of 12 ACD CNO inputs
-bit 5   Periodic       set for periodic trigger
-bit 6   Solicited      set for solicited trigger.
-*/
-            int summary = 
-                  (( trigger_bits & b_Track) !=0 ? 2 : 0)
-                  |((trigger_bits & b_LO_CAL)!=0 ? 4 : 0)
-                  |((trigger_bits & b_HI_CAL)!=0 ? 8 : 0)
-                  |((trigger_bits & b_ACDH)  !=0 ?16 : 0) ;
-
-            newgem->initTrigger(0, 0, 0, 0, 0, summary, tilelist);
-
         }
-
-
 
     }
 
     return sc;
 }
+//------------------------------------------------------------------------------
+unsigned int TriggerAlg::gemBits(unsigned int  trigger_bits)
+{
+    SmartDataPtr<LdfEvent::Gem> gem(eventSvc(), "/Event/Gem"); 
 
+    if ( gem!=0) {
+        LdfEvent::Gem & g = gem;
+        return g.conditionSummary();
+    }
+
+
+    /* no GEM: set correspnding bits from present word
+
+
+    bit 0   ROI            Meaning depends on whether ACD is being used as veto or trigger
+    bit 1   TKR           OR of 3-in-a-row for each tower
+    bit 2   CAL  (LE)  OR of CAL low energy for each tower
+    bit 3   CAL  (HE)  OR of CAL high energy for each tower
+    bit 4   CNO          OR of 12 ACD CNO inputs
+    bit 5   Periodic       set for periodic trigger
+    bit 6   Solicited      set for solicited trigger.
+    */
+    return 
+        (( trigger_bits & b_Track) !=0 ? 2 : 0)
+        |((trigger_bits & b_LO_CAL)!=0 ? 4 : 0)
+        |((trigger_bits & b_HI_CAL)!=0 ? 8 : 0)
+        |((trigger_bits & b_ACDH)  !=0 ?16 : 0) ;
+
+}
 //------------------------------------------------------------------------------
 unsigned int TriggerAlg::tracker(const Event::TkrDigiCol&  planes)
 {
@@ -470,7 +459,7 @@ StatusCode TriggerAlg::finalize() {
     log << MSG::INFO << "Totals triggered/ processed: " << m_triggered << "/" << m_total ; 
 
     if( m_deadtime>0 )  log << "\n\t\tLost to deadtime: " << m_deadtimeLoss ;
- 
+
     if(log.isActive() ) bitSummary(log.stream());
 
     log << endreq;
