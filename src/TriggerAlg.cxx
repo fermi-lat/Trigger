@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/userAlg/src/Trigger.cxx,v 1.1.1.1 2001/04/01 22:25:06 burnett Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/trigger/src/TriggerAlgAlg.cxx,v 1.1.1.1 2001/05/23 14:56:24 burnett Exp $
 
 // Include files
 // Gaudi system includes
@@ -29,9 +29,9 @@
 
   
 */
-class Trigger : public Algorithm {
+class TriggerAlg : public Algorithm {
 public:
-    Trigger(const std::string& name, ISvcLocator* pSvcLocator);
+    TriggerAlg(const std::string& name, ISvcLocator* pSvcLocator);
     StatusCode initialize();
     StatusCode execute();
     StatusCode finalize();
@@ -47,23 +47,23 @@ private:
 
 // necessary to define a Factory for this algorithm
 // expect that the xxx_load.cxx file contains a call     
-//     DLL_DECL_ALGORITHM( Trigger );
+//     DLL_DECL_ALGORITHM( TriggerAlg );
 
 static const AlgFactory<TriggerAlg>  Factory;
 const IAlgFactory& TriggerAlgFactory = Factory;
 
 //------------------------------------------------------------------------
 //! ctor
-Trigger::Trigger(const std::string& name, ISvcLocator* pSvcLocator)
+TriggerAlg::TriggerAlg(const std::string& name, ISvcLocator* pSvcLocator)
 :Algorithm(name, pSvcLocator)
-,m_count(0), m_detSvc(0), m_ini(0)
+, m_detSvc(0), m_ini(0)
 {
     // declare properties with setProperties calls
     
 }
 //------------------------------------------------------------------------
 //! set parameters and attach to various perhaps useful services.
-StatusCode Trigger::initialize(){
+StatusCode TriggerAlg::initialize(){
     StatusCode  sc = StatusCode::SUCCESS;
     MsgStream log(msgSvc(), name());
     log << MSG::INFO << "initialize" << endreq;
@@ -86,7 +86,7 @@ StatusCode Trigger::initialize(){
 
 //------------------------------------------------------------------------
 //! process an event
-StatusCode Trigger::execute()
+StatusCode TriggerAlg::execute()
 {
     StatusCode  sc = StatusCode::SUCCESS;
     MsgStream   log( msgSvc(), name() );
@@ -96,7 +96,7 @@ StatusCode Trigger::execute()
 
 //------------------------------------------------------------------------
 //! clean up, summarize
-StatusCode Trigger::finalize(){
+StatusCode TriggerAlg::finalize(){
     StatusCode  sc = StatusCode::SUCCESS;
     MsgStream log(msgSvc(), name());
     
