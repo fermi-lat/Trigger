@@ -5,8 +5,6 @@ version v1r6
 # define trigger algorithms
 # --------------------------
 
-# this is necessary for the new package_test pattern
-use GlastPolicy v3
 
 use GlastSvc
 use ntupleWriterSvc
@@ -27,5 +25,5 @@ apply_pattern package_headers
 
 library trigger  *.cxx ${trigger_headers}
 
-
-apply_pattern package_test
+# uncomment when have pattern defined
+#apply_pattern package_test
