@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Tue Nov 30 17:11:34 PST 2004
+Trigger/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+allow for consecuitive events with the same time
+    *
+------------------------------------------------------------
 TAG
 Tag name: v3r12gr1, operation: add
 Package: Trigger
