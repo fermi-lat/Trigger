@@ -2,7 +2,7 @@
 * @file TriggerAlg.cxx
 * @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.13 2002/06/10 17:58:12 burnett Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.14 2002/11/13 22:19:25 chehtman Exp $
 */
 
 // Include files
@@ -108,6 +108,7 @@ private:
     int m_triggered;
     std::map<int,int> m_counts; //map of values for each bit pattern
 
+    std::map<idents::TowerId, int> m_tower_trigger_count;
     
     
 };
@@ -268,14 +269,30 @@ unsigned int TriggerAlg::tracker(const Event::TkrDigiCol&  planes)
     typedef std::map<Key, unsigned int> Map;
     Map layer_bits;
     
+    // this loop sorts the hits by setting appropriate bits in the tower-plane hit map
     for( Event::TkrDigiCol::const_iterator it = planes.begin(); it != planes.end(); ++it){
         const TkrDigi& t = **it;
         layer_bits[std::make_pair(t.getTower(), t.getView())] |= layer_bit(t.getBilayer());
     }
     
-    // now look for a three in a row
+    // now look for a three in a row in x-y coincidence
     for( Map::iterator itr = layer_bits.begin(); itr !=layer_bits.end(); ++ itr){
-        if( three_in_a_row((*itr).second) ) return b_Track;
+
+        Key theKey=(*itr).first;
+        idents::TowerId tower = theKey.first;
+        if( theKey.second==idents::GlastAxis.X) { 
+            // found an x: and with corresponding Y (if exists)
+            unsigned int 
+                xbits = (*itr).second,
+                ybits = layer_bits[std::make_pair(tower, idents::GlastAxis.Y)];
+
+
+            if( three_in_a_row( xbits & ybits) ){
+                // OK: tag the tower for stats
+                m_tower_trigger_count[tower]++;
+                return b_Track;
+            }
+        }
     }
     return 0;
     
@@ -349,6 +366,7 @@ StatusCode TriggerAlg::finalize() {
 
     // purpose and method: make a summary
 
+    using namespace std;
     StatusCode  sc = StatusCode::SUCCESS;
     
     MsgStream log(msgSvc(), name());
@@ -357,6 +375,11 @@ StatusCode TriggerAlg::finalize() {
     bitSummary(log.stream());
     log << endreq;
 
+    log << MSG::INFO << "Tower trigger summary\n  Tower    count " <<std::endl;
+    for( std::map<idents::TowerId, int>::const_iterator it = m_tower_trigger_count.begin();
+    it != m_tower_trigger_count.end(); ++ it ){
+        log.stream() << setw(10) << (*it).first.id() << setw(10) << (*it).second << std::endl;
+    }
     return StatusCode::SUCCESS;
 }
 //------------------------------------------------------------------------------
