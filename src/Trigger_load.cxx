@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/trigger/src/trigger_load.cxx,v 1.1.1.1 2001/05/23 14:56:24 burnett Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/trigger/src/trigger_load.cxx,v 1.2 2001/05/28 23:47:37 burnett Exp $
 //====================================================================
 //
 //  Description: Implementation of <Package>_load routine.
@@ -20,6 +20,8 @@
 //! Load all  services: 
 void trigger_load() {
     DLL_DECL_ALGORITHM( Level1 );
+    DLL_DECL_ALGORITHM( ACDthrottle );
+
 } 
 
 extern "C" void trigger_loadRef()    {
