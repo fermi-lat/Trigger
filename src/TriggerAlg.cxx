@@ -2,7 +2,7 @@
 * @file TriggerAlg.cxx
 * @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.28 2004/09/14 14:20:34 burnett Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.29 2004/09/14 17:18:24 burnett Exp $
 */
 
 // Include files
@@ -318,27 +318,17 @@ unsigned int TriggerAlg::gemBits(unsigned int  trigger_bits)
     SmartDataPtr<LdfEvent::Gem> gem(eventSvc(), "/Event/Gem"); 
 
     if ( gem!=0) {
-        LdfEvent::Gem & g = gem;
-        return g.conditionSummary();
+        return gem->conditionSummary();
     }
 
+    // no GEM: set correspnding bits from present word
+    // kudos to Heather for creating a typedef
 
-    /* no GEM: set correspnding bits from present word
-
-
-    bit 0   ROI            Meaning depends on whether ACD is being used as veto or trigger
-    bit 1   TKR           OR of 3-in-a-row for each tower
-    bit 2   CAL  (LE)  OR of CAL low energy for each tower
-    bit 3   CAL  (HE)  OR of CAL high energy for each tower
-    bit 4   CNO          OR of 12 ACD CNO inputs
-    bit 5   Periodic       set for periodic trigger
-    bit 6   Solicited      set for solicited trigger.
-    */
     return 
-        (( trigger_bits & b_Track) !=0 ? 2 : 0)
-        |((trigger_bits & b_LO_CAL)!=0 ? 4 : 0)
-        |((trigger_bits & b_HI_CAL)!=0 ? 8 : 0)
-        |((trigger_bits & b_ACDH)  !=0 ?16 : 0) ;
+        (( trigger_bits & b_Track) !=0 ? Gem::Summary::TKR   : 0)
+        |((trigger_bits & b_LO_CAL)!=0 ? Gem::Summary::CALLE : 0)
+        |((trigger_bits & b_HI_CAL)!=0 ? Gem::Summary::CALHE : 0)
+        |((trigger_bits & b_ACDH)  !=0 ? Gem::Summary::CNO   : 0) ;
 
 }
 //------------------------------------------------------------------------------
