@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Thu Nov 18 10:14:03 PST 2004
+Trigger/src
+
+Modified Files:
+      Tag: GlastRelease-v4r6
+	TriggerAlg.cxx 
+Log Message:
+apply throttle only when both ACD and TKR digis exist
+    *
+------------------------------------------------------------
 User: heather  Thu Nov 18 10:13:47 PST 2004
 Trigger/doc
 
