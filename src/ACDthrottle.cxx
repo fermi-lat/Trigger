@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/userAlg/src/UserAlg.cxx,v 1.4 2001/06/07 23:12:05 burnett Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/trigger/src/ACDthrottle.cxx,v 1.1 2001/08/08 17:25:36 burnett Exp $
 
 // Include files
 // Gaudi system includes
@@ -53,25 +53,24 @@ private:
     //! find three in a row for a given tower
     bool threeInARow(const SiData* tkrDigiData, unsigned int towerId);
     //! calculate the bit pattern in a TKR tower for XY layer coincidences
-	unsigned long TKRtowerbitpattern(const SiData* tkrDigiData, unsigned int towerId);
+    unsigned long TKRtowerbitpattern(const SiData* tkrDigiData, unsigned int towerId);
     //! the GlastDetSvc used for access to detector info
     IGlastDetSvc*    m_detSvc; 
     //! constants from the "instrument.xml" file.
     xml::IFile * m_ini; 
     //! parameters that can be retrieved from the instrument.xml file
     int m_numTowers, m_xNumTowers, m_yNumTowers, m_xNumTopTiles, m_yNumTopTiles, m_nplanes;
-	double m_veto_threshold;
+    double m_veto_threshold;
     double m_mod_width;
-
+    
     // elements to store in the ntuple
     float m_nhitface0,m_nhitface1, m_nhitface2, m_nhitface3, m_nhitface4;
-	float m_nhitsiderow0, m_nhitsiderow1, m_nhitsiderow2, m_nhitsiderow3;
-	float m_ntothit;
-	float m_L1T, m_vetoword,m_bitpattern; 
-
+    float m_nhitsiderow0, m_nhitsiderow1, m_nhitsiderow2, m_nhitsiderow3;
+    float m_vetoword; 
+    
     unsigned int assoctile[16][4];
     unsigned int assoctileside[16][4];
-
+    
     //! access the ntupleWriter service to write out to ROOT ntuples
     INTupleWriterSvc *m_ntupleWriteSvc;
     //! parameter to store the logical name of the ROOT file to write to
@@ -105,9 +104,9 @@ StatusCode ACDthrottle::initialize(){
     
     // Use the Job options service to set the Algorithm's parameters
     setProperties();
-
+    
     if( m_tupleName.empty()) {log << MSG::ERROR << "tupleName property not set!"<<endreq;
-        return StatusCode::FAILURE;}
+    return StatusCode::FAILURE;}
     // now try to find the GlastDevSvc service
     if (service("GlastDetSvc", m_detSvc).isFailure()){
         log << MSG::ERROR << "Couldn't find the GlastDetSvc!" << endreq;
@@ -116,94 +115,94 @@ StatusCode ACDthrottle::initialize(){
     // get the ini file
     m_ini = const_cast<xml::IFile*>(m_detSvc->iniFile()); //OOPS!
     assert(4==m_ini->getInt("glast", "xNum"));  // simple check
-
+    
     // Call our routine to extract parameters from the instrument.xml file
     getParameters();
-
+    
     // setup our ntuple...
-//    setupNtuple();
-
-
+    //    setupNtuple();
+    
+    
     // set up the array of associated acd front tiles
-	assoctile[0][0] = 0x0000;
-	assoctile[0][1] = 0x0001;
-	assoctile[0][2] = 0x0010;
-	assoctile[0][3] = 0x0011;
+    assoctile[0][0] = 0x0000;
+    assoctile[0][1] = 0x0001;
+    assoctile[0][2] = 0x0010;
+    assoctile[0][3] = 0x0011;
     int itow, itil;
-	for (itow=1;itow<=3;itow++){
-		for (itil=0;itil<=3;itil++){
-          assoctile[itow][itil]=assoctile[itow-1][itil]+0x0001;
-		}
-	}
-	for (itow=4;itow<=15;itow++){
-		for (itil=0;itil<=3;itil++){
-          assoctile[itow][itil]=assoctile[itow-4][itil]+0x0010;
-		}
-	}
-//	for (itow=8;itow<=11;itow++){
-//		for (itil=0;itil<=3;itil++){
-//         assoctile[itow][itil]=assoctile[itow-4][itil]+0x0010;
-//		}
-//	}
-//	for (itow=12;itow<=15;itow++){
-//		for (itil=0;itil<=3;itil++){
-//        assoctile[itow][itil]=assoctile[itow-4][itil]+0x0010;
-//		}
-//	}
+    for (itow=1;itow<=3;itow++){
+        for (itil=0;itil<=3;itil++){
+            assoctile[itow][itil]=assoctile[itow-1][itil]+0x0001;
+        }
+    }
+    for (itow=4;itow<=15;itow++){
+        for (itil=0;itil<=3;itil++){
+            assoctile[itow][itil]=assoctile[itow-4][itil]+0x0010;
+        }
+    }
+    //	for (itow=8;itow<=11;itow++){
+    //		for (itil=0;itil<=3;itil++){
+    //         assoctile[itow][itil]=assoctile[itow-4][itil]+0x0010;
+    //		}
+    //	}
+    //	for (itow=12;itow<=15;itow++){
+    //		for (itil=0;itil<=3;itil++){
+    //        assoctile[itow][itil]=assoctile[itow-4][itil]+0x0010;
+    //		}
+    //	}
     // set up the array of associated acd side tiles
-	for (itow=0;itow<=15;itow++){
-		for (itil=0;itil<=3;itil++){
-          assoctileside[itow][itil]=0x0999;
-		}
-	}
-	assoctileside[0][0] = 0x0100;
-	assoctileside[0][1] = 0x0101;
-	assoctileside[0][2] = 0x0200;
-	assoctileside[0][3] = 0x0201;
-      assoctileside[1][0] = 0x0201;
-      assoctileside[1][1] = 0x0202;
-      assoctileside[2][0] = 0x0202;
-      assoctileside[2][1] = 0x0203;
-      assoctileside[3][0] = 0x0203;
-      assoctileside[3][1] = 0x0204;
-      assoctileside[3][2] = 0x0300;
-      assoctileside[3][3] = 0x0301;
-      assoctileside[7][0] = 0x0301;
-      assoctileside[7][1] = 0x0302;
-      assoctileside[11][0] = 0x0302;
-      assoctileside[11][1] = 0x0303;
-      assoctileside[15][0] = 0x0303;
-      assoctileside[15][1] = 0x0304;
-      assoctileside[15][2] = 0x0404;
-      assoctileside[15][3] = 0x0403;
-      assoctileside[14][0] = 0x0403;
-      assoctileside[14][1] = 0x0402;
-      assoctileside[13][0] = 0x0402;
-      assoctileside[13][1] = 0x0401;
-      assoctileside[12][0] = 0x0401;
-      assoctileside[12][1] = 0x0400;
-      assoctileside[12][2] = 0x0104;
-      assoctileside[12][3] = 0x0103;
-      assoctileside[8][0] = 0x0103;
-      assoctileside[8][1] = 0x0102;
-      assoctileside[4][0] = 0x0102;
-      assoctileside[4][1] = 0x0101;
-//
-//    now let's whack a tile to study increase in rate
-//
-//    unsigned int iwhack = 0x0000;
-//	for (itow=0;itow<=15;itow++){
-//		for (itil=0;itil<=3;itil++){
-//          if (assoctile[itow][itil]== iwhack) assoctile[itow][itil]=0x0999;
-//		}
-//	}
-//
+    for (itow=0;itow<=15;itow++){
+        for (itil=0;itil<=3;itil++){
+            assoctileside[itow][itil]=0x0999;
+        }
+    }
+    assoctileside[0][0] = 0x0100;
+    assoctileside[0][1] = 0x0101;
+    assoctileside[0][2] = 0x0200;
+    assoctileside[0][3] = 0x0201;
+    assoctileside[1][0] = 0x0201;
+    assoctileside[1][1] = 0x0202;
+    assoctileside[2][0] = 0x0202;
+    assoctileside[2][1] = 0x0203;
+    assoctileside[3][0] = 0x0203;
+    assoctileside[3][1] = 0x0204;
+    assoctileside[3][2] = 0x0300;
+    assoctileside[3][3] = 0x0301;
+    assoctileside[7][0] = 0x0301;
+    assoctileside[7][1] = 0x0302;
+    assoctileside[11][0] = 0x0302;
+    assoctileside[11][1] = 0x0303;
+    assoctileside[15][0] = 0x0303;
+    assoctileside[15][1] = 0x0304;
+    assoctileside[15][2] = 0x0404;
+    assoctileside[15][3] = 0x0403;
+    assoctileside[14][0] = 0x0403;
+    assoctileside[14][1] = 0x0402;
+    assoctileside[13][0] = 0x0402;
+    assoctileside[13][1] = 0x0401;
+    assoctileside[12][0] = 0x0401;
+    assoctileside[12][1] = 0x0400;
+    assoctileside[12][2] = 0x0104;
+    assoctileside[12][3] = 0x0103;
+    assoctileside[8][0] = 0x0103;
+    assoctileside[8][1] = 0x0102;
+    assoctileside[4][0] = 0x0102;
+    assoctileside[4][1] = 0x0101;
+    //
+    //    now let's whack a tile to study increase in rate
+    //
+    //    unsigned int iwhack = 0x0000;
+    //	for (itow=0;itow<=15;itow++){
+    //		for (itil=0;itil<=3;itil++){
+    //          if (assoctile[itow][itil]== iwhack) assoctile[itow][itil]=0x0999;
+    //		}
+    //	}
+    //
     // get a pointer to our ntupleWriterSvc
     if (service("ntupleWriterSvc", m_ntupleWriteSvc).isFailure()) {
         log << MSG::ERROR << "writeJunkAlg failed to get the ntupleWriterSvc" << endreq;
         return StatusCode::FAILURE;
     }
-
+    
     //setupNtuple();
     return sc;
 }
@@ -223,11 +222,10 @@ StatusCode ACDthrottle::execute()
     "/Event/TdGlastData" which denotes the location of the glast detector data in 
     our Gaudi Event Model.
     */
-
+    
     // Get the pointer to the event
     SmartDataPtr<TdGlastData> glastData(eventSvc(),"/Event/TdGlastData");
-    m_L1T = 0.;
-
+    
     // retrieve TKR data pointer for the event
     const SiData *tkrDigiData = glastData->getSiData();
     if (tkrDigiData == 0) {
@@ -242,143 +240,133 @@ StatusCode ACDthrottle::execute()
                 break;
             }
         }
-        if (anyTower) m_L1T=1.;
     }
-
-
+    
+    
     // retrieve CAL data pointer
     const CsIData *calDigiData = glastData->getCsIData();
     if (calDigiData == 0) {   
         log << MSG::INFO << "No CAL Data available" << endreq;
     } else {
-		// check for CAL-Hi and CAL-Lo
-		bool CALHI = false;
-		bool CALLO = false;
-	    // skip this for now.  Wait until L1T properly implemented.  Don't need it for L2 studies yet.
-	}
-
+        // check for CAL-Hi and CAL-Lo
+        bool CALHI = false;
+        bool CALLO = false;
+        // skip this for now.  Wait until L1T properly implemented.  Don't need it for L2 studies yet.
+    }
+    
     // retrieve the ACD data pointer
     const IVetoData *acdDigiData = glastData->getVetoData();
     // Check to see if there is any ACD data for this event - if not provide a message
     if (acdDigiData == 0) log << MSG::INFO << "No ACD Data available" << endreq;
-
+    
     // if we have ACD data, calculate the number of hit tiles by face and row
-          // initialize counters number of tiles on each face
-         int nhitface[5] = {0.,0.,0.,0.,0.};
-		 // initialize counters number of tiles in each row on the sides
-		 int nhitsiderow[5] = {0.,0.,0.,0.,0.};
-         unsigned long bitpattern;
-         unsigned long bitpatternall = 0;
-         int ntothit =0.; // this is a check on recon only
-		 if (acdDigiData != 0) {
-	     enum {
-        _layermask = 0x0800,
-        _facemask  = 0x0700,
-        _rowmask   = 0x00F0,
-        _colmask   = 0x000F
-		 };
-         for( IVetoData::const_iterator it= acdDigiData->begin(); it != acdDigiData->end(); ++it) {
-		  if ((*it).energy() > m_veto_threshold){
-              // add up tiles by face and by row on the side
-			ntothit += 1;
-			unsigned int face = ((*it).type() & _facemask)>>8;
-			nhitface[face] += 1;
-			if (face != 0) {
-				unsigned int row = ((*it).type() & _rowmask)>>4;
-				nhitsiderow[row] += 1;
-			}
-		  }
-		}
- 
-	// now let's examine those L1Ts that easily match ACD tiles
-//  get the bit pattern by tower
-    unsigned int vetoword = 0;
-	if (tkrDigiData == 0) {
-        log << MSG::INFO << "No TKR Data available" << endreq;
-    } else {
-        unsigned int iTower;
-        for (iTower = 0; iTower < m_numTowers-1; iTower++) {
-          bitpattern = TKRtowerbitpattern(tkrDigiData,iTower);
-          bitpatternall = bitpatternall | bitpattern;
-          if (bitpattern > 0) {
-          if ((bitpattern & 7) == 7) {
-	     // it's a top-layer conversion trigger
-           // loop over hit acd tiles and check if one is associated with this tower
-           // just the top guys for now			  
-            for( IVetoData::const_iterator it= acdDigiData->begin(); it != acdDigiData->end(); ++it) {
-				if ((*it).energy() > m_veto_threshold){
-					unsigned int tileno = (*it).type();
-					int itile;
-					for (itile = 0;itile<=3;itile++){
-						if (tileno == assoctile[iTower][itile]) vetoword |= 1;
-//				  if (assoctile[iTower][itile]==0x0999) {
-//   		            m_guiSvc->guiMgr()->setState(gui::GuiMgr::PAUSED);
-//				  }
-					}
-				}
-			}
-		  } else {
-			  // not a top conversion.  let's check the side tiles for this tower
-			  unsigned int iPlane;
-			  for (iPlane = 1; iPlane < m_nplanes-2; iPlane++) {
-				  unsigned long mask = (7 << iPlane);
-				  if ((bitpattern & mask) == mask) {
-					  // we found the first XY coincidence for the 3-in-a-row.  
-					  // Look at side ACD tiles in the appropriate row.
-					  for( IVetoData::const_iterator it= acdDigiData->begin(); it != acdDigiData->end(); ++it) {
-						  if ((*it).energy() > m_veto_threshold){
-							  unsigned int tileno = (*it).type();
-							  int itile;
-							  for (itile = 0;itile<=3;itile++){
-								  int rowassoc = 0;
-								  if (iPlane > 3) rowassoc = 1;
-                                  if (iPlane > 10) rowassoc = 2;
-                                  if (iPlane >14) rowassoc = 3;
-                                  if (tileno == (assoctileside[iTower][itile]+rowassoc*0x0010)) {
-                                      vetoword |= 0x0010*(1<<rowassoc);  // record in vetoword which row in ACD vetos
-                                      iPlane = m_nplanes+1;  //break out of this big loop.  CHECK THIS.
-                                      break; //  break out of this inner loop
-                                  }
-                                  // check wider angles if nothing has been found yet
-                                  rowassoc = 0;
-                                  if (iPlane > 10) rowassoc = 1;
-                                  if (iPlane > 14) rowassoc = 2;
-                                  if (tileno == (assoctileside[iTower][itile]+rowassoc*0x0010)) {
-                                      vetoword |= 0x0010*(1<<rowassoc);  // record in vetoword which row in ACD vetos
-                                      iPlane = m_nplanes+1;  //break out of this big loop.  CHECK THIS.
-                                      break; //  break out of this inner loop
-                                  }
-                              }
-                          }
-                          if (iPlane > m_nplanes) break; // check to see if we're done with loop
-                      }
-                  } 
-              }
-          }
-          } 
+    // initialize counters number of tiles on each face
+    int nhitface[5] = {0.,0.,0.,0.,0.};
+    // initialize counters number of tiles in each row on the sides
+    int nhitsiderow[5] = {0.,0.,0.,0.,0.};
+    unsigned long bitpattern;
+    if (acdDigiData != 0) {
+        enum {
+            _layermask = 0x0800,
+                _facemask  = 0x0700,
+                _rowmask   = 0x00F0,
+                _colmask   = 0x000F
+        };
+        for( IVetoData::const_iterator it= acdDigiData->begin(); it != acdDigiData->end(); ++it) {
+            if ((*it).energy() > m_veto_threshold){
+                // add up tiles by face and by row on the side
+                unsigned int face = ((*it).type() & _facemask)>>8;
+                nhitface[face] += 1;
+                if (face != 0) {
+                    unsigned int row = ((*it).type() & _rowmask)>>4;
+                    nhitsiderow[row] += 1;
+                }
+            }
         }
+        
+        // now let's examine those L1Ts that easily match ACD tiles
+        //  get the bit pattern by tower
+        unsigned int vetoword = 0;
+        if (tkrDigiData == 0) {
+            log << MSG::INFO << "No TKR Data available" << endreq;
+        } else {
+            unsigned int iTower;
+            for (iTower = 0; iTower < m_numTowers-1; iTower++) {
+                bitpattern = TKRtowerbitpattern(tkrDigiData,iTower);
+                if (bitpattern > 0) {
+                    if ((bitpattern & 7) == 7) {
+                        // it's a top-layer conversion trigger
+                        // loop over hit acd tiles and check if one is associated with this tower
+                        // just the top guys for now			  
+                        for( IVetoData::const_iterator it= acdDigiData->begin(); it != acdDigiData->end(); ++it) {
+                            if ((*it).energy() > m_veto_threshold){
+                                unsigned int tileno = (*it).type();
+                                int itile;
+                                for (itile = 0;itile<=3;itile++){
+                                    if (tileno == assoctile[iTower][itile]) vetoword |= 1;
+                                    //				  if (assoctile[iTower][itile]==0x0999) {
+                                    //   		            m_guiSvc->guiMgr()->setState(gui::GuiMgr::PAUSED);
+                                    //				  }
+                                }
+                            }
+                        }
+                    } else {
+                        // not a top conversion.  let's check the side tiles for this tower
+                        unsigned int iPlane;
+                        for (iPlane = 1; iPlane < m_nplanes-2; iPlane++) {
+                            unsigned long mask = (7 << iPlane);
+                            if ((bitpattern & mask) == mask) {
+                                // we found the first XY coincidence for the 3-in-a-row.  
+                                // Look at side ACD tiles in the appropriate row.
+                                for( IVetoData::const_iterator it= acdDigiData->begin(); it != acdDigiData->end(); ++it) {
+                                    if ((*it).energy() > m_veto_threshold){
+                                        unsigned int tileno = (*it).type();
+                                        int itile;
+                                        for (itile = 0;itile<=3;itile++){
+                                            int rowassoc = 0;
+                                            if (iPlane > 3) rowassoc = 1;
+                                            if (iPlane > 10) rowassoc = 2;
+                                            if (iPlane >14) rowassoc = 3;
+                                            if (tileno == (assoctileside[iTower][itile]+rowassoc*0x0010)) {
+                                                vetoword |= 0x0010*(1<<rowassoc);  // record in vetoword which row in ACD vetos
+                                                iPlane = m_nplanes+1;  //break out of this big loop.  CHECK THIS.
+                                                break; //  break out of this inner loop
+                                            }
+                                            // check wider angles if nothing has been found yet
+                                            rowassoc = 0;
+                                            if (iPlane > 10) rowassoc = 1;
+                                            if (iPlane > 14) rowassoc = 2;
+                                            if (tileno == (assoctileside[iTower][itile]+rowassoc*0x0010)) {
+                                                vetoword |= 0x0010*(1<<rowassoc);  // record in vetoword which row in ACD vetos
+                                                iPlane = m_nplanes+1;  //break out of this big loop.  CHECK THIS.
+                                                break; //  break out of this inner loop
+                                            }
+                                        }
+                                    }
+                                    if (iPlane > m_nplanes) break; // check to see if we're done with loop
+                                }
+                            } 
+                        }
+                    }
+                } 
+            }
+        }
+        
+        // At the end - we fill the tuple with the data from this event
+        m_vetoword = vetoword;
+        m_nhitface0 = nhitface[0];
+        m_nhitface1 = nhitface[1];
+        m_nhitface2 = nhitface[2];
+        m_nhitface3 = nhitface[3];
+        m_nhitface4 = nhitface[4];
+        m_nhitsiderow0 = nhitsiderow[0];
+        m_nhitsiderow1 = nhitsiderow[1];
+        m_nhitsiderow2 = nhitsiderow[2];
+        m_nhitsiderow3 = nhitsiderow[3];
+        //	
     }
-
-    // At the end - we fill the tuple with the data from this event
-    m_vetoword = vetoword;
-//    if (vetoword>0&&vetoword<128&&m_L1T>0.) {   // just a place to break conveniently
-//		m_guiSvc->guiMgr()->setState(gui::GuiMgr::PAUSED);
-//	}
-	m_nhitface0 = nhitface[0];
-	m_nhitface1 = nhitface[1];
-	m_nhitface2 = nhitface[2];
-	m_nhitface3 = nhitface[3];
-	m_nhitface4 = nhitface[4];
-	m_nhitsiderow0 = nhitsiderow[0];
-	m_nhitsiderow1 = nhitsiderow[1];
-	m_nhitsiderow2 = nhitsiderow[2];
-	m_nhitsiderow3 = nhitsiderow[3];
-    m_ntothit = ntothit;
-    m_bitpattern = bitpatternall;
-    //	
-   }
-
-	sc = fillNtuple();
+    
+    sc = fillNtuple();
     return sc;
 }
 
@@ -395,23 +383,23 @@ StatusCode ACDthrottle::finalize(){
 /// Retrieve parameters from the instrument.xml file
 void ACDthrottle::getParameters ()
 {
-
+    
     MsgStream   log( msgSvc(), name() );
-
+    
     m_yNumTowers = m_ini->getInt("glast", "yNum");
     m_xNumTowers = m_ini->getInt("glast", "xNum");
-
+    
     m_numTowers = (m_yNumTowers * m_xNumTowers);
-
+    
     m_nplanes = m_ini->getInt("tracker", "num_trays");
     --m_nplanes;  // # of planes is one less than # of trays
-
+    
     m_xNumTopTiles = m_ini->getInt("veto", "numXtiles");
     m_yNumTopTiles = m_ini->getInt("veto", "numYtiles");
-	m_veto_threshold = m_ini->getDouble("veto", "threshold");
-
+    m_veto_threshold = m_ini->getDouble("veto", "threshold");
+    
     m_mod_width = m_ini->getDouble("glast", "mod_width");
-
+    
     log << MSG::INFO << "Retrieved data from the instrument.xml file" << endreq;
     log << MSG::INFO << "The number of towers in X = " << m_xNumTowers << endreq;
     
@@ -420,26 +408,23 @@ void ACDthrottle::getParameters ()
 StatusCode ACDthrottle::fillNtuple() {
     StatusCode  sc = StatusCode::SUCCESS;
     if (m_tupleName.empty()) return sc;
- 
+    
 	   // Here we are adding to our ROOT ntuple
-   
+    
     // setup the entries to our tuple
-    if ((sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "vetoword", m_vetoword)).isFailure()) return sc;
-    if ((sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "nhitface0", m_nhitface0)).isFailure()) return sc;
-    if ((sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "nhitface1", m_nhitface1)).isFailure()) return sc;
-    if ((sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "nhitface2", m_nhitface2)).isFailure()) return sc;
-    if ((sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "nhitface3", m_nhitface3)).isFailure()) return sc;
-    if ((sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "nhitface4", m_nhitface4)).isFailure()) return sc;
-    if ((sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "nhitsiderow0", m_nhitsiderow0)).isFailure()) return sc;
-    if ((sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "nhitsiderow1", m_nhitsiderow1)).isFailure()) return sc;
-    if ((sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "nhitsiderow2", m_nhitsiderow2)).isFailure()) return sc;
-    if ((sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "nhitsiderow3", m_nhitsiderow3)).isFailure()) return sc;
-    if ((sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "ntothit", m_ntothit)).isFailure()) return sc;
-    if ((sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "L1T", m_L1T)).isFailure()) return sc;
-    if ((sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "TKRpattern", m_bitpattern)).isFailure()) return sc;
-
+    if ((sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "ACD_Throttle", m_vetoword)).isFailure()) return sc;
+    if ((sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "ACD_No_Face0", m_nhitface0)).isFailure()) return sc;
+    if ((sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "ACD_No_Face1", m_nhitface1)).isFailure()) return sc;
+    if ((sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "ACD_No_Face2", m_nhitface2)).isFailure()) return sc;
+    if ((sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "ACD_No_Face3", m_nhitface3)).isFailure()) return sc;
+    if ((sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "ACD_No_Face4", m_nhitface4)).isFailure()) return sc;
+    if ((sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "ACD_No_SideRow0", m_nhitsiderow0)).isFailure()) return sc;
+    if ((sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "ACD_No_SideRow1", m_nhitsiderow1)).isFailure()) return sc;
+    if ((sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "ACD_No_SideRow2", m_nhitsiderow2)).isFailure()) return sc;
+    if ((sc = m_ntupleWriteSvc->addItem(m_tupleName.c_str(), "ACD_No_SideRow3", m_nhitsiderow3)).isFailure()) return sc;
+    
     return sc;
-
+    
 }
 
 
@@ -472,9 +457,9 @@ unsigned long ACDthrottle::TKRtowerbitpattern(const SiData *tkrDigiData, unsigne
     for (iPlane = 0; iPlane < m_nplanes; iPlane++) {
         int nx = tkrDigiData->nHits(SiData::X, iPlane);
         int ny = tkrDigiData->nHits(SiData::Y, iPlane);
-
+        
         if ( (nx > 0) && (ny > 0) ) {  // we have hits in both x & y
-
+            
             bool foundXinTower = false;
             unsigned iXhit;
             for (iXhit = 0; iXhit < nx; iXhit++) {
@@ -483,7 +468,7 @@ unsigned long ACDthrottle::TKRtowerbitpattern(const SiData *tkrDigiData, unsigne
                     break;
                 }
             }
-
+            
             bool foundYinTower = false;
             unsigned iYhit;
             for (iYhit = 0; iYhit < ny; iYhit++) {
@@ -492,9 +477,9 @@ unsigned long ACDthrottle::TKRtowerbitpattern(const SiData *tkrDigiData, unsigne
                     break;
                 }
             }
-
+            
             if (foundXinTower && foundYinTower) bitString |= (1 << iPlane);
-
+            
         } else {  // do not have hits in both x & y..continue to the next plane
             continue;
         }
