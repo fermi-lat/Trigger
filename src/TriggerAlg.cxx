@@ -2,7 +2,7 @@
 * @file TriggerAlg.cxx
 * @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.8 2002/05/25 19:59:32 burnett Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.9 2002/05/31 19:27:19 burnett Exp $
 */
 
 // Include files
@@ -23,7 +23,6 @@
 #include "CLHEP/Vector/LorentzVector.h"
 
 #include "Event/TopLevel/EventModel.h"
-#include "Event/TopLevel/Event.h"
 #include "Event/TopLevel/Event.h"
 
 #include "Event/Digi/TkrDigi.h"
@@ -47,21 +46,25 @@ namespace {
 /*! \class TriggerAlg
 \brief  alg that sets trigger information
 
+  @Section Attributes for job options:
+  @param run [0] For setting the run number
+  @param mask [-1] mask to apply to trigger word. -1 means any, 0 means all.
+
 */
 
 class TriggerAlg : public Algorithm {
     
 public:
     enum  {
-        // definition of  trigger bits
+        //! definition of  trigger bits
         
-        b_ACDL =     1,  //  set if cover or side veto, low threshold
-            b_ACDH =     2,   //  cover or side veto, high threshold
+        b_ACDL =     1,  ///  set if cover or side veto, low threshold
+            b_ACDH =     2,   ///  cover or side veto, high threshold
             b_Track=     4,   //  3 consecutive x-y layers hit
-            b_LO_CAL=    8,  //  single log above low threshold
-            b_HI_CAL=   16,   //  3 cal layers in a row above high threshold
+            b_LO_CAL=    8,  ///  single log above low threshold
+            b_HI_CAL=   16,   ///  3 cal layers in a row above high threshold
 
-         number_of_trigger_bits = 5
+         number_of_trigger_bits = 5 ///> for size of table
             
     };
     
@@ -73,8 +76,13 @@ public:
     StatusCode finalize();
     
 private:
+    //! determine tracker trigger bits
     unsigned int  tracker(const Event::TkrDigiCol&  planes);
+    //! determine calormiter trigger bits
+    /// @return the bits
     unsigned int  calorimeter(const Event::CalDigiCol&  planes);
+    //! calculate ACD trigger bits
+    /// @return the bits
     unsigned int  anticoincidence(const Event::AcdDigiCol&  planes);
     void bitSummary(std::ostream& out);
 
@@ -121,8 +129,10 @@ Algorithm(name, pSvcLocator), m_event(0) ,m_total(0), m_triggered(0)
 //------------------------------------------------------------------------------
 /*! 
 */
-StatusCode TriggerAlg::initialize() {
+StatusCode TriggerAlg::initialize() 
+{
     
+
     StatusCode sc = StatusCode::SUCCESS;
     
     MsgStream log(msgSvc(), name());
@@ -130,11 +140,11 @@ StatusCode TriggerAlg::initialize() {
     // Use the Job options service to set the Algorithm's parameters
     setProperties();
     
-    log << MSG::INFO <<"Applying mask: " <<  std::setbase(16) <<m_mask <<  endreq;
+    log << MSG::INFO <<"Applying trigger mask: " <<  std::setbase(16) <<m_mask 
+        << "initializing run number " << m_run  << endreq;
     
     
     sc = caltrigsetup();
-    log << MSG::INFO << "initializing run number " << m_run  << endreq;
 
     return sc;
 }
@@ -142,7 +152,8 @@ StatusCode TriggerAlg::initialize() {
 //------------------------------------------------------------------------------
 StatusCode TriggerAlg::caltrigsetup()
 {
-    // extracting double constants for calorimeter trigger
+    // purpose and method: extracting double constants for calorimeter trigger
+
     IGlastDetSvc* detSvc;
     StatusCode sc = service("GlastDetSvc", detSvc);
     if( sc.isFailure() ) return sc;
@@ -176,8 +187,10 @@ StatusCode TriggerAlg::caltrigsetup()
 
 
 //------------------------------------------------------------------------------
-StatusCode TriggerAlg::execute() {
+StatusCode TriggerAlg::execute() 
+{
     
+    // purpose: find digi collections in the TDS, pass them to functions to calculate the individual trigger bits
     
     StatusCode  sc = StatusCode::SUCCESS;
     MsgStream   log( msgSvc(), name() );
@@ -215,15 +228,28 @@ StatusCode TriggerAlg::execute() {
        
         if(header) {
             Event::EventHeader& h = header;
-            h.setRun(m_run);
-            h.setEvent(++m_event);
-            h.setTrigger(trigger_bits);
-            
-            log << MSG::INFO << "Begin event " << m_event  << " trigger bits "  
-                << std::setbase(16) << (m_mask==0?trigger_bits:trigger_bits& m_mask) << endreq;
+
+            if( h.run() == 0 && h.event()==0) {
+
+                // event header info not set: create a new event  here
+                h.setRun(m_run);
+                h.setEvent(++m_event);
+                h.setTrigger(trigger_bits);
+                log << MSG::INFO << "Created run/event " << m_run <<"/"<<m_event  << " trigger & mask "  
+                    << std::setbase(16) << (m_mask==0?trigger_bits:trigger_bits& m_mask) << endreq;
+            }else {
+                // assume set by reading digiRoot file
+                log << MSG::INFO << "Read run/event " << h.run() << "/" << h.event() << " trigger & mask "
+                    << std::setbase(16) << (m_mask==0 ? trigger_bits : trigger_bits & m_mask) << endreq;
+                
+                if (h.trigger() != 0xbaadf00d && trigger_bits != h.trigger() ) {
+                    log << MSG::WARNING << "Trigger bits read back do not agree with recalculation! " 
+                        << std::setbase(16) <<trigger_bits << " vs. " << h.trigger() << endreq;
+                }
+            }
             
         } else { 
-            log << MSG::WARNING << " could not find the event header" << endreq;
+            log << MSG::ERROR << " could not find the event header" << endreq;
             return StatusCode::FAILURE;
         }
 
@@ -233,9 +259,11 @@ StatusCode TriggerAlg::execute() {
 }
 
 //------------------------------------------------------------------------------
-unsigned int TriggerAlg::tracker(const Event::TkrDigiCol&  planes){
+unsigned int TriggerAlg::tracker(const Event::TkrDigiCol&  planes)
+{
+    // purpose and method: determine if there is tracker trigger, 3-in-a-row
+
     using namespace Event;
-    // purpose: determine if there is tracker trigger, 3-in-a-row
     
     MsgStream   log( msgSvc(), name() );
     log << MSG::DEBUG << planes.size() << " tracker planes found with hits" << endreq;
@@ -258,7 +286,11 @@ unsigned int TriggerAlg::tracker(const Event::TkrDigiCol&  planes){
     
 }
 //------------------------------------------------------------------------------
-unsigned int TriggerAlg::calorimeter(const Event::CalDigiCol& calDigi){
+unsigned int TriggerAlg::calorimeter(const Event::CalDigiCol& calDigi)
+{
+    // purpose and method: calculate CAL trigger bits from the list of digis
+
+    
     using namespace Event;
     // purpose: set calorimeter trigger bits
     MsgStream   log( msgSvc(), name() );
@@ -302,7 +334,11 @@ unsigned int TriggerAlg::calorimeter(const Event::CalDigiCol& calDigi){
     
 }
 //------------------------------------------------------------------------------
-unsigned int TriggerAlg::anticoincidence(const Event::AcdDigiCol& tiles){
+unsigned int TriggerAlg::anticoincidence(const Event::AcdDigiCol& tiles)
+{
+    // purpose and method: calculate ACD trigger bits from the list of hit tiles
+
+    
     using namespace Event;
     // purpose: set ACD trigger bits
     MsgStream   log( msgSvc(), name() );
@@ -310,6 +346,7 @@ unsigned int TriggerAlg::anticoincidence(const Event::AcdDigiCol& tiles){
     unsigned int ret=0;
     for( AcdDigiCol::const_iterator it = tiles.begin(); it !=tiles.end(); ++it){
         ret |= b_ACDL; 
+        //TODO: check threshold, set high bit
     } 
     return ret;
 }
@@ -317,10 +354,13 @@ unsigned int TriggerAlg::anticoincidence(const Event::AcdDigiCol& tiles){
 
 //------------------------------------------------------------------------------
 StatusCode TriggerAlg::finalize() {
+
+    // purpose and method: make a summary
+
     StatusCode  sc = StatusCode::SUCCESS;
     
     MsgStream log(msgSvc(), name());
-    log << MSG::INFO << "Totals triggered/ processed: " << m_total << "/" << m_triggered ; 
+    log << MSG::INFO << "Totals triggered/ processed: " << m_triggered << "/" << m_total ; 
     
     bitSummary(log.stream());
     log << endreq;
