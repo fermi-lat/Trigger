@@ -2,7 +2,7 @@
 * @file TriggerAlg.cxx
 * @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Recon/src/Trigger.cxx,v 1.4 2002/05/10 21:54:05 burnett Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.4 2002/05/11 23:16:14 burnett Exp $
 */
 
 // Include files
@@ -106,6 +106,7 @@ StatusCode TriggerAlg::initialize() {
     // Use the Job options service to set the Algorithm's parameters
     setProperties();
     
+    log << MSG::INFO <<"Applying mask: " <<  std::setbase(16) <<m_mask <<  endreq;
     return sc;
 }
 
@@ -190,9 +191,11 @@ unsigned int TriggerAlg::anticoincidence(const Event::AcdDigiCol& tiles){
     // purpose: set ACD trigger bits
     MsgStream   log( msgSvc(), name() );
     log << MSG::DEBUG << tiles.size() << " tiles found with hits" << endreq;
+    unsigned int ret=0;
     for( AcdDigiCol::const_iterator it = tiles.begin(); it !=tiles.end(); ++it){
-    }
-    return 0;
+        ret |= b_ACDL; 
+    } 
+    return ret;
 }
 
 
