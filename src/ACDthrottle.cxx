@@ -1,4 +1,4 @@
-// $Header: /nfs/slac/g/glast/ground/cvs/trigger/src/ACDthrottle.cxx,v 1.2 2001/10/01 20:02:34 heather Exp $
+// $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/ACDthrottle.cxx,v 1.3 2001/10/02 13:12:38 heather Exp $
 
 // Include files
 // Gaudi system includes
@@ -8,6 +8,7 @@
 #include "GaudiKernel/SmartDataPtr.h"
 #include "GaudiKernel/Algorithm.h"
 
+#if 0  //==========================FIXME=========================================
 // ntuple interface
 #include "ntupleWriterSvc/INTupleWriterSvc.h"
 
@@ -23,7 +24,7 @@
 
 // access to the id classes
 #include "idents/AcdId.h"
-
+#endif //========================================================================
 
 #include <cassert>
 
@@ -44,6 +45,7 @@ public:
     StatusCode finalize();
     
 private: 
+#if 0  //==========================FIXME=========================================
     //! routine to extract parameters from the instrument.xml file
     void getParameters();
     //! setup our ntuple
@@ -75,6 +77,7 @@ private:
     INTupleWriterSvc *m_ntupleWriteSvc;
     //! parameter to store the logical name of the ROOT file to write to
     std::string m_tupleName;
+#endif //========================================================================
 };
 //------------------------------------------------------------------------
 
@@ -89,10 +92,10 @@ const IAlgFactory& ACDthrottleFactory = Factory;
 //! ctor
 ACDthrottle::ACDthrottle(const std::string& name, ISvcLocator* pSvcLocator)
 :Algorithm(name, pSvcLocator)
-, m_detSvc(0), m_ini(0)
+//, m_detSvc(0), m_ini(0)
 {
     // declare properties with setProperties calls
-    declareProperty("tupleName",  m_tupleName="");
+//    declareProperty("tupleName",  m_tupleName="");
     
 }
 //------------------------------------------------------------------------
@@ -101,7 +104,7 @@ StatusCode ACDthrottle::initialize(){
     StatusCode  sc = StatusCode::SUCCESS;
     MsgStream log(msgSvc(), name());
     log << MSG::INFO << "initialize" << endreq;
-    
+#if 0  //==========================FIXME=========================================
     // Use the Job options service to set the Algorithm's parameters
     setProperties();
     
@@ -202,7 +205,7 @@ StatusCode ACDthrottle::initialize(){
         log << MSG::ERROR << "writeJunkAlg failed to get the ntupleWriterSvc" << endreq;
         return StatusCode::FAILURE;
     }
-    
+#endif //========================================================================
     //setupNtuple();
     return sc;
 }
@@ -213,7 +216,7 @@ StatusCode ACDthrottle::execute()
 {
     StatusCode  sc = StatusCode::SUCCESS;
     MsgStream   log( msgSvc(), name() );
-    
+#if 0  //==========================FIXME=========================================
     /*! Causes the TDS to be searched, if the data is unavailable, the appropriate
     converter is called to retrieve the data from some persistent store, in this
     case from an IRF. 
@@ -367,6 +370,7 @@ StatusCode ACDthrottle::execute()
     }
     
     sc = fillNtuple();
+#endif //========================================================================
     return sc;
 }
 
@@ -378,7 +382,7 @@ StatusCode ACDthrottle::finalize(){
     
     return sc;
 }
-
+#if 0  //==========================FIXME=========================================
 
 /// Retrieve parameters from the instrument.xml file
 void ACDthrottle::getParameters ()
@@ -486,3 +490,4 @@ unsigned long ACDthrottle::TKRtowerbitpattern(const SiData *tkrDigiData, unsigne
     }
     return bitString;
 }
+#endif //========================================================================
