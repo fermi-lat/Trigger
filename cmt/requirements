@@ -7,7 +7,6 @@ version v1r3
 
 use GlastSvc
 use ntupleWriterSvc
-use GlastDigi
 
 branches src cmt doc
 

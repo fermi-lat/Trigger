@@ -24,3 +24,11 @@ extern "C" FactoryTable::EntryList* getFactoryEntries() {
   return FactoryTable::instance()->getEntries();
 } 
 
+//needed for this
+void FATAL(const char * msg) {
+    std::cerr << "Fatal error from trigger DLL: " << msg << std::endl; exit(-1);
+}
+
+void WARNING(const char * msg) {
+    std::cerr << "Warning message from trigger DLL:" << msg << std::endl;
+}
