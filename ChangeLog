@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Sat May 11 15:10:58 PDT 2002
+Trigger/src
+
+Modified Files:
+	ACDthrottle.cxx 
+Log Message:
+comment out lots of stuff that needs to be converted
+    *
+------------------------------------------------------------
 User: burnett  Fri Oct  5 10:53:34 PDT 2001
 trigger/cmt requirements
 
