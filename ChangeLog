@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: chehtman  Wed May 22 15:01:30 PDT 2002
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx 
+Log Message:
+Calorimeter trigger implemented
+    *
+------------------------------------------------------------
 User: burnett  Mon May 13 19:38:39 PDT 2002
 Trigger/src
 
