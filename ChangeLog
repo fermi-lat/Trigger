@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Wed Nov 10 14:02:41 PST 2004
+Trigger/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+move TriRowBits.h to new public header directory
+    *
+------------------------------------------------------------
 User: heather  Wed Nov 10 14:02:11 PST 2004
 Trigger/cmt
 
