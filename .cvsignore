@@ -1,0 +1,14 @@
+i686
+aclocal.m4
+config
+config.*
+configure
+libtool
+Makefile
+Makefile.in
+stamp-h*
+
+msdev
+Win32
+Win32Debug
+Visual

@@ -1,0 +1,27 @@
+// $Header: /nfs/slac/g/glast/ground/cvs/userAlg/src/jobOptions.txt,v 1.1.1.1 2001/04/01 22:25:06 burnett Exp $
+//##############################################################
+//
+// Job options file for user algorithm development
+//
+// expect this to be defined in pdrApp, as basic set.
+#include "$PDRAPPROOT/src/pdrOptions.txt"
+
+// include algorithms in this package to append to GismoGenerator, AOrecon.
+ApplicationMgr.TopAlg += { "UserAlg"};
+
+// Set output level threshold (2=DEBUG, 3=INFO, 4=WARNING, 5=ERROR, 6=FATAL )
+MessageSvc.OutputLevel      = 2;
+
+// suppress output tuple with ""; enable with "AORECON". 
+//AOrecon.tuple_name="";
+
+// source name from flux/xml/source_library.xml, and number of events.
+GismoGenerator.source_name="muons";
+ApplicationMgr.EvtMax = 100;
+
+//==============================================================
+//
+// End of job options file
+//
+//##############################################################
+
