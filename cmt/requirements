@@ -1,15 +1,23 @@
-package trigger
-version v1
+package Trigger
+version v3r6
+
+author T. Burnett <tburnett@u.washington.edu>
+# $Id: requirements,v 1.27 2004/03/09 16:58:52 dnwren Exp $
 
 # --------------------------
 # define trigger algorithms
 # --------------------------
 
-use GlastSvc
+
+use Event *
+use GlastSvc *
+
+
 branches src cmt doc
 
-# define link options
 apply_pattern packageShr
+
+
 
 #=============================================================
 private
@@ -17,12 +25,8 @@ private
 # get flags to build shared library
 
 apply_pattern package_Cshlibflags
+apply_pattern package_headers
 
-library trigger  *.cxx *.h Dll/*.cxx
+library Trigger  *.cxx ${Trigger_headers}
 
-
-# build this for testing 
-
-private
-
-application test_trigger ${Main}  *.cxx $(jobOptions) 
+apply_pattern package_test

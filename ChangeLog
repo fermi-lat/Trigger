@@ -1,4 +1,768 @@
 ------------------------------------------------------------
+User: dnwren  Mon Mar 15 19:31:52 PST 2004
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx 
+Log Message:
+moved throttle code to seperate class
+
+    *
+------------------------------------------------------------
+User: dnwren  Mon Mar 15 18:54:38 PST 2004
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx 
+Log Message:
+moved throttle code into a seperate class
+
+    *
+------------------------------------------------------------
+User: dnwren  Tue Mar  9 08:58:52 PST 2004
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx 
+Log Message:
+added new throttle code that appends a bit to the GltWord
+
+    *
+------------------------------------------------------------
+User: dnwren  Tue Mar  9 08:58:52 PST 2004
+Trigger/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+added new throttle code that appends a bit to the GltWord
+
+    *
+------------------------------------------------------------
+User: dnwren  Tue Mar  9 08:58:52 PST 2004
+Trigger/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+added new throttle code that appends a bit to the GltWord
+
+    *
+------------------------------------------------------------
+User: burnett  Fri Aug 29 06:38:54 PDT 2003
+Trigger/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+
+tagging v3r5p3
+    *
+------------------------------------------------------------
+User: burnett  Fri Aug 29 06:38:54 PDT 2003
+Trigger/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+
+tagging v3r5p3
+    *
+------------------------------------------------------------
+User: burnett  Fri Aug 29 06:36:35 PDT 2003
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx Trigger_load.cxx 
+Removed Files:
+	ACDthrottle.cxx 
+Log Message:
+remove obsolete code; lower output level 
+    *
+------------------------------------------------------------
+User: burnett  Thu Jun 12 17:06:56 PDT 2003
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx 
+Log Message:
+
+fix warning message; tagging
+    *
+------------------------------------------------------------
+User: burnett  Thu Jun 12 17:06:55 PDT 2003
+Trigger/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+
+fix warning message; tagging
+    *
+------------------------------------------------------------
+User: burnett  Thu Jun 12 17:06:55 PDT 2003
+Trigger/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+
+fix warning message; tagging
+    *
+------------------------------------------------------------
+User: burnett  Wed Jan 15 13:17:10 PST 2003
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx 
+Log Message:
+log problem from gaudi workaround
+    *
+------------------------------------------------------------
+User: burnett  Wed Jan 15 13:17:10 PST 2003
+Trigger/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+log problem from gaudi workaround
+    *
+------------------------------------------------------------
+User: burnett  Wed Jan 15 13:17:10 PST 2003
+Trigger/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+log problem from gaudi workaround
+    *
+------------------------------------------------------------
+User: als  Thu Jan  9 19:13:15 PST 2003
+Trigger/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+sandbox merge
+
+version v3r5
+use statement updates
+
+    *
+------------------------------------------------------------
+User: cohen  Tue Dec  3 00:48:42 PST 2002
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx 
+Log Message:
+replace std::cout by log (sorry)
+    *
+------------------------------------------------------------
+User: cohen  Mon Dec  2 12:51:19 PST 2002
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx 
+Log Message:
+creation of a GltDigi class, filled in TriggerAlg.cxx (for now!)
+    *
+------------------------------------------------------------
+User: burnett  Tue Nov 19 08:07:03 PST 2002
+Trigger/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+
+tagging v3r4
+    *
+------------------------------------------------------------
+User: burnett  Tue Nov 19 08:07:03 PST 2002
+Trigger/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+
+tagging v3r4
+    *
+------------------------------------------------------------
+User: burnett  Tue Nov 19 07:54:06 PST 2002
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx 
+Log Message:
+fix bad code caught by gcc
+    *
+------------------------------------------------------------
+User: burnett  Mon Nov 18 23:47:49 PST 2002
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx 
+Log Message:
+preliminary fix to apply tracker trigger properly, keep tower stats
+    *
+------------------------------------------------------------
+User: chehtman  Wed Nov 13 14:32:26 PST 2002
+Trigger/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+HICAL trigger modified from 3-in-a-row algorithm to simple OR of all discriminators.
+ Unnecessary conversion GeV => MeV suppressed.
+    *
+------------------------------------------------------------
+User: chehtman  Wed Nov 13 14:19:25 PST 2002
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx 
+Log Message:
+HICAL trigger modified from 3-in-a-row algorithm to simple OR of all discriminators.
+ Unnecessary conversion GeV => MeV suppressed.
+    *
+------------------------------------------------------------
+User: burnett  Tue Sep 10 18:08:59 PDT 2002
+Trigger/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+fix for changed Event
+    *
+------------------------------------------------------------
+User: burnett  Tue Sep 10 18:08:59 PDT 2002
+Trigger/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+fix for changed Event
+    *
+------------------------------------------------------------
+User: burnett  Mon Jun 10 10:59:45 PDT 2002
+Trigger/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+tagging v3r3p3
+    *
+------------------------------------------------------------
+User: burnett  Mon Jun 10 10:59:44 PDT 2002
+Trigger/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+tagging v3r3p3
+    *
+------------------------------------------------------------
+User: burnett  Mon Jun 10 10:58:12 PDT 2002
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx 
+Log Message:
+allow either for scope
+    *
+------------------------------------------------------------
+User: burnett  Sat Jun  8 20:15:03 PDT 2002
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx 
+Log Message:
+fix warnings
+    *
+------------------------------------------------------------
+User: burnett  Fri Jun  7 07:47:37 PDT 2002
+Trigger/src/test
+
+Modified Files:
+	jobOptions.txt 
+Log Message:
+
+implement minimal test program
+    *
+------------------------------------------------------------
+User: burnett  Fri Jun  7 07:47:36 PDT 2002
+Trigger/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+
+implement minimal test program
+    *
+------------------------------------------------------------
+User: burnett  Thu Jun  6 21:00:42 PDT 2002
+Trigger/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+
+see release.notes, ChangeLog. tagging v3r3p1
+    *
+------------------------------------------------------------
+User: burnett  Thu Jun  6 21:00:42 PDT 2002
+Trigger/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+
+see release.notes, ChangeLog. tagging v3r3p1
+    *
+------------------------------------------------------------
+User: burnett  Thu Jun  6 20:58:51 PDT 2002
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx 
+Log Message:
+
+tuning to test for digiRootReader signature.
+    *
+------------------------------------------------------------
+User: burnett  Thu Jun  6 14:52:41 PDT 2002
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx mainpage.h 
+Log Message:
+
+add a few doc comments. do not set run/event if already set; if trigger is set, check it.
+    *
+------------------------------------------------------------
+User: burnett  Fri May 31 12:27:19 PDT 2002
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx 
+Log Message:
+
+tagging v3r3, following change to set bits in EventHeader
+    *
+------------------------------------------------------------
+User: burnett  Fri May 31 12:27:19 PDT 2002
+Trigger/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+
+tagging v3r3, following change to set bits in EventHeader
+    *
+------------------------------------------------------------
+User: burnett  Fri May 31 12:27:19 PDT 2002
+Trigger/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+
+tagging v3r3, following change to set bits in EventHeader
+    *
+------------------------------------------------------------
+User: burnett  Sat May 25 12:59:32 PDT 2002
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx 
+Log Message:
+add some diagnostic output--will move tag
+    *
+------------------------------------------------------------
+User: burnett  Fri May 24 20:20:06 PDT 2002
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx 
+Log Message:
+
+set release.notes: tagging v3r2
+    *
+------------------------------------------------------------
+User: burnett  Fri May 24 20:20:06 PDT 2002
+Trigger/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+
+set release.notes: tagging v3r2
+    *
+------------------------------------------------------------
+User: burnett  Fri May 24 15:08:48 PDT 2002
+Trigger/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+
+tagging v3r2
+    *
+------------------------------------------------------------
+User: burnett  Fri May 24 15:08:48 PDT 2002
+Trigger/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+
+tagging v3r2
+    *
+------------------------------------------------------------
+User: chehtman  Wed May 22 15:03:38 PDT 2002
+Trigger/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+use GlastSvc added : needed for calorimeter trigger 
+    *
+------------------------------------------------------------
+User: chehtman  Wed May 22 15:01:30 PDT 2002
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx 
+Log Message:
+Calorimeter trigger implemented
+    *
+------------------------------------------------------------
+User: burnett  Mon May 13 19:38:39 PDT 2002
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx 
+Log Message:
+
+simple 
+    *
+------------------------------------------------------------
+User: burnett  Mon May 13 19:38:39 PDT 2002
+Trigger/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+
+simple 
+    *
+------------------------------------------------------------
+User: burnett  Sat May 11 16:16:15 PDT 2002
+Trigger/src
+
+Added Files:
+	TriggerAlg.cxx 
+Log Message:
+new alg to do the (former Level 1) trigger
+    *
+------------------------------------------------------------
+User: burnett  Sat May 11 15:28:28 PDT 2002
+Trigger/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+ready for tag v3r0
+    *
+------------------------------------------------------------
+User: burnett  Sat May 11 15:28:28 PDT 2002
+Trigger/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+ready for tag v3r0
+    *
+------------------------------------------------------------
+User: burnett  Sat May 11 15:27:59 PDT 2002
+Trigger/src
+
+Modified Files:
+	Trigger_dll.cxx Trigger_load.cxx mainpage.h 
+Log Message:
+follow conventions
+    *
+------------------------------------------------------------
+User: burnett  Sat May 11 15:10:58 PDT 2002
+Trigger/src
+
+Modified Files:
+	ACDthrottle.cxx 
+Log Message:
+comment out lots of stuff that needs to be converted
+    *
+------------------------------------------------------------
+User: burnett  Fri Oct  5 10:53:34 PDT 2001
+trigger/cmt requirements
+
+Modified Files:
+	requirements 
+Log Message:
+ok for test pattern
+    *
+------------------------------------------------------------
+User: burnett  Thu Oct  4 14:42:48 PDT 2001
+trigger/cmt requirements
+
+Modified Files:
+	requirements 
+Log Message:
+wait for new pattern
+    *
+------------------------------------------------------------
+User: heather  Tue Oct  2 06:12:38 PDT 2001
+trigger/src ACDthrottle.cxx
+
+Modified Files:
+	ACDthrottle.cxx 
+Log Message:
+renamed ACD_Throttle to ACD_Throttle_Bits
+    *
+------------------------------------------------------------
+User: heather  Mon Oct  1 13:02:34 PDT 2001
+trigger/src ACDthrottle.cxx
+
+Modified Files:
+	ACDthrottle.cxx 
+Log Message:
+modify the ntuple names and reformat
+    *
+------------------------------------------------------------
+User: burnett  Tue Sep  4 09:20:48 PDT 2001
+trigger/src/test jobOptions.txt
+
+Added Files:
+	jobOptions.txt 
+Log Message:
+
+Fix up as an example for the test program facility
+    *
+------------------------------------------------------------
+User: burnett  Tue Sep  4 09:20:47 PDT 2001
+trigger/cmt requirements
+
+Modified Files:
+	requirements 
+Log Message:
+
+Fix up as an example for the test program facility
+    *
+------------------------------------------------------------
+User: burnett  Tue Sep  4 09:18:14 PDT 2001
+trigger/src/test - New directory
+
+Log Message:
+Directory /nfs/slac/g/glast/ground/cvs/trigger/src/test added to the repository
+
+    *
+------------------------------------------------------------
+User: burnett  Wed Aug 15 15:49:57 PDT 2001
+trigger/cmt requirements
+
+Modified Files:
+	requirements 
+Log Message:
+
+remove ld_library_path macro.
+    *
+------------------------------------------------------------
+User: burnett  Wed Aug 15 15:35:05 PDT 2001
+trigger/src trigger_dll.cxx
+
+Modified Files:
+	trigger_dll.cxx 
+Log Message:
+
+removed dependence on glastDigi; put in WARNING and FATAL funtions in case need (by unix?)
+    *
+------------------------------------------------------------
+User: burnett  Wed Aug 15 15:35:04 PDT 2001
+trigger/cmt requirements
+
+Modified Files:
+	requirements 
+Log Message:
+
+removed dependence on glastDigi; put in WARNING and FATAL funtions in case need (by unix?)
+    *
+------------------------------------------------------------
+User: burnett  Wed Aug  8 10:25:36 PDT 2001
+trigger/src ACDthrottle.cxx trigger_load.cxx
+
+Modified Files:
+	trigger_load.cxx 
+Added Files:
+	ACDthrottle.cxx 
+Log Message:
+insert SR's ACD throttle code
+    *
+------------------------------------------------------------
+User: kyoung  Wed Jul 18 13:08:47 PDT 2001
+trigger/cmt requirements
+
+Modified Files:
+	requirements 
+Log Message:
+Added ld_library_path
+    *
+------------------------------------------------------------
+User: kyoung  Wed Jul 18 12:49:48 PDT 2001
+trigger/cmt requirements
+
+Modified Files:
+	requirements 
+Log Message:
+Added use GlastDigi
+    *
+------------------------------------------------------------
+User: igable  Sun Jul 15 15:14:49 PDT 2001
+trigger/cmt requirements
+
+Modified Files:
+	requirements 
+Log Message:
+headers pattern
+    *
+------------------------------------------------------------
+User: burnett  Thu Jun 21 13:50:35 PDT 2001
+trigger/src Level1.cxx
+
+Modified Files:
+	Level1.cxx 
+Log Message:
+reassing the cal trigger bits.
+
+    *
+------------------------------------------------------------
+User: chehtman  Tue Jun 19 16:14:33 PDT 2001
+trigger/src Level1.cxx
+
+Modified Files:
+	Level1.cxx 
+Log Message:
+ 3-in-a-row logic implemented for HiCal trigger.
+    *
+------------------------------------------------------------
+User: burnett  Sat Jun 16 21:43:24 PDT 2001
+trigger/src Level1.cxx
+
+Modified Files:
+	Level1.cxx 
+Log Message:
+implement test for mask: if zero no test.
+
+    *
+------------------------------------------------------------
+User: burnett  Sat Jun 16 21:43:23 PDT 2001
+trigger/cmt requirements
+
+Modified Files:
+	requirements 
+Log Message:
+implement test for mask: if zero no test.
+
+    *
+------------------------------------------------------------
+User: burnett  Sat Jun 16 07:07:50 PDT 2001
+trigger/cmt requirements
+
+Modified Files:
+	requirements 
+Log Message:
+update versions
+
+    *
+------------------------------------------------------------
+User: burnett  Fri Jun 15 21:19:50 PDT 2001
+trigger/src Level1.cxx
+
+Modified Files:
+	Level1.cxx 
+Log Message:
+
+define mask; use to set filter
+    *
+------------------------------------------------------------
+User: burnett  Thu Jun  7 09:17:33 PDT 2001
+trigger/doc release.notes
+
+Added Files:
+	release.notes 
+Log Message:
+prepare for tag
+    *
+------------------------------------------------------------
+User: burnett  Thu Jun  7 09:17:04 PDT 2001
+trigger/doc - New directory
+
+Log Message:
+Directory /nfs/slac/g/glast/ground/cvs/trigger/doc added to the repository
+
+    *
+------------------------------------------------------------
+User: burnett  Sat Jun  2 16:27:06 PDT 2001
+trigger/cmt requirements
+
+Modified Files:
+	requirements 
+Log Message:
+clean up library spec
+    *
+------------------------------------------------------------
+User: burnett  Mon May 28 16:57:26 PDT 2001
+trigger/src Level1.cxx
+
+Modified Files:
+	Level1.cxx 
+Log Message:
+
+compiles.
+    *
+------------------------------------------------------------
+User: burnett  Mon May 28 16:47:37 PDT 2001
+trigger/src Level1.cxx trigger_dll.cxx trigger_load.cxx TriggerAlg.cxx
+
+Modified Files:
+	trigger_load.cxx 
+Added Files:
+	Level1.cxx trigger_dll.cxx 
+Removed Files:
+	TriggerAlg.cxx 
+Log Message:
+Rename algoritm, implement varous trigger bits using AO bit definitions.
+
+    *
+------------------------------------------------------------
+User: burnett  Mon May 28 16:47:36 PDT 2001
+trigger/cmt requirements
+
+Modified Files:
+	requirements 
+Log Message:
+Rename algoritm, implement varous trigger bits using AO bit definitions.
+
+    *
+------------------------------------------------------------
+User: burnett  Wed May 23 08:04:43 PDT 2001
+trigger/src TriggerAlg.cxx
+
+Modified Files:
+	TriggerAlg.cxx 
+Log Message:
+
+compilation errors fixed.
+    *
+------------------------------------------------------------
 User: burnett  Wed May 23 07:56:24 PDT 2001
 trigger - Imported sources
 

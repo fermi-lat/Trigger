@@ -1,4 +1,21 @@
-Package trigger
-Coordinator: T. Burnett
+/** @file release.notes
+ * @brief package Trigger
+ * package manager:T.Burnett 
+  <pre>
+ *  v3r6   09-mar-04 DNW added new throttle code that appends a bit to the GltWord
+ *  v3r5p3 29-aug-03 THB remove obsolete throttle code; lower output level per event
+ *  v3r5p2 15-jun-03 THB fix test for trigger bits inconsistency (requires it to be initially zero)
+ *  v3r5p1 14-jan-03 THB fixes for vsnet consistency (Gaudi problem with format in log)
 
-07-may-2001: tag v1
+ *  v3r4   19-nov-02 Fix tracker 3-in-a-row to be properly an x-y coincidence: put in stats 
+ *  v3r3p6 13-nov-02 AC HICAL trigger modified: 3-in-a-row logic and unnecessary conversion GeV=>MeV suppressed.  
+ *  v3r3p4 10-sep-02 THB Event, GlastSvc version
+ *  v3r3p3 10-jun-02 THB for scope fix
+ *  v3r3p1 07jun-02 THB do not EventHeader if set by RootIo
+ *  v3r3  31-may-02 THB set bits in EventHeader
+ *  v3r2  24-may-02 THB cal trigger included; set run, event no if trigger
+ *  v3r1  13-may-02 THB add ACD as bit 1
+ *  v3r0  11-may-02 THB renamed from old trigger
+ *
+ </pre>
+*/

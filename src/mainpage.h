@@ -1,9 +1,9 @@
-//$Header: /nfs/slac/g/glast/ground/cvs/userAlg/src/mainpage.h,v 1.1.1.1 2001/04/01 22:25:06 burnett Exp $
+//$Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/mainpage.h,v 1.3 2002/06/06 21:52:41 burnett Exp $
 // (Special "header" just for doxygen)
 
-/*! @mainpage  package trigger
+/*! @mainpage  package Trigger
 
-
+See TriggerAlg documentation.
 
   <hr>
   \section jobOptions src/jobOptions.txt
