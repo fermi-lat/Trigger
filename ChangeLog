@@ -1,4 +1,17 @@
 ------------------------------------------------------------
+User: heather  Wed Nov 10 14:10:02 PST 2004
+Trigger/src
+
+Modified Files:
+      Tag: GlastRelease-v4r6
+	TriggerAlg.cxx 
+Removed Files:
+      Tag: GlastRelease-v4r6
+	TriRowBits.h 
+Log Message:
+move TriRowBits.h to new public header directory
+    *
+------------------------------------------------------------
 User: heather  Wed Nov 10 14:09:35 PST 2004
 Trigger/Trigger
 
