@@ -6,9 +6,10 @@ version v1
 # --------------------------
 
 use GlastSvc
+use ntupleWriterSvc
+
 branches src cmt doc
 
-# define link options
 apply_pattern packageShr
 
 #=============================================================
