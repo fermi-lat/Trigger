@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Mon Mar 14 20:09:57 PST 2005
+Trigger/src
+
+Modified Files:
+	mainpage.h 
+Log Message:
+update for new ntuple documentation scheme
+    *
+------------------------------------------------------------
 TAG
 Tag name: v3r16, operation: add
 Package: Trigger
