@@ -2,7 +2,7 @@
 * @file TriggerAlg.cxx
 * @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.6 2002/05/22 22:01:29 chehtman Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.7 2002/05/25 03:20:06 burnett Exp $
 */
 
 // Include files
@@ -59,7 +59,9 @@ public:
             b_ACDH =     2,   //  cover or side veto, high threshold
             b_Track=     4,   //  3 consecutive x-y layers hit
             b_LO_CAL=    8,  //  single log above low threshold
-            b_HI_CAL=   16   //  3 cal layers in a row above high threshold
+            b_HI_CAL=   16,   //  3 cal layers in a row above high threshold
+
+         number_of_trigger_bits = 5
             
     };
     
@@ -74,6 +76,8 @@ private:
     unsigned int  tracker(const Event::TkrDigiCol&  planes);
     unsigned int  calorimeter(const Event::CalDigiCol&  planes);
     unsigned int  anticoincidence(const Event::AcdDigiCol&  planes);
+    void bitSummary(std::ostream& out);
+
     StatusCode caltrigsetup();
     
     unsigned int m_mask;
@@ -91,6 +95,12 @@ private:
     
     int m_run;
     int m_event;
+
+    // for statistics
+    int m_total;
+    int m_triggered;
+    std::map<int,int> m_counts; //map of values for each bit pattern
+
     
     
 };
@@ -101,7 +111,8 @@ const IAlgFactory& TriggerAlgFactory = Factory;
 //------------------------------------------------------------------------------
 /// 
 TriggerAlg::TriggerAlg(const std::string& name, ISvcLocator* pSvcLocator) :
-Algorithm(name, pSvcLocator), m_event(0){
+Algorithm(name, pSvcLocator), m_event(0) ,m_total(0), m_triggered(0)
+{
     declareProperty("mask"     ,  m_mask=0xffffffff); // trigger mask
     declareProperty("run"      ,  m_run =0 );  
    
@@ -188,11 +199,16 @@ StatusCode TriggerAlg::execute() {
         | (acd? anticoincidence(acd) : 0);
     
     
+    m_total++;
+    m_counts[trigger_bits] = m_counts[trigger_bits]+1;
+
     // apply filter for subsequent processing.
     if( m_mask!=0 && ( trigger_bits & m_mask) == 0) {
         setFilterPassed( false );
         log << MSG::DEBUG << "Event did not trigger" << endreq;
     }else {
+        m_triggered++;
+
         
         SmartDataPtr<Event::EventHeader> header(eventSvc(), EventModel::EventHeader);
         
@@ -202,7 +218,7 @@ StatusCode TriggerAlg::execute() {
             h.setRun(m_run);
             h.setEvent(++m_event);
             
-            log << MSG::DEBUG << "Begin event " << m_event  << " trigger bits "  
+            log << MSG::INFO << "Begin event " << m_event  << " trigger bits "  
                 << std::setbase(16) << (m_mask==0?trigger_bits:trigger_bits& m_mask) << endreq;
             
         } else { 
@@ -303,9 +319,46 @@ StatusCode TriggerAlg::finalize() {
     StatusCode  sc = StatusCode::SUCCESS;
     
     MsgStream log(msgSvc(), name());
+    log << MSG::INFO << "Totals triggered/ processed: " << m_total << "/" << m_triggered ; 
     
+    bitSummary(log.stream());
+    log << endreq;
+
     return StatusCode::SUCCESS;
 }
+//------------------------------------------------------------------------------
+void TriggerAlg::bitSummary(std::ostream& out){
+
+    // purpose and method: make a summary of the bit frequencies to the stream
+
+    using namespace std;
+    int size= number_of_trigger_bits;  // bits to expect
+    static int col1=16; // width of first column
+    out << endl << "             bit frequency table";
+    out << endl << setw(col1) << "value"<< setw(6) << "count" ;
+    int j, grand_total=0;
+    for(j=0; j<size; ++j) out << setw(6) << (1<<j);
+    out << endl << setw(col1) <<" "<< setw(6) << "------"; 
+    for( j=0; j<size; ++j) out << setw(6) << "-----";
+    vector<int>total(size);
+    for( map<int,int>::const_iterator it = m_counts.begin(); it != m_counts.end(); ++it){
+        int i = (*it).first, n = (*it).second;
+        grand_total += n;
+        out << endl << setw(col1)<< i << setw(6)<< n ;
+        for(j=0; j<size; ++j){
+            int m = ((i&(1<<j))!=0)? n :0;
+            total[j] += m;
+            out << setw(6) << m ;
+        }
+    }
+    out << endl << setw(col1) <<" "<< setw(6) << "------"; 
+    for( j=0; j<size; ++j) out << setw(6) << "-----";
+    out << endl << setw(col1) << "tot:" << setw(6)<< grand_total;
+    for( j=0; j<size; ++j) out << setw(6) << total[j];
+
+
+}
+
 
 //------------------------------------------------------------------------------
 
