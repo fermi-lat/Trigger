@@ -6,7 +6,8 @@ version v3r0
 # --------------------------
 
 
-use Event
+use Event v8*
+use GlastSvc v8*
 
 branches src cmt doc
 
