@@ -1,13 +1,12 @@
-package trigger
-version v2r1
+package Trigger
+version v3r0
 
 # --------------------------
 # define trigger algorithms
 # --------------------------
 
 
-use GlastSvc
-use ntupleWriterSvc
+use Event
 
 branches src cmt doc
 
@@ -23,7 +22,7 @@ private
 apply_pattern package_Cshlibflags
 apply_pattern package_headers
 
-library trigger  *.cxx ${trigger_headers}
+library Trigger  *.cxx ${Trigger_headers}
 
 # uncomment when have pattern defined
-apply_pattern package_test
+#apply_pattern package_test
