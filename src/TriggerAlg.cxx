@@ -2,7 +2,7 @@
 * @file TriggerAlg.cxx
 * @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.37 2004/11/10 22:04:00 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.38 2004/12/01 01:11:34 burnett Exp $
 */
 
 
@@ -218,6 +218,10 @@ StatusCode TriggerAlg::caltrigsetup()
 
 bool TriggerAlg::alive(double current_time)
 { 
+    // this is the case when reading back.
+    if (m_deadtime<=0) return true;
+    // ok we actually want to apply a deadtime: in this case *assume* time is increasing!
+
     return (current_time-m_lastTriggerTime >=m_deadtime);
 }
 

@@ -3,6 +3,7 @@
  * package manager:T.Burnett 
   <pre>
 
+ *  v3r14p1 07-dec-04 THB allow consecutive events to have decreasing times 
  *  v3r14   30-nov-04 THB allow consecutive events to have the same time 
             10-nov-04 HMK move TriRowBits.h to new public header directory
             10-nov-04 HMK move TriRowBits.h to new public header directory
