@@ -18,8 +18,9 @@ private
 # get flags to build shared library
 
 apply_pattern package_Cshlibflags
+apply_pattern package_headers
 
-library trigger  *.cxx *.h 
+library trigger  *.cxx ${trigger_headers}
 
 
 # build this for testing 
