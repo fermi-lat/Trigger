@@ -1,13 +1,4 @@
 ------------------------------------------------------------
-User: burnett  Fri Feb 18 13:55:54 PST 2005
-Trigger/cmt
-
-Modified Files:
-	requirements 
-Log Message:
-convert to use enums for trigger bit definitions
-    *
-------------------------------------------------------------
 TAG
 Tag name: v3r15p1, operation: add
 Package: Trigger
