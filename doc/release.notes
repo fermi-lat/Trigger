@@ -1,4 +1,9 @@
-Package trigger
-Coordinator: T. Burnett
-
-07-may-2001: tag v1
+/** @file release.notes
+ * package Trigger
+ * package manager:T.Burnett 
+  
+ *
+ *  v3r0  11-may-02 THB renamed from old trigger
+ *
+ 
+*/
