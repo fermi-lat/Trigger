@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Thu Jul 22 06:26:38 PDT 2004
+Trigger/src
+
+Modified Files:
+	Trigger_dll.cxx 
+Log Message:
+update Gaudi interface
+    *
+------------------------------------------------------------
 User: dnwren  Mon Mar 15 19:35:42 PST 2004
 Trigger
 
