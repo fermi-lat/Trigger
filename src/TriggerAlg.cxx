@@ -2,7 +2,7 @@
 * @file TriggerAlg.cxx
 * @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.34 2004/10/14 16:40:10 burnett Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.35 2004/10/14 16:44:51 burnett Exp $
 */
 
 // Include files
@@ -243,9 +243,9 @@ StatusCode TriggerAlg::execute()
     // set bits in the trigger word
 
     unsigned int trigger_bits = 
-        (  tkr==0? tracker(tkr) : 0 )
-        | (cal==0? calorimeter(cal) : 0 )
-        | (acd==0? anticoincidence(acd) : 0);
+        (  tkr!=0? tracker(tkr) : 0 )
+        | (cal!=0? calorimeter(cal) : 0 )
+        | (acd!=0? anticoincidence(acd) : 0);
 
     SmartDataPtr<Event::EventHeader> header(eventSvc(), EventModel::EventHeader);
 
