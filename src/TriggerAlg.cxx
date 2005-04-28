@@ -2,7 +2,7 @@
 * @file TriggerAlg.cxx
 * @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.42 2005/03/15 15:36:51 burnett Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.43 2005/03/30 04:04:21 cohen Exp $
 */
 
 
@@ -103,7 +103,6 @@ private:
     double m_LOCALthreshold;
     double m_HICALthreshold;
 
-    int m_run;
     int m_event;
     DoubleProperty m_deadtime;
 
@@ -133,7 +132,6 @@ m_lastTriggerTime(0), m_liveTime(0), m_total(0),
 m_triggered(0), m_deadtimeLoss(0)
 {
     declareProperty("mask"     ,  m_mask=0xffffffff); // trigger mask
-    declareProperty("run"      ,  m_run =0 );
     declareProperty("deadtime" ,  m_deadtime=0. );    // deadtime to apply to trigger, in sec.
 
 }
