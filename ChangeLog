@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Thu Apr 28 14:09:42 PDT 2005
+Trigger/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+remove obsolete propery from TriggerAlg
+    *
+------------------------------------------------------------
 TAG
 Tag name: v4r0, operation: add
 Package: Trigger
