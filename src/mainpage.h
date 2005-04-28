@@ -1,4 +1,4 @@
-//$Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/mainpage.h,v 1.5 2004/08/11 20:57:41 burnett Exp $
+//$Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/mainpage.h,v 1.6 2005/03/15 04:09:57 burnett Exp $
 // (Special "header" just for doxygen)
 
 /*! @mainpage  package Trigger
@@ -12,7 +12,6 @@ TriggerAlg analyzes the digis for trigger conditions, and optionally
 sets a flag to abort processing of subsequent algorithms in the same sequence. 
 
 @param mask [0xffffffff]  Mask to apply to the trigger word to decide if event is accepted; if 0, accept all; default accept any set bit
-@param  run  [0]      Run number to apply if MC run
 @param deadtime [0.]  Livetime threshold (s). Ignore if zero. 
     
 If the deadtime is enabled, this much time is subtracted from the accumulated livetime associated with the given 
