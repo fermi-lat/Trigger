@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: burnett  Thu Apr 28 14:09:42 PDT 2005
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx mainpage.h 
+Log Message:
+remove obsolete propery from TriggerAlg
+    *
+------------------------------------------------------------
+User: burnett  Thu Apr 28 14:09:42 PDT 2005
 Trigger/doc
 
 Modified Files:
