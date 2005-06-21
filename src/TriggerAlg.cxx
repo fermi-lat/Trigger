@@ -2,7 +2,7 @@
 * @file TriggerAlg.cxx
 * @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.43 2005/03/30 04:04:21 cohen Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.44 2005/04/28 21:09:42 burnett Exp $
 */
 
 
@@ -27,6 +27,7 @@
 #include "Event/Digi/TkrDigi.h"
 #include "Event/Digi/CalDigi.h"
 #include "Event/Digi/AcdDigi.h"
+#include "Event/Digi/GltDigi.h"
 
 #include "LdfEvent/DiagnosticData.h"
 #include "LdfEvent/Gem.h"
@@ -37,6 +38,7 @@
 #include "Trigger/TriRowBits.h"
 
 #include <map>
+#include <vector>
 
 namespace { // local definitions of convenient inline functions
     inline unsigned three_in_a_row(unsigned bits)
@@ -76,6 +78,8 @@ private:
     //! determine calormiter trigger bits
     /// @return the bits
     unsigned int  calorimeter(const Event::CalDigiCol&  planes);
+    unsigned int  calorimeter(const Event::GltDigi&  glt);
+
     //! calculate ACD trigger bits
     /// @return the bits
     unsigned int  anticoincidence(const Event::AcdDigiCol&  planes);
@@ -229,12 +233,19 @@ StatusCode TriggerAlg::execute()
     SmartDataPtr<Event::AcdDigiCol> acd(eventSvc(), EventModel::Digi::AcdDigiCol);
     if( acd==0 ) log << MSG::DEBUG << "No acd digis found" << endreq;
 
+    SmartDataPtr<Event::GltDigi> glt(eventSvc(), "Event/digi/GltDigi");
+    if( glt==0 ) log << MSG::DEBUG << "No digi bits found" << endreq;
     // set bits in the trigger word
 
     unsigned int trigger_bits = 
         (  tkr!=0? tracker(tkr) : 0 )
-        | (cal!=0? calorimeter(cal) : 0 )
         | (acd!=0? anticoincidence(acd) : 0);
+
+
+    // calorimter is either the new glt, or old cal
+    if( glt!=0 ){ trigger_bits |= calorimeter(glt) ;}
+    else if( cal!=0) {trigger_bits |= calorimeter(cal); }
+
 
     SmartDataPtr<Event::EventHeader> header(eventSvc(), EventModel::EventHeader);
 
@@ -390,6 +401,25 @@ unsigned int TriggerAlg::tracker(const Event::TkrDigiCol&  planes)
     //returns the digi base word, for consistency with the cal and acd.
        if(tkr_trig_flag) return enums::b_Track;
             else return 0;
+}
+//------------------------------------------------------------------------------
+unsigned int TriggerAlg::calorimeter(const Event::GltDigi& glt)
+{
+    // purpose and method: calculate CAL trigger bits from the list of bits
+    bool local=false, hical=false;
+    const std::vector<bool>& cal_lo = glt.getCAL_LO();
+    const std::vector<bool>& cal_hi = glt.getCAL_HI();
+    for( std::vector<bool>::const_iterator bit = cal_lo.begin(); 
+        bit!=cal_lo.end(); ++ bit){
+        if( *bit) { local = true; break;}
+    }
+    for( std::vector<bool>::const_iterator bit = cal_hi.begin(); 
+        bit!=cal_hi.end(); ++ bit){
+        if( *bit) { hical = true; break;}
+    }
+    return (local ? enums::b_LO_CAL:0) 
+        |  (hical ? enums::b_HI_CAL:0);
+
 }
 //------------------------------------------------------------------------------
 unsigned int TriggerAlg::calorimeter(const Event::CalDigiCol& calDigi)
