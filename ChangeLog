@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Mon Jun 20 19:39:38 PDT 2005
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx 
+Log Message:
+preparing for bits from CalDigi
+    *
+------------------------------------------------------------
 TAG
 Tag name: v4r0p1, operation: add
 Package: Trigger
