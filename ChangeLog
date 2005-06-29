@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: burnett  Wed Jun 29 05:20:03 PDT 2005
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx 
+Log Message:
+fix error output when runnng from mcRootData file
+    *
+------------------------------------------------------------
+User: burnett  Wed Jun 29 05:20:03 PDT 2005
 Trigger/doc
 
 Modified Files:
