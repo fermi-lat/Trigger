@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Wed Jun 29 05:20:02 PDT 2005
+Trigger/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+fix error output when runnng from mcRootData file
+    *
+------------------------------------------------------------
 User: burnett  Mon Jun 20 19:39:38 PDT 2005
 Trigger/src
 
