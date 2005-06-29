@@ -2,7 +2,7 @@
 * @file TriggerAlg.cxx
 * @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.44 2005/04/28 21:09:42 burnett Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.45 2005/06/21 02:39:38 burnett Exp $
 */
 
 
@@ -301,7 +301,10 @@ StatusCode TriggerAlg::execute()
         // or in the gem trigger bits, either from hardware, or derived from trigger
         trigger_bits |= gemBits(trigger_bits) << 8;
 
-        if( static_cast<int>(h.trigger())==-1 ){
+        if( static_cast<int>(h.trigger())==-1 
+                    || h.trigger()==0  // this seems to happen when reading back from incoming??
+                    )
+        {
             // expect it to be zero if not set.
             h.setTrigger(trigger_bits);
         }else  if (h.trigger() != 0xbaadf00d && trigger_bits != h.trigger() ) {
@@ -311,7 +314,6 @@ StatusCode TriggerAlg::execute()
                 << std::setbase(16) <<trigger_bits << " vs. " << h.trigger();
             log << endreq;
         }
-
     }
 
     return sc;

@@ -3,6 +3,7 @@
  * package manager:T.Burnett 
   <pre>
 
+ *  v4r0p2  29-jun-05 THB Add code to pick up Cal bits from TDS.  
  *  v4r0p1  28-apr-05 THB remove opsolete run property from TriggerAlg 
  *  v4r0               ???
  *  v3r16p2 29-mar-05 JCT Use enums::b_THROTTLE in ThrottleAlg
