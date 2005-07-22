@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: burnett  Thu Jul 21 19:56:41 PDT 2005
+Trigger/src/test
+
+Modified Files:
+	jobOptions.txt 
+Log Message:
+enable throttle: if TriggerAlg.throttle==true, dkill event if bit is set.
+    *
+------------------------------------------------------------
+User: burnett  Thu Jul 21 19:56:41 PDT 2005
 Trigger/src
 
 Modified Files:
