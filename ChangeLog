@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Thu Jul 21 19:56:40 PDT 2005
+Trigger/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+enable throttle: if TriggerAlg.throttle==true, dkill event if bit is set.
+    *
+------------------------------------------------------------
 TAG
 Tag name: v4r0p2, operation: add
 Package: Trigger
