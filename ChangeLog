@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: burnett  Thu Jul 21 19:56:40 PDT 2005
+Trigger/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+enable throttle: if TriggerAlg.throttle==true, dkill event if bit is set.
+    *
+------------------------------------------------------------
+User: burnett  Thu Jul 21 19:56:40 PDT 2005
 Trigger/cmt
 
 Modified Files:
