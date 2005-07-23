@@ -2,7 +2,7 @@
 * @file TriggerAlg.cxx
 * @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.46 2005/06/29 12:20:03 burnett Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.47 2005/07/22 02:56:40 burnett Exp $
 */
 
 
@@ -236,7 +236,7 @@ StatusCode TriggerAlg::execute()
     SmartDataPtr<Event::AcdDigiCol> acd(eventSvc(), EventModel::Digi::AcdDigiCol);
     if( acd==0 ) log << MSG::DEBUG << "No acd digis found" << endreq;
 
-    SmartDataPtr<Event::GltDigi> glt(eventSvc(), "Event/digi/GltDigi");
+    SmartDataPtr<Event::GltDigi> glt(eventSvc(),   EventModel::Digi::Event+"/GltDigi");
     if( glt==0 ) log << MSG::DEBUG << "No digi bits found" << endreq;
     // set bits in the trigger word
 
