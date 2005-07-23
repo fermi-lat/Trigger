@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: burnett  Sat Jul 23 07:51:51 PDT 2005
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx 
+Log Message:
+fix path for TDS cal trigger bits; taggin
+    *
+------------------------------------------------------------
+User: burnett  Sat Jul 23 07:51:51 PDT 2005
 Trigger/doc
 
 Modified Files:
