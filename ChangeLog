@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Tue Oct  4 11:42:10 PDT 2005
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx 
+Log Message:
+use new access function for CAL trigger bits
+    *
+------------------------------------------------------------
 User: burnett  Tue Oct  4 11:42:09 PDT 2005
 Trigger/doc
 
