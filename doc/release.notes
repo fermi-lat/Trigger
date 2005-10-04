@@ -3,6 +3,7 @@
  * package manager:T.Burnett 
   <pre>
 
+ *  v4r2    04-oct-05 THB use Event::GltDigi trigger bit access function.
  *  v4r1p1  23-jul-05 THB Fix path for TDS cal trigger bits
  *  v4r1    21-jul-05 THB Implement option (bool throttle) to enable RItz throttle
  *  v4r0p2  29-jun-05 THB Add code to pick up Cal bits from TDS.  
