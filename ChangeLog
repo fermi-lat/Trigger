@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Tue Oct  4 11:42:09 PDT 2005
+Trigger/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+use new access function for CAL trigger bits
+    *
+------------------------------------------------------------
 TAG
 Tag name: v4r1p1, operation: add
 Package: Trigger
