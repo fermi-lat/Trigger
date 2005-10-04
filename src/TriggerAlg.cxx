@@ -2,7 +2,7 @@
 * @file TriggerAlg.cxx
 * @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.47 2005/07/22 02:56:40 burnett Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.48 2005/07/23 14:51:51 burnett Exp $
 */
 
 
@@ -412,17 +412,8 @@ unsigned int TriggerAlg::tracker(const Event::TkrDigiCol&  planes)
 unsigned int TriggerAlg::calorimeter(const Event::GltDigi& glt)
 {
     // purpose and method: calculate CAL trigger bits from the list of bits
-    bool local=false, hical=false;
-    const std::vector<bool>& cal_lo = glt.getCAL_LO();
-    const std::vector<bool>& cal_hi = glt.getCAL_HI();
-    for( std::vector<bool>::const_iterator bit = cal_lo.begin(); 
-        bit!=cal_lo.end(); ++ bit){
-        if( *bit) { local = true; break;}
-    }
-    for( std::vector<bool>::const_iterator bit = cal_hi.begin(); 
-        bit!=cal_hi.end(); ++ bit){
-        if( *bit) { hical = true; break;}
-    }
+    bool local=glt.getCALLOtrigger(), 
+        hical = glt.getCALHItrigger();
     return (local ? enums::b_LO_CAL:0) 
         |  (hical ? enums::b_HI_CAL:0);
 
