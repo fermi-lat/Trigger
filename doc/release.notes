@@ -3,6 +3,7 @@
  * package manager:T.Burnett 
   <pre>
 
+ *  v4r2p1  11-oct-05 THB check for dead strips when checking for a trigger
  *  v4r2    04-oct-05 THB use Event::GltDigi trigger bit access function.
  *  v4r1p1  23-jul-05 THB Fix path for TDS cal trigger bits
  *  v4r1    21-jul-05 THB Implement option (bool throttle) to enable RItz throttle
