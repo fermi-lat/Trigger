@@ -2,7 +2,7 @@
 * @file TriggerAlg.cxx
 * @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.48 2005/07/23 14:51:51 burnett Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.49 2005/10/04 18:42:10 burnett Exp $
 */
 
 
@@ -360,6 +360,7 @@ unsigned int TriggerAlg::tracker(const Event::TkrDigiCol&  planes)
     // this loop sorts the hits by setting appropriate bits in the tower-plane hit map
     for( Event::TkrDigiCol::const_iterator it = planes.begin(); it != planes.end(); ++it){
         const TkrDigi& t = **it;
+        if( t.getNumHits()== 0) continue; // this can happen if there are dead strips 
         layer_bits[std::make_pair(t.getTower(), t.getView())] |= layer_bit(t.getBilayer());
     }
 
