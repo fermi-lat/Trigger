@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Fri Nov 11 14:32:38 PST 2005
+Trigger/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+tagging after small change allow for dead strips
+    *
+------------------------------------------------------------
 TAG
 Tag name: v4r2, operation: add
 Package: Trigger
