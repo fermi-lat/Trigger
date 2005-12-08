@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: fewtrell  Thu Dec  8 12:19:06 PST 2005
+Trigger/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+now using CalXtalResponse/CalTrigTool to calculate Cal trigger response
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: v4r2p1, operation: add
 Package: Trigger
