@@ -2,7 +2,7 @@
  * @file TriggerAlg.cxx
  * @brief Declaration and definition of the algorithm TriggerAlg.
  *
- *  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.50 2005/11/11 22:32:38 burnett Exp $
+ *  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.51 2005/12/08 20:19:10 fewtrell Exp $
  */
 
 
@@ -237,11 +237,8 @@ StatusCode TriggerAlg::execute()
       return sc;
     }
       
-    if (newGlt)
-      trigger_bits |= calorimeter(*newGlt);
-    else // odd case that we can't create glt class
-      trigger_bits |= (calTrigBits[LRG_DIODE] ? enums::b_LO_CAL:0) 
-        |  (calTrigBits[SM_DIODE] ? enums::b_HI_CAL:0);
+    trigger_bits |= (calTrigBits[LRG_DIODE] ? enums::b_LO_CAL:0) 
+      |  (calTrigBits[SM_DIODE] ? enums::b_HI_CAL:0);
   }
 
   SmartDataPtr<Event::EventHeader> header(eventSvc(), EventModel::EventHeader);
