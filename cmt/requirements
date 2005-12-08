@@ -2,7 +2,7 @@ package Trigger
 version v4r2p1
 
 author T. Burnett <tburnett@u.washington.edu>
-# $Id: requirements,v 1.47 2005/10/04 18:42:09 burnett Exp $
+# $Id: requirements,v 1.48 2005/11/11 22:32:37 burnett Exp $
 
 # --------------------------
 # define trigger algorithms
@@ -14,6 +14,7 @@ branches src cmt doc
 use GlastPolicy *
 use enums *
 apply_pattern packageShr
+use CalXtalResponse
 
 apply_pattern package_include
 
