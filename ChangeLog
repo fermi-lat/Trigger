@@ -1,4 +1,16 @@
 ------------------------------------------------------------
+User: fewtrell  Fri Dec 16 11:40:19 PST 2005
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx 
+Log Message:
+undo impolite whitespace changing.  this file will generate a clean diff
+from TriggerAlg.cxx rev 1.50 which is Toby's last version before I started 
+messing w/ it.
+
+    *
+------------------------------------------------------------
 User: fewtrell  Fri Dec 16 11:39:19 PST 2005
 Trigger/doc
 
