@@ -2,7 +2,7 @@
 * @file TriggerAlg.cxx
 * @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.48 2005/07/23 14:51:51 burnett Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.49 2005/10/04 18:42:10 burnett Exp $
 */
 
 
@@ -111,6 +111,8 @@ private:
     DoubleProperty m_deadtime;
     BooleanProperty  m_throttle;
 
+    IntegerProperty m_vetobits;
+
     double m_lastTriggerTime; //! time of last trigger, for calculated live time
     double m_liveTime; //! cumulative live time
 
@@ -139,6 +141,7 @@ m_triggered(0), m_deadtimeLoss(0)
     declareProperty("mask"     ,  m_mask=0xffffffff); // trigger mask
     declareProperty("deadtime" ,  m_deadtime=0. );    // deadtime to apply to trigger, in sec.
     declareProperty("throttle",   m_throttle=false);  // if set, veto when throttle bit is on
+    declareProperty("vetobits",   m_vetobits=35);     // if thottle it set, do not accept this value
 
 }
 
@@ -161,7 +164,7 @@ StatusCode TriggerAlg::initialize()
         else            log.stream() << "Applying trigger mask: " <<  std::setbase(16) <<m_mask <<std::setbase(10);
 
         if( m_deadtime>0) log.stream() <<", applying deadtime of " << m_deadtime*1E6 << "u sec ";
-        if( m_throttle) log.stream() <<", throttled ";
+        if( m_throttle) log.stream() <<", throttled by rejecting  the value "<< m_vetobits;
     }
     log << endreq;
 
@@ -280,7 +283,7 @@ StatusCode TriggerAlg::execute()
 
     // apply filter for subsequent processing.
     if( m_mask!=0 && ( trigger_bits & m_mask) == 0 
-        || m_throttle && ( (trigger_bits & enums::b_THROTTLE) !=0) ) {
+        || m_throttle && ( (trigger_bits == m_vetobits) ) ) {
         setFilterPassed( false );
         log << MSG::DEBUG << "Event did not trigger" << endreq;
     }else if( killedByDeadtime ){
