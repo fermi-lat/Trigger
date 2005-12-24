@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: burnett  Sat Dec 24 08:31:31 PST 2005
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx 
+Log Message:
+merge veto logic with main branch.
+    *
+------------------------------------------------------------
+User: burnett  Sat Dec 24 08:31:31 PST 2005
 Trigger/doc
 
 Modified Files:
