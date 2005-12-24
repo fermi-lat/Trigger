@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Sat Dec 24 08:31:30 PST 2005
+Trigger/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+merge veto logic with main branch.
+    *
+------------------------------------------------------------
 TAG
 Tag name: v4r2gr1, operation: add
 Package: Trigger
