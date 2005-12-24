@@ -2,7 +2,7 @@
 * @file TriggerAlg.cxx
 * @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.50 2005/11/11 22:32:38 burnett Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.53 2005/12/16 19:40:19 fewtrell Exp $
 */
 
 
@@ -102,6 +102,7 @@ private:
     int m_event;
     DoubleProperty m_deadtime;
     BooleanProperty  m_throttle;
+    IntegerProperty m_vetobits;
 
     double m_lastTriggerTime; //! time of last trigger, for calculated live time
     double m_liveTime; //! cumulative live time
@@ -136,7 +137,7 @@ m_triggered(0), m_deadtimeLoss(0)
     declareProperty("mask"     ,  m_mask=0xffffffff); // trigger mask
     declareProperty("deadtime" ,  m_deadtime=0. );    // deadtime to apply to trigger, in sec.
     declareProperty("throttle",   m_throttle=false);  // if set, veto when throttle bit is on
-
+    declareProperty("vetobits",   m_vetobits=35);     // if thottle it set, do not accept this value
 }
 
 //------------------------------------------------------------------------------
@@ -158,7 +159,7 @@ StatusCode TriggerAlg::initialize()
         else            log.stream() << "Applying trigger mask: " <<  std::setbase(16) <<m_mask <<std::setbase(10);
 
         if( m_deadtime>0) log.stream() <<", applying deadtime of " << m_deadtime*1E6 << "u sec ";
-        if( m_throttle) log.stream() <<", throttled ";
+        if( m_throttle) log.stream() <<", throttled by rejecting  the value "<< m_vetobits;
     }
     log << endreq;
 
@@ -273,8 +274,8 @@ StatusCode TriggerAlg::execute()
 
     // apply filter for subsequent processing.
     if( m_mask!=0 && ( trigger_bits & m_mask) == 0 
-        || m_throttle && ( (trigger_bits & enums::b_THROTTLE) !=0) ) {
-        setFilterPassed( false );
+         || m_throttle && ( (trigger_bits == m_vetobits) ) ) {
+             setFilterPassed( false );
         log << MSG::DEBUG << "Event did not trigger" << endreq;
     }else if( killedByDeadtime ){
         setFilterPassed( false );
@@ -441,8 +442,11 @@ StatusCode TriggerAlg::finalize() {
 
     // purpose and method: make a summary
 
-    using namespace std;
     StatusCode  sc = StatusCode::SUCCESS;
+    static bool done = false;
+    if( done ) return sc;
+    done=true;
+
 
     MsgStream log(msgSvc(), name());
     log << MSG::INFO << "Totals triggered/ processed: " << m_triggered << "/" << m_total ; 
@@ -456,10 +460,10 @@ StatusCode TriggerAlg::finalize() {
     //TODO: format this nicely, as a 4x4 table
     log << MSG::INFO ;
     if(log.isActive() ){
-        log.stream() << "Tower trigger summary\n" << setw(30) << "Tower    count " << std::endl;;
+        log.stream() << "Tower trigger summary\n" << std::setw(30) << "Tower    count " << std::endl;;
         for( std::map<idents::TowerId, int>::const_iterator it = m_tower_trigger_count.begin();
             it != m_tower_trigger_count.end(); ++ it ){
-                log.stream() << setw(30) << (*it).first.id() << setw(10) << (*it).second << std::endl;
+                log.stream() << std::setw(30) << (*it).first.id() << std::setw(10) << (*it).second << std::endl;
             }
     }
     log << endreq;

@@ -3,6 +3,7 @@
  * package manager:T.Burnett 
   <pre>
 
+ *  v4r3    24-dec=05 THB Update veto calculation
  *  v4r2p3  16-dec-05 ZGF support new CalTrigTool, drop old/bad cal code entirely.  undo impolite whitespace changes in TriggerAlg.cxx
  *  v4r2p1  11-oct-05 THB check for dead strips when checking for a trigger
  *  v4r2    04-oct-05 THB use Event::GltDigi trigger bit access function.
