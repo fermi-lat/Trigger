@@ -2,19 +2,13 @@
 * @file TriggerAlg.cxx
 * @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.49 2005/10/04 18:42:10 burnett Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.49.2.1 2005/12/23 18:13:29 burnett Exp $
 */
 
+#include "ThrottleAlg.h"
 
-#include "GaudiKernel/MsgStream.h"
-#include "GaudiKernel/AlgFactory.h"
-#include "GaudiKernel/IDataProviderSvc.h"
-#include "GaudiKernel/SmartDataPtr.h"
-#include "GaudiKernel/Algorithm.h"
-#include "GaudiKernel/Property.h"
-
-#include "GaudiKernel/SmartDataPtr.h"
-#include "GaudiKernel/StatusCode.h"
+#include "Trigger/TriRowBits.h"
+#include "Trigger/ILivetimeSvc.h"
 
 #include "GlastSvc/GlastDetSvc/IGlastDetSvc.h"
 
@@ -33,9 +27,16 @@
 #include "LdfEvent/Gem.h"
 #include "enums/TriggerBits.h"
 
+#include "GaudiKernel/MsgStream.h"
+#include "GaudiKernel/AlgFactory.h"
+#include "GaudiKernel/IDataProviderSvc.h"
+#include "GaudiKernel/SmartDataPtr.h"
+#include "GaudiKernel/Algorithm.h"
+#include "GaudiKernel/Property.h"
 
-#include "ThrottleAlg.h"
-#include "Trigger/TriRowBits.h"
+#include "GaudiKernel/SmartDataPtr.h"
+#include "GaudiKernel/StatusCode.h"
+
 
 #include <map>
 #include <vector>
@@ -87,10 +88,7 @@ private:
 
     StatusCode caltrigsetup();
 
-    //// are we alive?
-    bool alive(double current_time);
-
-    /// set gem bits in trigger word, either from real condition summary, or from bits
+   /// set gem bits in trigger word, either from real condition summary, or from bits
     unsigned int gemBits(unsigned int  trigger_bits);
   
   void computeTrgReqTriRowBits(TriRowBitsTds::TriRowBits&);
@@ -113,19 +111,18 @@ private:
 
     IntegerProperty m_vetobits;
 
-    double m_lastTriggerTime; //! time of last trigger, for calculated live time
-    double m_liveTime; //! cumulative live time
-
     // for statistics
     int m_total;
     int m_triggered;
-    int m_deadtimeLoss; //!< lost due to deadtime
     std::map<int,int> m_counts; //map of values for each bit pattern
 
     std::map<idents::TowerId, int> m_tower_trigger_count;
 
     /// access to the Glast Detector Service to read in geometry constants from XML files
     IGlastDetSvc *m_glastDetSvc;
+    
+    ILivetimeSvc * m_LivetimeSvc;
+
 };
 
 //------------------------------------------------------------------------------
@@ -133,16 +130,14 @@ static const AlgFactory<TriggerAlg>  Factory;
 const IAlgFactory& TriggerAlgFactory = Factory;
 //------------------------------------------------------------------------------
 /// 
-TriggerAlg::TriggerAlg(const std::string& name, ISvcLocator* pSvcLocator) :
-Algorithm(name, pSvcLocator), m_event(0),
-m_lastTriggerTime(0), m_liveTime(0), m_total(0), 
-m_triggered(0), m_deadtimeLoss(0)
+TriggerAlg::TriggerAlg(const std::string& name, ISvcLocator* pSvcLocator) 
+: Algorithm(name, pSvcLocator), m_event(0)
+, m_total(0)
+, m_triggered(0)
 {
     declareProperty("mask"     ,  m_mask=0xffffffff); // trigger mask
-    declareProperty("deadtime" ,  m_deadtime=0. );    // deadtime to apply to trigger, in sec.
     declareProperty("throttle",   m_throttle=false);  // if set, veto when throttle bit is on
     declareProperty("vetobits",   m_vetobits=35);     // if thottle it set, do not accept this value
-
 }
 
 //------------------------------------------------------------------------------
@@ -162,8 +157,6 @@ StatusCode TriggerAlg::initialize()
     if(log.isActive()) {
         if (m_mask==0xffffffff) log.stream() << "No trigger requirement";
         else            log.stream() << "Applying trigger mask: " <<  std::setbase(16) <<m_mask <<std::setbase(10);
-
-        if( m_deadtime>0) log.stream() <<", applying deadtime of " << m_deadtime*1E6 << "u sec ";
         if( m_throttle) log.stream() <<", throttled by rejecting  the value "<< m_vetobits;
     }
     log << endreq;
@@ -176,6 +169,11 @@ StatusCode TriggerAlg::initialize()
 
     if( sc.isFailure() ) {
         log << MSG::ERROR << "TriggerAlg failed to get the GlastDetSvc" << endreq;
+        return sc;
+    }
+    sc = service("LivetimeSvc", m_LivetimeSvc);
+    if( sc.isFailure() ) {
+        log << MSG::ERROR << "failed to get the LivetimeSvc" << endreq;
         return sc;
     }
 
@@ -210,15 +208,6 @@ StatusCode TriggerAlg::caltrigsetup()
     }
 
     return StatusCode::SUCCESS;
-}
-
-bool TriggerAlg::alive(double current_time)
-{ 
-    // this is the case when reading back.
-    if (m_deadtime<=0) return true;
-    // ok we actually want to apply a deadtime: in this case *assume* time is increasing!
-
-    return (current_time-m_lastTriggerTime >=m_deadtime);
 }
 
 //------------------------------------------------------------------------------
@@ -270,13 +259,10 @@ StatusCode TriggerAlg::execute()
         log << MSG::ERROR << " could not find the event header" << endreq;
         return StatusCode::FAILURE;
     }
-
     // check for deadtime: set flag only if applying deadtime
-    bool killedByDeadtime =  ! alive(header->time()); 
+    bool killedByDeadtime =  ! m_LivetimeSvc->isLive(header->time()); 
     if( killedByDeadtime) {
-        ++ m_deadtimeLoss; // keep track of these for output summary
     }else {
-
         m_total++;
         m_counts[trigger_bits] = m_counts[trigger_bits]+1;
     }
@@ -292,11 +278,8 @@ StatusCode TriggerAlg::execute()
     }else {
         m_triggered++;
         double now = header->time();
-        // this is where we lose the deadtime.
-        m_liveTime +=  now-m_lastTriggerTime - m_deadtime;
 
-        header->setLivetime(m_liveTime);
-        m_lastTriggerTime = now;
+        header->setLivetime(m_LivetimeSvc->livetime());
 
         Event::EventHeader& h = header;
 
@@ -498,11 +481,12 @@ StatusCode TriggerAlg::finalize() {
 
     using namespace std;
     StatusCode  sc = StatusCode::SUCCESS;
+    static bool first(true);
+    if( !first ) return sc;
+    first = false;
 
     MsgStream log(msgSvc(), name());
     log << MSG::INFO << "Totals triggered/ processed: " << m_triggered << "/" << m_total ; 
-
-    if( m_deadtime>0 )  log << "\n\t\tLost to deadtime: " << m_deadtimeLoss ;
 
     if(log.isActive() ) bitSummary(log.stream());
 
