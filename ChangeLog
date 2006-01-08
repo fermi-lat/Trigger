@@ -1,4 +1,17 @@
 ------------------------------------------------------------
+User: burnett  Sat Jan  7 17:46:41 PST 2006
+Trigger/src
+
+Modified Files:
+      Tag: GRv7r3p1
+	TriggerAlg.cxx Trigger_load.cxx 
+Added Files:
+      Tag: GRv7r3p1
+	LivetimeSvc.cxx 
+Log Message:
+Implement service to manage livetime
+    *
+------------------------------------------------------------
 TAG
 Tag name: v4r3, operation: add
 Package: Trigger
