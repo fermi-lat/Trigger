@@ -3,6 +3,7 @@
  * package manager:T.Burnett 
   <pre>
 
+ *  v4r3p1  09-jan-06 HMK Update setting of ACD Low bit, to use 0.3 MIP thresh
  *  v4r3    24-dec=05 THB Update veto calculation
  *  v4r2p3  16-dec-05 ZGF support new CalTrigTool, drop old/bad cal code entirely.  undo impolite whitespace changes in TriggerAlg.cxx
  *  v4r2p1  11-oct-05 THB check for dead strips when checking for a trigger
