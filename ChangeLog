@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Mon Jan  9 11:36:20 PST 2006
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx 
+Log Message:
+set ACD Low GltWord bit using 0.3 MIP threshold
+    *
+------------------------------------------------------------
 User: heather  Mon Jan  9 11:35:55 PST 2006
 Trigger/doc
 
