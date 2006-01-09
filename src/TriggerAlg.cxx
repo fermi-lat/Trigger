@@ -2,7 +2,7 @@
 * @file TriggerAlg.cxx
 * @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.53 2005/12/16 19:40:19 fewtrell Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.54 2005/12/24 16:31:31 burnett Exp $
 */
 
 
@@ -426,12 +426,14 @@ unsigned int TriggerAlg::anticoincidence(const Event::AcdDigiCol& tiles)
     log << MSG::DEBUG << tiles.size() << " tiles found with hits" << endreq;
     unsigned int ret=0;
     for( AcdDigiCol::const_iterator it = tiles.begin(); it !=tiles.end(); ++it){
-        // if it is here, assume it has a bit.
-        ret |= enums::b_ACDL; 
+        // check if hitMapBit is set (veto) which will correspond to 0.3 MIP.
+        // 20060109 Agreed at Analysis Meeting that onboard threshold is 0.3 MIP
+        if ( digi.getHitMapBit(Event::AcdDigi::A)
+            || digi.getHitMapBit(Event::AcdDigi::B) ) ret |= enums::b_ACDL; 
         // now trigger high if either PMT is above threshold
         const AcdDigi& digi = **it;
-        if (   digi.getHighDiscrim(Event::AcdDigi::A) 
-            || digi.getHighDiscrim(Event::AcdDigi::B) ) ret |= enums::b_ACDH;
+        if (   digi.getCno(Event::AcdDigi::A) 
+            || digi.getCno(Event::AcdDigi::B) ) ret |= enums::b_ACDH;
     } 
     return ret;
 }
