@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Tue Jan 10 13:38:56 PST 2006
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx 
+Log Message:
+fix little bug that was setting digi var too late
+    *
+------------------------------------------------------------
 TAG
 Tag name: v4r3p1, operation: add
 Package: Trigger
