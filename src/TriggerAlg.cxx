@@ -2,7 +2,7 @@
 * @file TriggerAlg.cxx
 * @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.54 2005/12/24 16:31:31 burnett Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.55 2006/01/09 19:36:20 heather Exp $
 */
 
 
@@ -428,10 +428,10 @@ unsigned int TriggerAlg::anticoincidence(const Event::AcdDigiCol& tiles)
     for( AcdDigiCol::const_iterator it = tiles.begin(); it !=tiles.end(); ++it){
         // check if hitMapBit is set (veto) which will correspond to 0.3 MIP.
         // 20060109 Agreed at Analysis Meeting that onboard threshold is 0.3 MIP
+        const AcdDigi& digi = **it;
         if ( digi.getHitMapBit(Event::AcdDigi::A)
             || digi.getHitMapBit(Event::AcdDigi::B) ) ret |= enums::b_ACDL; 
         // now trigger high if either PMT is above threshold
-        const AcdDigi& digi = **it;
         if (   digi.getCno(Event::AcdDigi::A) 
             || digi.getCno(Event::AcdDigi::B) ) ret |= enums::b_ACDH;
     } 
