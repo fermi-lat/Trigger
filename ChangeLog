@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Tue Jan 10 13:39:23 PST 2006
+Trigger/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+fix little bug that was setting digi var too late
+    *
+------------------------------------------------------------
 User: heather  Tue Jan 10 13:38:56 PST 2006
 Trigger/src
 
