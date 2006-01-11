@@ -1,8 +1,8 @@
 package Trigger
-version v4r3p2
+version v4r3p3
 
 author T. Burnett <tburnett@u.washington.edu>
-# $Id: requirements,v 1.51 2006/01/09 19:35:48 heather Exp $
+# $Id: requirements,v 1.52 2006/01/10 21:39:34 heather Exp $
 
 # --------------------------
 # define trigger algorithms
@@ -20,6 +20,8 @@ apply_pattern package_include
 
 #=============================================================
 private
+#needed only for the test app
+use CalibSvc *
 
 use Event *
 use GlastSvc *
