@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Tue Jan 10 23:37:46 PST 2006
+Trigger/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+update JO for unit test to handle the CAL services now needed to run
+    *
+------------------------------------------------------------
 User: heather  Tue Jan 10 23:37:08 PST 2006
 Trigger/cmt
 
