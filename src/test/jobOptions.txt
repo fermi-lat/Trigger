@@ -5,7 +5,12 @@
 
 // basic glast dlls
 ApplicationMgr.DLLs += { "GlastSvc", "Trigger"};
+ApplicationMgr.DLLs += {"CalUtil","CalXtalResponse"};
 ApplicationMgr.ExtSvc += {"GlastDetSvc"};
+ApplicationMgr.DLLs += {"CalibSvc"};
+  	 
+#include "$CALIBSVCROOT/src/defaultOptions.txt"
+#include "$CALXTALRESPONSEROOT/src/defaultOptions.txt"
 
 ApplicationMgr.TopAlg = {"TriggerAlg"};
 // Set output level threshold (2=DEBUG, 3=INFO, 4=WARNING, 5=ERROR, 6=FATAL )
