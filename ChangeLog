@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: burnett  Fri Jan 13 08:22:14 PST 2006
+Trigger/src
+
+Modified Files:
+      Tag: GRv7r3p1
+	LivetimeSvc.cxx TriggerAlg.cxx 
+Log Message:
+better veto processing; another capitalization problem
+    *
+------------------------------------------------------------
 TAG
 Tag name: v4r2gr4, operation: add
 Package: Trigger
