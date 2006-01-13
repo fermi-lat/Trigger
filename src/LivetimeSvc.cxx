@@ -2,10 +2,10 @@
  * @file LivetimeSvc.cxx
  * @brief declare, implement the class LivetimeSvc
  *
- * $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/Attic/LivetimeSvc.cxx,v 1.1.2.1 2006/01/08 01:46:41 burnett Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/Attic/LivetimeSvc.cxx,v 1.1.2.2 2006/01/13 10:08:32 burnett Exp $
  */
 
-#include "trigger/ILivetimeSvc.h"
+#include "Trigger/ILivetimeSvc.h"
 
 
 #include "CLHEP/Random/RandFlat.h"
