@@ -5,7 +5,7 @@
  * package manager:T.Burnett 
   <pre>
 
- *  v4r2gr2 07-jan-06 THB implement service to manage deadtime
+ *  v4r2gr4 13-jan-06 THB implement service to manage deadtime
  *  v4r2gr1 23-dec-05 THB modify throttle to specify specific pattern to reject
  * ---- on branch GRv7r3p1 ------------------------------------
  *  v4r2    04-oct-05 THB use Event::GltDigi trigger bit access function.
