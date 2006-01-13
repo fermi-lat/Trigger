@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: burnett  Fri Jan 13 09:26:43 PST 2006
+Trigger/cmt
+
+Modified Files:
+      Tag: GRv7r3p1
+	requirements 
+Log Message:
+linux compile fix; tag
+    *
+------------------------------------------------------------
 TAG
 Tag name: v4r2gr5, operation: add
 Package: Trigger
