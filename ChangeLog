@@ -1,5 +1,15 @@
 ------------------------------------------------------------
 User: burnett  Fri Jan 13 09:26:44 PST 2006
+Trigger/src
+
+Modified Files:
+      Tag: GRv7r3p1
+	LivetimeSvc.cxx 
+Log Message:
+linux compile fix; tag
+    *
+------------------------------------------------------------
+User: burnett  Fri Jan 13 09:26:44 PST 2006
 Trigger/doc
 
 Modified Files:
