@@ -2,7 +2,7 @@
 * @file TriggerAlg.cxx
 * @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.49.2.1 2005/12/23 18:13:29 burnett Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.49.2.2 2006/01/08 01:46:40 burnett Exp $
 */
 
 #include "ThrottleAlg.h"
@@ -110,6 +110,7 @@ private:
     BooleanProperty  m_throttle;
 
     IntegerProperty m_vetobits;
+    IntegerProperty m_vetomask;
 
     // for statistics
     int m_total;
@@ -137,7 +138,8 @@ TriggerAlg::TriggerAlg(const std::string& name, ISvcLocator* pSvcLocator)
 {
     declareProperty("mask"     ,  m_mask=0xffffffff); // trigger mask
     declareProperty("throttle",   m_throttle=false);  // if set, veto when throttle bit is on
-    declareProperty("vetobits",   m_vetobits=35);     // if thottle it set, do not accept this value
+    declareProperty("vetobits",   m_vetobits=32);     // bits that function as veto
+    declareProperty("vetomask",   m_vetomask=2);      // if thottle it set, veto if veto and these bits on
 }
 
 //------------------------------------------------------------------------------
@@ -269,7 +271,7 @@ StatusCode TriggerAlg::execute()
 
     // apply filter for subsequent processing.
     if( m_mask!=0 && ( trigger_bits & m_mask) == 0 
-        || m_throttle && ( (trigger_bits == m_vetobits) ) ) {
+        || m_throttle && ( (trigger_bits & m_vetobits)>0 && (trigger_bits& m_mask)==m_vetomask ) ) {
         setFilterPassed( false );
         log << MSG::DEBUG << "Event did not trigger" << endreq;
     }else if( killedByDeadtime ){
