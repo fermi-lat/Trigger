@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: burnett  Wed Jan 18 08:35:27 PST 2006
+Trigger/src
+
+Modified Files:
+      Tag: GRv7r3p1
+	TriggerAlg.cxx 
+Log Message:
+rearrage veto condition to allow flexibility for configuration 2
+    *
+------------------------------------------------------------
 TAG
 Tag name: v4r2gr6, operation: add
 Package: Trigger
