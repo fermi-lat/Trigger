@@ -4,6 +4,7 @@
  *  
  * package manager:T.Burnett 
   <pre>
+ *  v4r4    18-jan-06 THB merge the branch   
  * ------end branch -----------------------------------------
  *  v4r2gr7 18-jan-06 THB tweak of throttle condition to allow more flexibility
  *  v4r2gr6 13-jan-06 THB implement service to manage deadtime
