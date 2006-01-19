@@ -1,8 +1,8 @@
 /**
-* @file TriggerAlg.cxx
-* @brief Declaration and definition of the algorithm TriggerAlg.
+*  @file TriggerAlg.cxx
+*  @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.49.2.3 2006/01/13 16:22:14 burnett Exp $
+*  $Header$
 */
 
 #include "ThrottleAlg.h"
@@ -36,6 +36,9 @@
 
 #include "GaudiKernel/SmartDataPtr.h"
 #include "GaudiKernel/StatusCode.h"
+
+
+#include "CalXtalResponse/ICalTrigTool.h"
 
 
 #include <map>
@@ -78,7 +81,6 @@ private:
     unsigned int  tracker(const Event::TkrDigiCol&  planes);
     //! determine calormiter trigger bits
     /// @return the bits
-    unsigned int  calorimeter(const Event::CalDigiCol&  planes);
     unsigned int  calorimeter(const Event::GltDigi&  glt);
 
     //! calculate ACD trigger bits
@@ -88,7 +90,10 @@ private:
 
     StatusCode caltrigsetup();
 
-   /// set gem bits in trigger word, either from real condition summary, or from bits
+    //// are we alive?
+    bool alive(double current_time);
+
+    /// set gem bits in trigger word, either from real condition summary, or from bits
     unsigned int gemBits(unsigned int  trigger_bits);
   
   void computeTrgReqTriRowBits(TriRowBitsTds::TriRowBits&);
@@ -96,19 +101,10 @@ private:
     unsigned int m_mask;
     int m_acd_hits;
     int m_log_hits;
-    bool m_local;
-    bool m_hical;
-
-    double m_pedestal;
-    double m_maxAdc;
-    double m_maxEnergy[4];
-    double m_LOCALthreshold;
-    double m_HICALthreshold;
 
     int m_event;
     DoubleProperty m_deadtime;
     BooleanProperty  m_throttle;
-
     IntegerProperty m_vetobits;
     IntegerProperty m_vetomask;
 
@@ -121,8 +117,13 @@ private:
 
     /// access to the Glast Detector Service to read in geometry constants from XML files
     IGlastDetSvc *m_glastDetSvc;
-    
+
     ILivetimeSvc * m_LivetimeSvc;
+
+
+    /// use to calculate cal trigger response from digis if cal trig response has not already
+    /// been calculated
+    ICalTrigTool *m_calTrigTool;
 
 };
 
@@ -158,6 +159,8 @@ StatusCode TriggerAlg::initialize()
     if(log.isActive()) {
         if (m_mask==0xffffffff) log.stream() << "No trigger requirement";
         else            log.stream() << "Applying trigger mask: " <<  std::setbase(16) <<m_mask <<std::setbase(10);
+
+        if( m_deadtime>0) log.stream() <<", applying deadtime of " << m_deadtime*1E6 << "u sec ";
         if( m_throttle) log.stream() <<", throttled by rejecting  the value "<< m_vetobits;
     }
     log << endreq;
@@ -178,38 +181,17 @@ StatusCode TriggerAlg::initialize()
         return sc;
     }
 
-    sc = caltrigsetup();
+  // this tool needs to be shared by CalDigiAlg, XtalDigiTool & TriggerAlg, so I am
+  // giving it global ownership
+  sc = toolSvc()->retrieveTool("CalTrigTool", m_calTrigTool);
+  if (sc.isFailure() ) {
+    log << MSG::ERROR << "  Unable to create CalTrigTool" << endreq;
+    return sc;
+  }
 
     return sc;
 }
 
-//------------------------------------------------------------------------------
-StatusCode TriggerAlg::caltrigsetup()
-{
-    // purpose and method: extracting double constants for calorimeter trigger
-
-    MsgStream   log( msgSvc(), name() );
-
-    typedef std::map<double*,std::string> DPARAMAP;
-    DPARAMAP dparam;
-    dparam[m_maxEnergy]=std::string("cal.maxResponse0");
-    dparam[m_maxEnergy+1]=std::string("cal.maxResponse1");
-    dparam[m_maxEnergy+2]=std::string("cal.maxResponse2");
-    dparam[m_maxEnergy+3]=std::string("cal.maxResponse3");
-    dparam[&m_LOCALthreshold]=std::string("trigger.LOCALthreshold");
-    dparam[&m_HICALthreshold]=std::string("trigger.HICALthreshold");
-    dparam[&m_pedestal]=std::string("cal.pedestal");
-    dparam[&m_maxAdc]=std::string("cal.maxAdcValue");
-
-    for(DPARAMAP::iterator dit=dparam.begin(); dit!=dparam.end();dit++){
-        if(!m_glastDetSvc->getNumericConstByName((*dit).second,(*dit).first)) {
-            log << MSG::ERROR << " constant " <<(*dit).second << " not defined" << endreq;
-            return StatusCode::FAILURE;
-        } 
-    }
-
-    return StatusCode::SUCCESS;
-}
 
 //------------------------------------------------------------------------------
 StatusCode TriggerAlg::execute() 
@@ -240,7 +222,24 @@ StatusCode TriggerAlg::execute()
 
     // calorimter is either the new glt, or old cal
     if( glt!=0 ){ trigger_bits |= calorimeter(glt) ;}
-    else if( cal!=0) {trigger_bits |= calorimeter(cal); }
+  else if( cal!=0 ) {
+    /// try to create new glt
+    Event::GltDigi *newGlt(0);
+    newGlt = m_calTrigTool->setupGltDigi(eventSvc());
+    if (!newGlt)
+      log << MSG::ERROR << "Failure to create new GltDigi in TDS." << endreq;
+
+    CalArray<DiodeNum, bool> calTrigBits;
+    calTrigBits.fill(false);
+    sc = m_calTrigTool->calcGlobalTrig(cal, calTrigBits, newGlt);
+    if (sc.isFailure()) {
+      log << MSG::ERROR << "Failure to run cal trigger code" << endreq;
+      return sc;
+    }
+      
+    trigger_bits |= (calTrigBits[LRG_DIODE] ? enums::b_LO_CAL:0) 
+      |  (calTrigBits[SM_DIODE] ? enums::b_HI_CAL:0);
+  }
 
 
     SmartDataPtr<Event::EventHeader> header(eventSvc(), EventModel::EventHeader);
@@ -347,6 +346,7 @@ unsigned int TriggerAlg::tracker(const Event::TkrDigiCol&  planes)
     // this loop sorts the hits by setting appropriate bits in the tower-plane hit map
     for( Event::TkrDigiCol::const_iterator it = planes.begin(); it != planes.end(); ++it){
         const TkrDigi& t = **it;
+        if( t.getNumHits()== 0) continue; // this can happen if there are dead strips 
         layer_bits[std::make_pair(t.getTower(), t.getView())] |= layer_bit(t.getBilayer());
     }
 
@@ -405,53 +405,7 @@ unsigned int TriggerAlg::calorimeter(const Event::GltDigi& glt)
         |  (hical ? enums::b_HI_CAL:0);
 
 }
-//------------------------------------------------------------------------------
-unsigned int TriggerAlg::calorimeter(const Event::CalDigiCol& calDigi)
-{
-    // purpose and method: calculate CAL trigger bits from the list of digis
 
-
-    using namespace Event;
-    // purpose: set calorimeter trigger bits
-    MsgStream   log( msgSvc(), name() );
-    log << MSG::DEBUG << calDigi.size() << " crystals found with hits" << endreq;
-
-    m_local = false;
-    m_hical = false;
-
-    for( CalDigiCol::const_iterator it = calDigi.begin(); it != calDigi.end(); ++it ){
-
-        idents::CalXtalId xtalId = (*it)->getPackedId();
-#if 0 // for debug only: not used, so comment out to avoid warnings
-        int lyr = xtalId.getLayer();
-        int towid = xtalId.getTower();
-        int icol  = xtalId.getColumn();
-#endif
-
-        const Event::CalDigi::CalXtalReadoutCol& readoutCol = (*it)->getReadoutCol();
-
-        Event::CalDigi::CalXtalReadoutCol::const_iterator itr = readoutCol.begin();
-
-        int rangeP = itr->getRange(idents::CalXtalId::POS); 
-        int rangeM = itr->getRange(idents::CalXtalId::NEG); 
-
-        double adcP = itr->getAdc(idents::CalXtalId::POS);	
-        double adcM = itr->getAdc(idents::CalXtalId::NEG);	
-
-        double eneP = m_maxEnergy[rangeP]*(adcP-m_pedestal)/(m_maxAdc-m_pedestal);
-        double eneM = m_maxEnergy[rangeM]*(adcM-m_pedestal)/(m_maxAdc-m_pedestal);
-
-
-        if(eneP> m_LOCALthreshold || eneM > m_LOCALthreshold) m_local = true;
-        if(eneP> m_HICALthreshold || eneM > m_HICALthreshold) m_hical = true; 
-
-    }
-
-
-    return (m_local ? enums::b_LO_CAL:0) 
-        | (m_hical ? enums::b_HI_CAL:0);
-
-}
 //------------------------------------------------------------------------------
 unsigned int TriggerAlg::anticoincidence(const Event::AcdDigiCol& tiles)
 {
@@ -464,12 +418,14 @@ unsigned int TriggerAlg::anticoincidence(const Event::AcdDigiCol& tiles)
     log << MSG::DEBUG << tiles.size() << " tiles found with hits" << endreq;
     unsigned int ret=0;
     for( AcdDigiCol::const_iterator it = tiles.begin(); it !=tiles.end(); ++it){
-        // if it is here, assume it has a bit.
-        ret |= enums::b_ACDL; 
-        // now trigger high if either PMT is above threshold
+        // check if hitMapBit is set (veto) which will correspond to 0.3 MIP.
+        // 20060109 Agreed at Analysis Meeting that onboard threshold is 0.3 MIP
         const AcdDigi& digi = **it;
-        if (   digi.getHighDiscrim(Event::AcdDigi::A) 
-            || digi.getHighDiscrim(Event::AcdDigi::B) ) ret |= enums::b_ACDH;
+        if ( digi.getHitMapBit(Event::AcdDigi::A)
+            || digi.getHitMapBit(Event::AcdDigi::B) ) ret |= enums::b_ACDL; 
+        // now trigger high if either PMT is above threshold
+        if (   digi.getCno(Event::AcdDigi::A) 
+            || digi.getCno(Event::AcdDigi::B) ) ret |= enums::b_ACDH;
     } 
     return ret;
 }
@@ -480,7 +436,6 @@ StatusCode TriggerAlg::finalize() {
 
     // purpose and method: make a summary
 
-    using namespace std;
     StatusCode  sc = StatusCode::SUCCESS;
     static bool first(true);
     if( !first ) return sc;
@@ -496,10 +451,10 @@ StatusCode TriggerAlg::finalize() {
     //TODO: format this nicely, as a 4x4 table
     log << MSG::INFO ;
     if(log.isActive() ){
-        log.stream() << "Tower trigger summary\n" << setw(30) << "Tower    count " << std::endl;;
+        log.stream() << "Tower trigger summary\n" << std::setw(30) << "Tower    count " << std::endl;;
         for( std::map<idents::TowerId, int>::const_iterator it = m_tower_trigger_count.begin();
             it != m_tower_trigger_count.end(); ++ it ){
-                log.stream() << setw(30) << (*it).first.id() << setw(10) << (*it).second << std::endl;
+                log.stream() << std::setw(30) << (*it).first.id() << std::setw(10) << (*it).second << std::endl;
             }
     }
     log << endreq;
