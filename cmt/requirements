@@ -1,8 +1,8 @@
 package Trigger
-version v4r2gr7
+version v4r4
 
 author T. Burnett <tburnett@u.washington.edu>
-# $Id: requirements,v 1.47.2.5 2006/01/13 17:26:43 burnett Exp $
+# $Id$
 
 # --------------------------
 # define trigger algorithms
@@ -15,11 +15,14 @@ use GlastPolicy *
 use enums *
 
 apply_pattern packageShr
+use CalXtalResponse
 
 apply_pattern package_include
 
 #=============================================================
 private
+#needed only for the test app
+use CalibSvc *
 
 use Event *
 use GlastSvc *
