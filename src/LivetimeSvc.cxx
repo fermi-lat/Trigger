@@ -2,7 +2,7 @@
  * @file LivetimeSvc.cxx
  * @brief declare, implement the class LivetimeSvc
  *
- * $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/Attic/LivetimeSvc.cxx,v 1.1.2.3 2006/01/13 16:22:14 burnett Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/Attic/LivetimeSvc.cxx,v 1.1.2.4 2006/01/13 17:26:44 burnett Exp $
  */
 
 #include "Trigger/ILivetimeSvc.h"
@@ -37,7 +37,7 @@ public:
     virtual StatusCode finalize ();
 
     /// Query interface - required of all Gaudi services
-    virtual StatusCode queryInterface( const IID& riid, void** ppvUnknown );
+    virtual StatusCode queryInterface( const InterfaceID& riid, void** ppvUnknown );
 
 
     ///check if valid trigger, and set last trigger time
@@ -143,7 +143,7 @@ double LivetimeSvc::setTriggerRate(double rate)
     return old;
 }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-StatusCode LivetimeSvc::queryInterface(const IID& riid, void** ppvInterface)
+StatusCode LivetimeSvc::queryInterface(const InterfaceID& riid, void** ppvInterface)
 {
     if ( IID_ILivetimeSvc.versionMatch(riid) )  {
         *ppvInterface = (ILivetimeSvc*)this;
