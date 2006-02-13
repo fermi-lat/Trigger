@@ -2,7 +2,7 @@
 * @file TriggerAlg.cxx
 * @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.49.2.3 2006/01/13 16:22:14 burnett Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.49.2.4 2006/01/18 16:35:27 burnett Exp $
 */
 
 #include "ThrottleAlg.h"
@@ -172,7 +172,7 @@ StatusCode TriggerAlg::initialize()
         log << MSG::ERROR << "TriggerAlg failed to get the GlastDetSvc" << endreq;
         return sc;
     }
-    sc = service("LivetimeSvc", m_LivetimeSvc);
+    sc = service("LivetimeSvc", m_LivetimeSvc, true);
     if( sc.isFailure() ) {
         log << MSG::ERROR << "failed to get the LivetimeSvc" << endreq;
         return sc;
