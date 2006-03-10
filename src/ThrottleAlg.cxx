@@ -2,7 +2,7 @@
  * @file ThrottleAlg.cxx
  * @brief implementation for class ThrottleAlg
 
- $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/ThrottleAlg.cxx,v 1.3 2005/03/29 23:15:41 cohen Exp $
+ $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/ThrottleAlg.cxx,v 1.4 2005/03/30 04:00:17 cohen Exp $
  * @author David Wren - dnwren@milkyway.gsfc.nasa.gov
 */
 #include "ThrottleAlg.h"
@@ -73,6 +73,7 @@ void ThrottleAlg::getTriggeredTowers(const Event::TkrDigiCol& planes)
     // this loop sorts the hits by setting appropriate bits in the tower-plane hit map
     for( Event::TkrDigiCol::const_iterator it = planes.begin(); it != planes.end(); ++it){
         const TkrDigi& t = **it;
+        if( t.getNumHits()== 0) continue; //Can happen if dead strips
         layer_bits[std::make_pair(t.getTower(), t.getView())] |= layer_bit(t.getBilayer());
     }
     
