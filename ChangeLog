@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: winer  Fri Mar 10 07:50:25 PST 2006
+Trigger/src
+
+Modified Files:
+	ThrottleAlg.cxx 
+Log Message:
+Fix 3-in-a-row test guard against dead strips
+    *
+------------------------------------------------------------
 TAG
 Tag name: v4r2cl0, operation: add
 Package: Trigger
