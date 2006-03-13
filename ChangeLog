@@ -1,4 +1,26 @@
 ------------------------------------------------------------
+TAG
+Tag name: v4r5, operation: add
+Package: Trigger
+User: burnett  Mon Mar 13 15:59:29 2006
+Files:
+  Trigger/.cvsignore  1.2
+  Trigger/ChangeLog  1.264
+  Trigger/Trigger/TriRowBits.h  1.4
+  Trigger/cmt/.cvsignore  1.2
+  Trigger/cmt/requirements  1.54
+  Trigger/doc/release.notes  1.46
+  Trigger/src/mainpage.h  1.7
+  Trigger/src/jobOptions.txt  1.1.1.2
+  Trigger/src/Trigger_load.cxx  1.6
+  Trigger/src/TriggerAlg.cxx  1.56
+  Trigger/src/ThrottleAlg.h  1.6
+  Trigger/src/ThrottleAlg.cxx  1.5
+  Trigger/src/Trigger_dll.cxx  1.5
+  Trigger/src/test/jobOptions.txt  1.4
+
+    *
+------------------------------------------------------------
 User: burnett  Mon Mar 13 15:58:54 PST 2006
 Trigger/doc
 
