@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Tue Mar 14 07:09:29 PST 2006
+Trigger/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+fix test program jobopts
+    *
+------------------------------------------------------------
 TAG
 Tag name: v4r6, operation: add
 Package: Trigger
