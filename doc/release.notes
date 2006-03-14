@@ -1,9 +1,24 @@
 /** @file release.notes
  * @brief package Trigger
+ *
+ *  
  * package manager:T.Burnett 
   <pre>
 
  *  v4r5    13-mar-06 THB tagging OSU fix to ThrottleAlg
+ *  v4r3p3  10-jan-06 HMK Update unit test JO file to set up CAL services that
+ *          are now required.
+ *  v4r3p2  10-jan-06 HMK Bug fix - setting digi variable too late
+ *  v4r3p1  09-jan-06 HMK Update setting of ACD Low bit, to use 0.3 MIP thresh
+ *  v4r3    24-dec=05 THB Update veto calculation
+ *  v4r2p3  16-dec-05 ZGF support new CalTrigTool, drop old/bad cal code entirely.  undo impolite whitespace changes in TriggerAlg.cxx
+ *  v4r2p1  11-oct-05 THB check for dead strips when checking for a trigger
+ *  v4r4    18-jan-06 THB merge the branch   
+ * ------end branch -----------------------------------------
+ *  v4r2gr7 18-jan-06 THB tweak of throttle condition to allow more flexibility
+ *  v4r2gr6 13-jan-06 THB implement service to manage deadtime
+ *  v4r2gr1 23-dec-05 THB modify throttle to specify specific pattern to reject
+ * ---- on branch GRv7r3p1 ------------------------------------
  *  v4r3p3  10-jan-06 HMK Update unit test JO file to set up CAL services that
  *          are now required.
  *  v4r3p2  10-jan-06 HMK Bug fix - setting digi variable too late
