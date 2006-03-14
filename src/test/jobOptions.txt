@@ -8,6 +8,7 @@ ApplicationMgr.DLLs += { "GlastSvc", "Trigger"};
 ApplicationMgr.DLLs += {"CalUtil","CalXtalResponse"};
 ApplicationMgr.ExtSvc += {"GlastDetSvc"};
 ApplicationMgr.DLLs += {"CalibSvc"};
+ApplicationMgr.ExtSvc += {"LivetimeSvc"};
   	 
 #include "$CALIBSVCROOT/src/defaultOptions.txt"
 #include "$CALXTALRESPONSEROOT/src/defaultOptions.txt"
