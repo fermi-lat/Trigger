@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: burnett  Mon Mar 13 21:55:10 PST 2006
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx Trigger_load.cxx 
+Added Files:
+	LivetimeSvc.cxx 
+Log Message:
+merging from branch
+    *
+------------------------------------------------------------
 User: burnett  Mon Mar 13 21:55:09 PST 2006
 Trigger/doc
 
