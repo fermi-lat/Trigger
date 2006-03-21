@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: usher  Tue Mar 21 11:14:41 PST 2006
+Trigger/src
+
+Modified Files:
+	LivetimeSvc.cxx TriggerAlg.cxx 
+Log Message:
+Changes to LivetimeSvc for Gaudi, put original TriggerAlg back (overwrote somehow...)
+    *
+------------------------------------------------------------
 User: usher  Tue Mar 21 09:05:25 PST 2006
 Trigger/src
 
