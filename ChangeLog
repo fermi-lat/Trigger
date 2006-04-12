@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: winer  Wed Apr 12 12:14:31 PDT 2006
+Trigger/src
+
+Modified Files:
+	ThrottleAlg.cxx 
+Log Message:
+For Throttle check Veto Bits as defined by ACDdigi
+    *
+------------------------------------------------------------
 TAG
 Tag name: v4r7, operation: add
 Package: Trigger
