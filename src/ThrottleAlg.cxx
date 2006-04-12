@@ -2,7 +2,7 @@
  * @file ThrottleAlg.cxx
  * @brief implementation for class ThrottleAlg
 
- $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/ThrottleAlg.cxx,v 1.4 2005/03/30 04:00:17 cohen Exp $
+ $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/ThrottleAlg.cxx,v 1.5 2006/03/10 15:50:25 winer Exp $
  * @author David Wren - dnwren@milkyway.gsfc.nasa.gov
 */
 #include "ThrottleAlg.h"
@@ -124,8 +124,11 @@ void ThrottleAlg::setACDTileList(const Event::AcdDigiCol& digiCol,  double thres
 
         // if it is a tile...
 		if (id.tile()==true) {
-        // toss out hits below threshold
-        if ((*acdDigiIt)->getEnergy() < threshold) continue;
+
+            // check that this tile is above the veto on either readout
+                   if( !((*acdDigiIt)->getVeto(Event::AcdDigi::A)) && 
+                       !((*acdDigiIt)->getVeto(Event::AcdDigi::B)) ) continue;
+        
            //get the face, row, and column numbers
 		   s_face = id.face();
 		   s_row  = id.row();
