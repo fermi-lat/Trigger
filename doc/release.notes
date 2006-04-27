@@ -5,6 +5,7 @@
  * package manager:T.Burnett 
   <pre>
 
+ *  v4r7p2  27-apr-06 ZGF namespace issues to work w/ new CalXtalResponse.
  *  v4r7p1  20-apr-06 THB (For the OSU group) fix threshhold in ThrottleAlg
  *  v4r7    24-mar-06 HMK updates for new CLHEP 1.9.2.2 and Gaudi
  *  v4r6p1  14-mar-06 THB merge with DC2 branch
