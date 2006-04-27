@@ -1,5 +1,15 @@
 ------------------------------------------------------------
 User: fewtrell  Thu Apr 27 11:08:12 PDT 2006
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx 
+Log Message:
+fixed some namespace issues to work w/ new CalXtalResponse tag
+
+    *
+------------------------------------------------------------
+User: fewtrell  Thu Apr 27 11:08:12 PDT 2006
 Trigger/doc
 
 Modified Files:
