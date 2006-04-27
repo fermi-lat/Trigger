@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: fewtrell  Thu Apr 27 11:08:12 PDT 2006
+Trigger/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+fixed some namespace issues to work w/ new CalXtalResponse tag
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: v4r7p1, operation: add
 Package: Trigger
