@@ -2,12 +2,17 @@
 *  @file TriggerAlg.cxx
 *  @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.59 2006/03/21 19:14:41 usher Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.60 2006/04/27 18:08:12 fewtrell Exp $
 */
 
 #include "ThrottleAlg.h"
 
+// set the following define to compile Johann's code for special trigger bit diagnostics
+// or better, move it to its own algorithm, as it is not involved in computing trigger bits itself.
+// #define TRIROWBITS
+#ifdef TRIROWBITS
 #include "Trigger/TriRowBits.h"
+#endif
 #include "Trigger/ILivetimeSvc.h"
 
 #include "GlastSvc/GlastDetSvc/IGlastDetSvc.h"
@@ -97,8 +102,9 @@ private:
     /// set gem bits in trigger word, either from real condition summary, or from bits
     unsigned int gemBits(unsigned int  trigger_bits);
   
+#ifdef TRIROWBITS //THB disable this -- it should be in a special algorithm for the diagnostics
   void computeTrgReqTriRowBits(TriRowBitsTds::TriRowBits&);
-
+#endif
     unsigned int m_mask;
     int m_acd_hits;
     int m_log_hits;
@@ -363,11 +369,12 @@ unsigned int TriggerAlg::tracker(const Event::TkrDigiCol&  planes)
         layer_bits[std::make_pair(t.getTower(), t.getView())] |= layer_bit(t.getBilayer());
     }
 
+#ifdef TRIROWBITS
     //!Creating Object in TDS.
     //!Documentation of three_in_a_row_bits available in Trigger/TriRowBits.h
     TriRowBitsTds::TriRowBits *rowbits= new TriRowBitsTds::TriRowBits;
     eventSvc()->registerObject("/Event/TriRowBits", rowbits);
-
+#endif
     bool tkr_trig_flag = false;
     // now look for a three in a row in x-y coincidence
     for( Map::iterator itr = layer_bits.begin(); itr !=layer_bits.end(); ++ itr){
@@ -380,11 +387,14 @@ unsigned int TriggerAlg::tracker(const Event::TkrDigiCol&  planes)
                 xbits = (*itr).second,
                 ybits = layer_bits[std::make_pair(tower, idents::GlastAxis::Y)];
 
+#ifdef TRIROWBITS
             //!Calculating the TriRowBits - 16 possible 3-in-a-row signals for 18 layers
             unsigned int bitword=three_in_a_row(xbits & ybits);
 	    rowbits->setDigiTriRowBits(tower.id(), bitword);
-
-	    if(bitword) {
+#else
+            unsigned int bitword = three_in_a_row(xbits & ybits);
+#endif
+            if(bitword) {
 	        // OK: tag the tower for stats, but just one tower per event
                 if(!tkr_trig_flag) m_tower_trigger_count[tower]++;
 		//remember there was a 3-in-a-row but keep looking in other towers
@@ -393,16 +403,17 @@ unsigned int TriggerAlg::tracker(const Event::TkrDigiCol&  planes)
 
         }
     }
+#ifdef TRIROWBITS
 
     //Now we compute the 3 in a row combinations based on the trigger requests
     computeTrgReqTriRowBits(*rowbits);
-    
     //    SmartDataPtr<TriRowBitsTds::TriRowBits> newrowbits(eventSvc(), "/Event/TriRowBits");
 
     
     log << MSG::DEBUG;
     if(log.isActive()) log.stream() << *rowbits;
     log <<endreq;
+#endif
 
     //returns the digi base word, for consistency with the cal and acd.
        if(tkr_trig_flag) return enums::b_Track;
@@ -508,7 +519,7 @@ void TriggerAlg::bitSummary(std::ostream& out){
 
 
 //------------------------------------------------------------------------------
-
+#ifdef TRIROWBITS
 void TriggerAlg::computeTrgReqTriRowBits(TriRowBitsTds::TriRowBits& rowbits)
 {
   // Retrieve the Diagnostic data for this event
@@ -575,3 +586,4 @@ void TriggerAlg::computeTrgReqTriRowBits(TriRowBitsTds::TriRowBits& rowbits)
     }
   
 }
+#endif
