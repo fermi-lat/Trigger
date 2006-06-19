@@ -1,22 +1,4 @@
 ------------------------------------------------------------
-User: burnett  Mon Jun 19 14:25:11 PDT 2006
-Trigger/doc
-
-Modified Files:
-	release.notes 
-Log Message:
-disable tracker diagnostic code & tag
-    *
-------------------------------------------------------------
-User: burnett  Mon Jun 19 14:25:11 PDT 2006
-Trigger/cmt
-
-Modified Files:
-	requirements 
-Log Message:
-disable tracker diagnostic code & tag
-    *
-------------------------------------------------------------
 TAG
 Tag name: v4r7p2, operation: add
 Package: Trigger
