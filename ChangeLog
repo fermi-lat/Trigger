@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Mon Jun 26 11:42:29 PDT 2006
+Trigger/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+patch test program because of CalUtil change
+    *
+------------------------------------------------------------
 TAG
 Tag name: v4r8, operation: add
 Package: Trigger
