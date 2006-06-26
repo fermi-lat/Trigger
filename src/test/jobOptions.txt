@@ -5,7 +5,7 @@
 
 // basic glast dlls
 ApplicationMgr.DLLs += { "GlastSvc", "Trigger"};
-ApplicationMgr.DLLs += {"CalUtil","CalXtalResponse"};
+ApplicationMgr.DLLs += {"CalXtalResponse"};
 ApplicationMgr.ExtSvc += {"GlastDetSvc"};
 ApplicationMgr.DLLs += {"CalibSvc"};
 ApplicationMgr.ExtSvc += {"LivetimeSvc"};
