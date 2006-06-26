@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Mon Jun 26 11:42:30 PDT 2006
+Trigger/src/test
+
+Modified Files:
+	jobOptions.txt 
+Log Message:
+patch test program because of CalUtil change
+    *
+------------------------------------------------------------
 User: burnett  Mon Jun 26 11:42:29 PDT 2006
 Trigger/doc
 
