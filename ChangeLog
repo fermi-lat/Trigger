@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Fri Nov 10 13:51:39 PST 2006
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx mainpage.h 
+Log Message:
+change to ROI bit for JIRA request
+    *
+------------------------------------------------------------
 User: burnett  Fri Nov 10 13:51:38 PST 2006
 Trigger/doc
 
