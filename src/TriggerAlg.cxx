@@ -2,7 +2,7 @@
 *  @file TriggerAlg.cxx
 *  @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.60 2006/04/27 18:08:12 fewtrell Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.61 2006/06/19 21:25:12 burnett Exp $
 */
 
 #include "ThrottleAlg.h"
@@ -114,6 +114,7 @@ private:
     BooleanProperty  m_throttle;
     IntegerProperty m_vetobits;
     IntegerProperty m_vetomask;
+    BooleanProperty m_setROIbit;
 
     double m_lastTriggerTime; //! time of last trigger, for calculated live time
     double m_liveTime; //! cumulative live time
@@ -151,6 +152,7 @@ TriggerAlg::TriggerAlg(const std::string& name, ISvcLocator* pSvcLocator)
     declareProperty("throttle",   m_throttle=false);  // if set, veto when throttle bit is on
     declareProperty("vetomask",  m_vetomask=2+4+32); // if thottle it set, veto if trigger masked with these ...
     declareProperty("vetobits",  m_vetobits=2+32);   // equals these bits
+    declareProperty("setRIObit", m_setROIbit=true);  // interpret bit 0 as the ROI.
 }
 //------------------------------------------------------------------------------
 /*! 
@@ -241,24 +243,24 @@ StatusCode TriggerAlg::execute()
 
     // calorimter is either the new glt, or old cal
     if( glt!=0 ){ trigger_bits |= calorimeter(glt) ;}
-  else if( cal!=0 ) {
-    /// try to create new glt
-    Event::GltDigi *newGlt(0);
-    newGlt = m_calTrigTool->setupGltDigi(eventSvc());
-    if (!newGlt)
-      log << MSG::ERROR << "Failure to create new GltDigi in TDS." << endreq;
+    else if( cal!=0 ) {
+        /// try to create new glt
+        Event::GltDigi *newGlt(0);
+        newGlt = m_calTrigTool->setupGltDigi(eventSvc());
+        if (!newGlt)
+            log << MSG::ERROR << "Failure to create new GltDigi in TDS." << endreq;
 
-	CalUtil::CalArray<CalUtil::DiodeNum, bool> calTrigBits;
-    calTrigBits.fill(false);
-    sc = m_calTrigTool->calcGlobalTrig(cal, calTrigBits, newGlt);
-    if (sc.isFailure()) {
-      log << MSG::ERROR << "Failure to run cal trigger code" << endreq;
-      return sc;
+        CalUtil::CalArray<CalUtil::DiodeNum, bool> calTrigBits;
+        calTrigBits.fill(false);
+        sc = m_calTrigTool->calcGlobalTrig(cal, calTrigBits, newGlt);
+        if (sc.isFailure()) {
+            log << MSG::ERROR << "Failure to run cal trigger code" << endreq;
+            return sc;
+        }
+
+        trigger_bits |= (calTrigBits[CalUtil::LRG_DIODE] ? enums::b_LO_CAL:0) 
+            |  (calTrigBits[CalUtil::SM_DIODE] ? enums::b_HI_CAL:0);
     }
-      
-	trigger_bits |= (calTrigBits[CalUtil::LRG_DIODE] ? enums::b_LO_CAL:0) 
-      |  (calTrigBits[CalUtil::SM_DIODE] ? enums::b_HI_CAL:0);
-  }
 
 
     SmartDataPtr<Event::EventHeader> header(eventSvc(), EventModel::EventHeader);
@@ -268,10 +270,17 @@ StatusCode TriggerAlg::execute()
     Throttle.setup();
     if (header){
         StatusCode temp_sc;
-        double s_vetoThresholdMeV;
-        temp_sc = m_glastDetSvc->getNumericConstByName("acd.vetoThreshold", &s_vetoThresholdMeV);
+        static double vetoThresholdMeV(-99);
+        if( vetoThresholdMeV<0){
+            temp_sc = m_glastDetSvc->getNumericConstByName("acd.vetoThreshold", &vetoThresholdMeV);
+        }
         if( tkr!=0 && acd !=0 ) {
-            trigger_bits |= Throttle.calculate(tkr,acd, s_vetoThresholdMeV);
+            int roi = Throttle.calculate(tkr,acd, vetoThresholdMeV);
+            trigger_bits |= roi;
+            if( roi!=0  &&  m_setROIbit ){
+                // make copy
+                trigger_bits |= enums::b_ROI;
+            }
         }
     }
     else{
@@ -445,8 +454,11 @@ unsigned int TriggerAlg::anticoincidence(const Event::AcdDigiCol& tiles)
         // check if hitMapBit is set (veto) which will correspond to 0.3 MIP.
         // 20060109 Agreed at Analysis Meeting that onboard threshold is 0.3 MIP
         const AcdDigi& digi = **it;
-        if ( digi.getHitMapBit(Event::AcdDigi::A)
-            || digi.getHitMapBit(Event::AcdDigi::B) ) ret |= enums::b_ACDL; 
+        if ( (digi.getHitMapBit(Event::AcdDigi::A)
+            || digi.getHitMapBit(Event::AcdDigi::B)) && ! m_setROIbit ){
+                // set bit only if not using it as ROI
+                ret |= enums::b_ACDL; 
+            }
         // now trigger high if either PMT is above threshold
         if (   digi.getCno(Event::AcdDigi::A) 
             || digi.getCno(Event::AcdDigi::B) ) ret |= enums::b_ACDH;
