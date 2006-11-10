@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Fri Nov 10 13:51:38 PST 2006
+Trigger/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+change to ROI bit for JIRA request
+    *
+------------------------------------------------------------
 TAG
 Tag name: v4r8p1, operation: add
 Package: Trigger
