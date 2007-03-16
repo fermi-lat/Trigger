@@ -2,7 +2,7 @@
 *  @file TriggerAlg.cxx
 *  @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.61 2006/06/19 21:25:12 burnett Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.62 2006/11/10 21:51:38 burnett Exp $
 */
 
 #include "ThrottleAlg.h"
@@ -349,7 +349,8 @@ unsigned int TriggerAlg::gemBits(unsigned int  trigger_bits)
     // kudos to Heather for creating a typedef
 
     return 
-        (( trigger_bits & enums::b_Track) !=0 ? LdfEvent::Gem::TKR   : 0)
+         ((trigger_bits & enums::b_ROI)   !=0 ? LdfEvent::Gem::ROI   : 0)
+        |((trigger_bits & enums::b_Track) !=0 ? LdfEvent::Gem::TKR   : 0)
         |((trigger_bits & enums::b_LO_CAL)!=0 ? LdfEvent::Gem::CALLE : 0)
         |((trigger_bits & enums::b_HI_CAL)!=0 ? LdfEvent::Gem::CALHE : 0)
         |((trigger_bits & enums::b_ACDH)  !=0 ? LdfEvent::Gem::CNO   : 0) ;
