@@ -1,13 +1,4 @@
 ------------------------------------------------------------
-User: burnett  Fri Mar 16 13:33:35 PDT 2007
-Trigger/src
-
-Modified Files:
-	TriggerAlg.cxx 
-Log Message:
-set the ROI GEM bit if MC
-    *
-------------------------------------------------------------
 TAG
 Tag name: v4r9, operation: add
 Package: Trigger
