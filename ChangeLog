@@ -1,4 +1,28 @@
 ------------------------------------------------------------
+TAG
+Tag name: v4r9p1, operation: add
+Package: Trigger
+User: burnett  Fri Mar 16 13:36:40 2007
+Files:
+  Trigger/.cvsignore  1.2
+  Trigger/ChangeLog  1.302
+  Trigger/Trigger/ILivetimeSvc.h  1.2
+  Trigger/Trigger/TriRowBits.h  1.4
+  Trigger/cmt/.cvsignore  1.2
+  Trigger/cmt/requirements  1.63
+  Trigger/doc/release.notes  1.56
+  Trigger/src/Trigger_load.cxx  1.7
+  Trigger/src/LivetimeSvc.cxx  1.3
+  Trigger/src/Trigger_dll.cxx  1.5
+  Trigger/src/mainpage.h  1.8
+  Trigger/src/jobOptions.txt  1.1.1.2
+  Trigger/src/TriggerAlg.cxx  1.63
+  Trigger/src/ThrottleAlg.cxx  1.6
+  Trigger/src/ThrottleAlg.h  1.6
+  Trigger/src/test/jobOptions.txt  1.6
+
+    *
+------------------------------------------------------------
 User: burnett  Fri Mar 16 13:36:09 PDT 2007
 Trigger/doc
 
