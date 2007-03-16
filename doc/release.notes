@@ -5,6 +5,7 @@
  * package manager:T.Burnett 
   <pre>
 
+ *  v4r9p1  10-nov-06 THB Make copy of ROI bit in bit 0 [JIRA GRINF-32], apply also to GemConditionSummary
  *  v4r9    10-nov-06 THB Make copy of ROI bit in bit 0 [JIRA GRINF-32], selectable from JO parameter
  *  v4r8p1  26-jun-06 THB fix test program after CalUtil change
  *  v4r8    19-jun-06 THB Disable tracker trigger diagnostic code
