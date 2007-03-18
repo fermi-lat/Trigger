@@ -2,7 +2,7 @@
 *  @file TriggerAlg.cxx
 *  @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.62 2006/11/10 21:51:38 burnett Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.63 2007/03/16 20:33:35 burnett Exp $
 */
 
 #include "ThrottleAlg.h"
@@ -114,7 +114,6 @@ private:
     BooleanProperty  m_throttle;
     IntegerProperty m_vetobits;
     IntegerProperty m_vetomask;
-    BooleanProperty m_setROIbit;
 
     double m_lastTriggerTime; //! time of last trigger, for calculated live time
     double m_liveTime; //! cumulative live time
@@ -150,9 +149,9 @@ TriggerAlg::TriggerAlg(const std::string& name, ISvcLocator* pSvcLocator)
     declareProperty("mask"     ,  m_mask=0xffffffff); // trigger mask
     declareProperty("deadtime" ,  m_deadtime=0. );    // deadtime to apply to trigger, in sec.
     declareProperty("throttle",   m_throttle=false);  // if set, veto when throttle bit is on
-    declareProperty("vetomask",  m_vetomask=2+4+32); // if thottle it set, veto if trigger masked with these ...
-    declareProperty("vetobits",  m_vetobits=2+32);   // equals these bits
-    declareProperty("setRIObit", m_setROIbit=true);  // interpret bit 0 as the ROI.
+    declareProperty("vetomask",  m_vetomask=1+2+4);  // if thottle it set, veto if trigger masked with these ...
+    declareProperty("vetobits",  m_vetobits=1+2);    // equals these bits
+//removing    declareProperty("setRIObit", m_setROIbit=true);  // interpret bit 0 as the ROI.
 }
 //------------------------------------------------------------------------------
 /*! 
@@ -276,10 +275,9 @@ StatusCode TriggerAlg::execute()
         }
         if( tkr!=0 && acd !=0 ) {
             int roi = Throttle.calculate(tkr,acd, vetoThresholdMeV);
-            trigger_bits |= roi;
-            if( roi!=0  &&  m_setROIbit ){
-                // make copy
+            if( roi!=0){
                 trigger_bits |= enums::b_ROI;
+                trigger_bits |= roi; // hit both for now
             }
         }
     }
@@ -456,9 +454,8 @@ unsigned int TriggerAlg::anticoincidence(const Event::AcdDigiCol& tiles)
         // 20060109 Agreed at Analysis Meeting that onboard threshold is 0.3 MIP
         const AcdDigi& digi = **it;
         if ( (digi.getHitMapBit(Event::AcdDigi::A)
-            || digi.getHitMapBit(Event::AcdDigi::B)) && ! m_setROIbit ){
-                // set bit only if not using it as ROI
-                ret |= enums::b_ACDL; 
+            || digi.getHitMapBit(Event::AcdDigi::B))  ){
+                 ret |= enums::b_ACDL; 
             }
         // now trigger high if either PMT is above threshold
         if (   digi.getCno(Event::AcdDigi::A) 
