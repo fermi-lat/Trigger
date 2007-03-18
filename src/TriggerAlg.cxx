@@ -2,7 +2,7 @@
 *  @file TriggerAlg.cxx
 *  @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.63 2007/03/16 20:33:35 burnett Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.64 2007/03/18 14:57:25 burnett Exp $
 */
 
 #include "ThrottleAlg.h"
@@ -94,7 +94,7 @@ private:
     //! calculate ACD trigger bits
     /// @return the bits
     unsigned int  anticoincidence(const Event::AcdDigiCol&  planes);
-    void bitSummary(std::ostream& out);
+    void bitSummary(std::ostream& out, std::string label, const std::map<int,int>& table);
 
     //// are we alive?
     bool alive(double current_time);
@@ -122,6 +122,7 @@ private:
     int m_total;
     int m_triggered;
     std::map<int,int> m_counts; //map of values for each bit pattern
+    std::map<int,int> m_trig_counts; //map of values for each bit pattern, triggered events
 
     std::map<idents::TowerId, int> m_tower_trigger_count;
 
@@ -134,6 +135,9 @@ private:
     /// use to calculate cal trigger response from digis if cal trig response has not already
     /// been calculated
     ICalTrigTool *m_calTrigTool;
+
+    /// use for the names of the bits
+    std::map<int, std::string> m_bitNames;
 };
 
 //------------------------------------------------------------------------------
@@ -152,6 +156,16 @@ TriggerAlg::TriggerAlg(const std::string& name, ISvcLocator* pSvcLocator)
     declareProperty("vetomask",  m_vetomask=1+2+4);  // if thottle it set, veto if trigger masked with these ...
     declareProperty("vetobits",  m_vetobits=1+2);    // equals these bits
 //removing    declareProperty("setRIObit", m_setROIbit=true);  // interpret bit 0 as the ROI.
+    for( int i=0; i<8; ++i) { 
+        std::stringstream t; t<< "bit "<< i;
+        m_bitNames[1<<i] = t.str();
+    }
+    m_bitNames[enums::b_LO_CAL] = "LOCAL";
+    m_bitNames[enums::b_HI_CAL] = "HICAL";
+    m_bitNames[enums::b_ROI]    = "ROI";
+    m_bitNames[enums::b_ACDH]   = "ACDH";
+    m_bitNames[enums::b_Track]  = "TKR";
+    m_bitNames[enums::b_ACDL]   = "ACDL";
 }
 //------------------------------------------------------------------------------
 /*! 
@@ -303,6 +317,8 @@ StatusCode TriggerAlg::execute()
         log << MSG::DEBUG << "Event killed by deadtime limit" << endreq;
     }else {
         m_triggered++;
+        m_trig_counts[trigger_bits] = m_trig_counts[trigger_bits]+1;
+
         double now = header->time();
 
         header->setLivetime(m_LivetimeSvc->livetime());
@@ -478,11 +494,15 @@ StatusCode TriggerAlg::finalize() {
     MsgStream log(msgSvc(), name());
     log << MSG::INFO << "Totals triggered/ processed: " << m_triggered << "/" << m_total ; 
 
-    if(log.isActive() ) bitSummary(log.stream());
+    if(log.isActive() ){
+        bitSummary(log.stream(), "all events", m_counts);
+        bitSummary(log.stream(), "triggered events", m_trig_counts);
+    }
 
     log << endreq;
 
     //TODO: format this nicely, as a 4x4 table
+#if 0 // remove this -- not really useful
     log << MSG::INFO ;
     if(log.isActive() ){
         log.stream() << "Tower trigger summary\n" << std::setw(30) << "Tower    count " << std::endl;;
@@ -492,24 +512,25 @@ StatusCode TriggerAlg::finalize() {
             }
     }
     log << endreq;
+#endif
     return sc;
 }
 //------------------------------------------------------------------------------
-void TriggerAlg::bitSummary(std::ostream& out){
+void TriggerAlg::bitSummary(std::ostream& out, std::string label, const std::map<int,int>& table){
 
     // purpose and method: make a summary of the bit frequencies to the stream
 
     using namespace std;
     int size= enums::number_of_trigger_bits;  // bits to expect
     static int col1=16; // width of first column
-    out << endl << "             bit frequency table";
+    out << endl << "             bit frequency: "<< label;
     out << endl << setw(col1) << "value"<< setw(6) << "count" ;
     int j, grand_total=0;
-    for(j=0; j<size; ++j) out << setw(6) << (1<<j);
+    for(j=0; j<size; ++j) out << setw(6) << m_bitNames[1<<j];
     out << endl << setw(col1) <<" "<< setw(6) << "------"; 
     for( j=0; j<size; ++j) out << setw(6) << "-----";
     vector<int>total(size);
-    for( map<int,int>::const_iterator it = m_counts.begin(); it != m_counts.end(); ++it){
+    for( map<int,int>::const_iterator it = table.begin(); it != table.end(); ++it){
         int i = (*it).first, n = (*it).second;
         grand_total += n;
         out << endl << setw(col1)<< i << setw(6)<< n ;
