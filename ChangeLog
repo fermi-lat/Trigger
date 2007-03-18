@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: burnett  Sun Mar 18 11:52:13 PDT 2007
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx 
+Log Message:
+better trigger bit table format
+    *
+------------------------------------------------------------
+User: burnett  Sun Mar 18 11:52:13 PDT 2007
 Trigger/doc
 
 Modified Files:
