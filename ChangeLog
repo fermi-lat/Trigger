@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Sun Mar 18 07:57:24 PDT 2007
+Trigger/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+tag after fix bits, adding ACDL
+    *
+------------------------------------------------------------
 TAG
 Tag name: v4r9p1, operation: add
 Package: Trigger
