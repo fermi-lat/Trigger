@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: burnett  Fri Apr  6 15:26:04 PDT 2007
+Trigger/src/test/engine
+
+Added Files:
+	testmain.cxx 
+Log Message:
+implement Trigger Engine scheme
+    *
+------------------------------------------------------------
+User: burnett  Fri Apr  6 15:26:04 PDT 2007
 Trigger/src
 
 Modified Files:
