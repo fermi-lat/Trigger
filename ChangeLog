@@ -1,5 +1,16 @@
 ------------------------------------------------------------
 User: burnett  Fri Apr  6 15:26:04 PDT 2007
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx 
+Added Files:
+	Engine.cxx Engine.h TriggerTables.cxx TriggerTables.h 
+Log Message:
+implement Trigger Engine scheme
+    *
+------------------------------------------------------------
+User: burnett  Fri Apr  6 15:26:04 PDT 2007
 Trigger/cmt
 
 Modified Files:
