@@ -1,8 +1,8 @@
 package Trigger
-version v4r9p3
+version v4r10
 
 author T. Burnett <tburnett@u.washington.edu>
-# $Id: requirements,v 1.64 2007/03/18 14:57:24 burnett Exp $
+# $Id: requirements,v 1.65 2007/03/18 18:52:13 burnett Exp $
 
 # --------------------------
 # define trigger algorithms
@@ -38,3 +38,6 @@ library Trigger  \
   -s=../src $(source)
 
 apply_pattern package_test
+
+# enable for testing
+#application engine_test -s=test/engine $(source) -s=../src TriggerTables.* Engine.*

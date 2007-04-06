@@ -2,10 +2,12 @@
 *  @file TriggerAlg.cxx
 *  @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.64 2007/03/18 14:57:25 burnett Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.65 2007/03/18 18:52:13 burnett Exp $
 */
 
 #include "ThrottleAlg.h"
+
+#include "TriggerTables.h"
 
 // set the following define to compile Johann's code for special trigger bit diagnostics
 // or better, move it to its own algorithm, as it is not involved in computing trigger bits itself.
@@ -17,8 +19,6 @@
 
 #include "GlastSvc/GlastDetSvc/IGlastDetSvc.h"
 
-#include "CLHEP/Geometry/Point3D.h"
-#include "CLHEP/Vector/LorentzVector.h"
 
 #include "Event/TopLevel/EventModel.h"
 #include "Event/TopLevel/Event.h"
@@ -45,10 +45,6 @@
 
 #include "CalXtalResponse/ICalTrigTool.h"
 
-
-#include "CalXtalResponse/ICalTrigTool.h"
-
-
 #include <map>
 #include <vector>
 
@@ -56,10 +52,10 @@ namespace { // local definitions of convenient inline functions
     inline unsigned three_in_a_row(unsigned bits)
     {
         unsigned bitword = 0;
-	for(int i=0; i<16; i++){
-	       if((bits&7)==7)  bitword |= 1 << i;
-	       bits >>= 1;
-            }
+        for(int i=0; i<16; i++){
+            if((bits&7)==7)  bitword |= 1 << i;
+            bits >>= 1;
+        }
         return bitword;
     }
     inline unsigned layer_bit(int layer){ return 1 << layer;}
@@ -101,9 +97,9 @@ private:
 
     /// set gem bits in trigger word, either from real condition summary, or from bits
     unsigned int gemBits(unsigned int  trigger_bits);
-  
+
 #ifdef TRIROWBITS //THB disable this -- it should be in a special algorithm for the diagnostics
-  void computeTrgReqTriRowBits(TriRowBitsTds::TriRowBits&);
+    void computeTrgReqTriRowBits(TriRowBitsTds::TriRowBits&);
 #endif
     unsigned int m_mask;
     int m_acd_hits;
@@ -114,6 +110,7 @@ private:
     BooleanProperty  m_throttle;
     IntegerProperty m_vetobits;
     IntegerProperty m_vetomask;
+    BooleanProperty m_engine;
 
     double m_lastTriggerTime; //! time of last trigger, for calculated live time
     double m_liveTime; //! cumulative live time
@@ -138,6 +135,8 @@ private:
 
     /// use for the names of the bits
     std::map<int, std::string> m_bitNames;
+
+    TriggerTables* m_triggerTables;
 };
 
 //------------------------------------------------------------------------------
@@ -150,20 +149,21 @@ TriggerAlg::TriggerAlg(const std::string& name, ISvcLocator* pSvcLocator)
 , m_total(0)
 , m_triggered(0)
 {
-    declareProperty("mask"     ,  m_mask=0xffffffff); // trigger mask
-    declareProperty("deadtime" ,  m_deadtime=0. );    // deadtime to apply to trigger, in sec.
-    declareProperty("throttle",   m_throttle=false);  // if set, veto when throttle bit is on
+    declareProperty("mask"    ,  m_mask=0xffffffff); // trigger mask
+    declareProperty("deadtime",  m_deadtime=0. );    // deadtime to apply to trigger, in sec.
+    declareProperty("throttle",  m_throttle=false);  // if set, veto when throttle bit is on
     declareProperty("vetomask",  m_vetomask=1+2+4);  // if thottle it set, veto if trigger masked with these ...
     declareProperty("vetobits",  m_vetobits=1+2);    // equals these bits
-//removing    declareProperty("setRIObit", m_setROIbit=true);  // interpret bit 0 as the ROI.
+
+    declareProperty("engine",    m_engine = false);  // set true to use default engine
     for( int i=0; i<8; ++i) { 
         std::stringstream t; t<< "bit "<< i;
         m_bitNames[1<<i] = t.str();
     }
-    m_bitNames[enums::b_LO_CAL] = "LOCAL";
-    m_bitNames[enums::b_HI_CAL] = "HICAL";
+    m_bitNames[enums::b_LO_CAL] = "CALLO";
+    m_bitNames[enums::b_HI_CAL] = "CALHI";
     m_bitNames[enums::b_ROI]    = "ROI";
-    m_bitNames[enums::b_ACDH]   = "ACDH";
+    m_bitNames[enums::b_ACDH]   = "CNO";
     m_bitNames[enums::b_Track]  = "TKR";
     m_bitNames[enums::b_ACDL]   = "ACDL";
 }
@@ -206,14 +206,23 @@ StatusCode TriggerAlg::initialize()
         return sc;
     }
 
-  // this tool needs to be shared by CalDigiAlg, XtalDigiTool & TriggerAlg, so I am
-  // giving it global ownership
-  sc = toolSvc()->retrieveTool("CalTrigTool", m_calTrigTool);
-  if (sc.isFailure() ) {
-    log << MSG::ERROR << "  Unable to create CalTrigTool" << endreq;
-    return sc;
-  }
+    // this tool needs to be shared by CalDigiAlg, XtalDigiTool & TriggerAlg, so I am
+    // giving it global ownership
+    sc = toolSvc()->retrieveTool("CalTrigTool", m_calTrigTool);
+    if (sc.isFailure() ) {
+        log << MSG::ERROR << "  Unable to create CalTrigTool" << endreq;
+        return sc;
+    }
 
+    if( m_engine){
+        // selected trigger tables and engines for event selection
+
+        m_triggerTables = new TriggerTables();
+
+        log << MSG::INFO << "Trigger tables: \n";
+            m_triggerTables->print(log.stream());
+        log << endreq;
+    }
     return sc;
 }
 
@@ -302,50 +311,69 @@ StatusCode TriggerAlg::execute()
     // check for deadtime: set flag only if applying deadtime
     bool killedByDeadtime =  ! m_LivetimeSvc->isLive(header->time()); 
     if( killedByDeadtime) {
-    }else {
-        m_total++;
-        m_counts[trigger_bits] = m_counts[trigger_bits]+1;
+        return sc;
     }
 
+    m_total++;
+    m_counts[trigger_bits] +=1;
+
     // apply filter for subsequent processing.
-    if( m_mask!=0 && ( trigger_bits & m_mask) == 0 
-        || m_throttle && ( (trigger_bits & m_vetomask) == m_vetobits ) ) {
-        setFilterPassed( false );
-        log << MSG::DEBUG << "Event did not trigger" << endreq;
-    }else if( killedByDeadtime ){
-        setFilterPassed( false );
-        log << MSG::DEBUG << "Event killed by deadtime limit" << endreq;
-    }else {
-        m_triggered++;
-        m_trig_counts[trigger_bits] = m_trig_counts[trigger_bits]+1;
+    if( m_engine){
+        int marker = (*m_triggerTables)(trigger_bits & 31); // note only apply to low 5 bits for now
+        log << MSG::DEBUG << "Marker is " << marker << endreq;
 
-        double now = header->time();
-
-        header->setLivetime(m_LivetimeSvc->livetime());
-
-        Event::EventHeader& h = header;
-
-        log << MSG::DEBUG ;
-        if(log.isActive()) log.stream() << "Processing run/event " << h.run() << "/" << h.event() << " trigger & mask = "
-            << std::setbase(16) << (m_mask==0 ? trigger_bits : trigger_bits & m_mask);
-        log << endreq;
-
-        // or in the gem trigger bits, either from hardware, or derived from trigger
-        trigger_bits |= gemBits(trigger_bits) << 8;
-
-        if( static_cast<int>(h.trigger())==-1 
-                    || h.trigger()==0  // this seems to happen when reading back from incoming??
-                    )
-        {
-            // expect it to be zero if not set.
-            h.setTrigger(trigger_bits);
-        }else  if (h.trigger() != 0xbaadf00d && trigger_bits != h.trigger() ) {
-            // trigger bits already set: reading digiRoot file.
-            log << MSG::INFO;
-            if(log.isActive()) log.stream() << "Trigger bits read back do not agree with recalculation! " 
-                << std::setbase(16) <<trigger_bits << " vs. " << h.trigger();
-            log << endreq;
+        if( marker==0 ) {
+            setFilterPassed(false);
+            log << MSG::DEBUG << "Event did not trigger, according to engine" << endreq;
+            return sc;
         }
+    }else {
+        // apply mask conditions
+        if( m_mask!=0 && ( trigger_bits & m_mask) == 0 
+            || m_throttle && ( (trigger_bits & m_vetomask) == m_vetobits ) ) 
+        {
+            setFilterPassed( false );
+            log << MSG::DEBUG << "Event did not trigger" << endreq;
+            return sc;
+        }else if( killedByDeadtime ){
+            setFilterPassed( false );
+            log << MSG::DEBUG << "Event killed by deadtime limit" << endreq;
+            return sc;
+
+        }
+    }
+
+    // passed trigger: continue processing
+
+    m_triggered++;
+    m_trig_counts[trigger_bits] +=1;
+
+    double now = header->time();
+
+    header->setLivetime(m_LivetimeSvc->livetime());
+
+    Event::EventHeader& h = header;
+
+    log << MSG::DEBUG ;
+    if(log.isActive()) log.stream() << "Processing run/event " << h.run() << "/" << h.event() << " trigger & mask = "
+        << std::setbase(16) << (m_mask==0 ? trigger_bits : trigger_bits & m_mask);
+    log << endreq;
+
+    // or in the gem trigger bits, either from hardware, or derived from trigger
+    trigger_bits |= gemBits(trigger_bits) << 8;
+
+    if( static_cast<int>(h.trigger())==-1 
+        || h.trigger()==0  // this seems to happen when reading back from incoming??
+        )
+    {
+        // expect it to be zero if not set.
+        h.setTrigger(trigger_bits);
+    }else  if (h.trigger() != 0xbaadf00d && trigger_bits != h.trigger() ) {
+        // trigger bits already set: reading digiRoot file.
+        log << MSG::INFO;
+        if(log.isActive()) log.stream() << "Trigger bits read back do not agree with recalculation! " 
+            << std::setbase(16) <<trigger_bits << " vs. " << h.trigger();
+        log << endreq;
     }
 
     return sc;
@@ -363,7 +391,7 @@ unsigned int TriggerAlg::gemBits(unsigned int  trigger_bits)
     // kudos to Heather for creating a typedef
 
     return 
-         ((trigger_bits & enums::b_ROI)   !=0 ? LdfEvent::Gem::ROI   : 0)
+        ((trigger_bits & enums::b_ROI)   !=0 ? LdfEvent::Gem::ROI   : 0)
         |((trigger_bits & enums::b_Track) !=0 ? LdfEvent::Gem::TKR   : 0)
         |((trigger_bits & enums::b_LO_CAL)!=0 ? LdfEvent::Gem::CALLE : 0)
         |((trigger_bits & enums::b_HI_CAL)!=0 ? LdfEvent::Gem::CALHE : 0)
@@ -414,16 +442,16 @@ unsigned int TriggerAlg::tracker(const Event::TkrDigiCol&  planes)
 #ifdef TRIROWBITS
             //!Calculating the TriRowBits - 16 possible 3-in-a-row signals for 18 layers
             unsigned int bitword=three_in_a_row(xbits & ybits);
-	    rowbits->setDigiTriRowBits(tower.id(), bitword);
+            rowbits->setDigiTriRowBits(tower.id(), bitword);
 #else
             unsigned int bitword = three_in_a_row(xbits & ybits);
 #endif
             if(bitword) {
-	        // OK: tag the tower for stats, but just one tower per event
+                // OK: tag the tower for stats, but just one tower per event
                 if(!tkr_trig_flag) m_tower_trigger_count[tower]++;
-		//remember there was a 3-in-a-row but keep looking in other towers
-		tkr_trig_flag=true;
-             }
+                //remember there was a 3-in-a-row but keep looking in other towers
+                tkr_trig_flag=true;
+            }
 
         }
     }
@@ -433,15 +461,15 @@ unsigned int TriggerAlg::tracker(const Event::TkrDigiCol&  planes)
     computeTrgReqTriRowBits(*rowbits);
     //    SmartDataPtr<TriRowBitsTds::TriRowBits> newrowbits(eventSvc(), "/Event/TriRowBits");
 
-    
+
     log << MSG::DEBUG;
     if(log.isActive()) log.stream() << *rowbits;
     log <<endreq;
 #endif
 
     //returns the digi base word, for consistency with the cal and acd.
-       if(tkr_trig_flag) return enums::b_Track;
-            else return 0;
+    if(tkr_trig_flag) return enums::b_Track;
+    else return 0;
 }
 //------------------------------------------------------------------------------
 unsigned int TriggerAlg::calorimeter(const Event::GltDigi& glt)
@@ -471,11 +499,11 @@ unsigned int TriggerAlg::anticoincidence(const Event::AcdDigiCol& tiles)
         const AcdDigi& digi = **it;
         if ( (digi.getHitMapBit(Event::AcdDigi::A)
             || digi.getHitMapBit(Event::AcdDigi::B))  ){
-                 ret |= enums::b_ACDL; 
+                ret |= enums::b_ACDL; 
             }
-        // now trigger high if either PMT is above threshold
-        if (   digi.getCno(Event::AcdDigi::A) 
-            || digi.getCno(Event::AcdDigi::B) ) ret |= enums::b_ACDH;
+            // now trigger high if either PMT is above threshold
+            if (   digi.getCno(Event::AcdDigi::A) 
+                || digi.getCno(Event::AcdDigi::B) ) ret |= enums::b_ACDH;
     } 
     return ret;
 }
@@ -496,23 +524,14 @@ StatusCode TriggerAlg::finalize() {
 
     if(log.isActive() ){
         bitSummary(log.stream(), "all events", m_counts);
-        bitSummary(log.stream(), "triggered events", m_trig_counts);
+        if( m_triggered < m_total )
+            bitSummary(log.stream(), "triggered events", m_trig_counts);
     }
 
     log << endreq;
 
     //TODO: format this nicely, as a 4x4 table
-#if 0 // remove this -- not really useful
-    log << MSG::INFO ;
-    if(log.isActive() ){
-        log.stream() << "Tower trigger summary\n" << std::setw(30) << "Tower    count " << std::endl;;
-        for( std::map<idents::TowerId, int>::const_iterator it = m_tower_trigger_count.begin();
-            it != m_tower_trigger_count.end(); ++ it ){
-                log.stream() << std::setw(30) << (*it).first.id() << std::setw(10) << (*it).second << std::endl;
-            }
-    }
-    log << endreq;
-#endif
+
     return sc;
 }
 //------------------------------------------------------------------------------
@@ -553,68 +572,68 @@ void TriggerAlg::bitSummary(std::ostream& out, std::string label, const std::map
 #ifdef TRIROWBITS
 void TriggerAlg::computeTrgReqTriRowBits(TriRowBitsTds::TriRowBits& rowbits)
 {
-  // Retrieve the Diagnostic data for this event
-  // note: here we would also have access to the CAL diagnostic data.
-  SmartDataPtr<LdfEvent::DiagnosticData> diagTds(eventSvc(), "/Event/Diagnostic");
-  //  SmartDataPtr<TriRowBitsTds::TriRowBits> rowbits(eventSvc(), "/Event/TriRowBits");
-  static const unsigned int NUM_TWR = 16; //this should come from the geometry.
+    // Retrieve the Diagnostic data for this event
+    // note: here we would also have access to the CAL diagnostic data.
+    SmartDataPtr<LdfEvent::DiagnosticData> diagTds(eventSvc(), "/Event/Diagnostic");
+    //  SmartDataPtr<TriRowBitsTds::TriRowBits> rowbits(eventSvc(), "/Event/TriRowBits");
+    static const unsigned int NUM_TWR = 16; //this should come from the geometry.
 
-  //handle the case where there is no diagnostics in the TDS:
-  if(!diagTds) 
+    //handle the case where there is no diagnostics in the TDS:
+    if(!diagTds) 
     {
-      return;
+        return;
     }
-  typedef std::pair<unsigned int, unsigned int> Key;
-  typedef std::map<Key, unsigned int> Map;
-  Map trgReq_bits;
-  
-  int numTkrDiag = diagTds->getNumTkrDiagnostic();
+    typedef std::pair<unsigned int, unsigned int> Key;
+    typedef std::map<Key, unsigned int> Map;
+    Map trgReq_bits;
 
-  for (int ind = 0; ind < numTkrDiag; ind++) 
+    int numTkrDiag = diagTds->getNumTkrDiagnostic();
+
+    for (int ind = 0; ind < numTkrDiag; ind++) 
     {
-      LdfEvent::TkrDiagnosticData tkrDiagTds = diagTds->getTkrDiagnosticByIndex(ind);
-      unsigned int tower = tkrDiagTds.tower();
-      unsigned int gtcc  = tkrDiagTds.gtcc();
-      if(gtcc==2||gtcc==3) //X view even
-	{
-	  trgReq_bits[std::make_pair(tower,0)] |= tkrDiagTds.dataWord();
-	}
-      if(gtcc==0||gtcc==1) //Y view even
-	{
-	  trgReq_bits[std::make_pair(tower,1)] |= tkrDiagTds.dataWord();
-	}
-      if(gtcc==6||gtcc==7) //X view odd
-	{
-	  trgReq_bits[std::make_pair(tower,2)] |= tkrDiagTds.dataWord();
-	}
-      if(gtcc==4||gtcc==5) //Y view odd
-	{
-	  trgReq_bits[std::make_pair(tower,3)] |= tkrDiagTds.dataWord();
-	}
+        LdfEvent::TkrDiagnosticData tkrDiagTds = diagTds->getTkrDiagnosticByIndex(ind);
+        unsigned int tower = tkrDiagTds.tower();
+        unsigned int gtcc  = tkrDiagTds.gtcc();
+        if(gtcc==2||gtcc==3) //X view even
+        {
+            trgReq_bits[std::make_pair(tower,0)] |= tkrDiagTds.dataWord();
+        }
+        if(gtcc==0||gtcc==1) //Y view even
+        {
+            trgReq_bits[std::make_pair(tower,1)] |= tkrDiagTds.dataWord();
+        }
+        if(gtcc==6||gtcc==7) //X view odd
+        {
+            trgReq_bits[std::make_pair(tower,2)] |= tkrDiagTds.dataWord();
+        }
+        if(gtcc==4||gtcc==5) //Y view odd
+        {
+            trgReq_bits[std::make_pair(tower,3)] |= tkrDiagTds.dataWord();
+        }
     }
-  
-  unsigned int trgReq_bits_evenbilayers[NUM_TWR];
-  unsigned int trgReq_bits_oddbilayers[NUM_TWR];
-  for(unsigned int twr=0;twr<NUM_TWR;twr++)
+
+    unsigned int trgReq_bits_evenbilayers[NUM_TWR];
+    unsigned int trgReq_bits_oddbilayers[NUM_TWR];
+    for(unsigned int twr=0;twr<NUM_TWR;twr++)
     {
-      unsigned bitword=0;
-      trgReq_bits_evenbilayers[twr]=0;
-      trgReq_bits_oddbilayers[twr]=0;
-      trgReq_bits_evenbilayers[twr] = trgReq_bits[std::make_pair(twr,0)] & trgReq_bits[std::make_pair(twr,1)];
-      trgReq_bits_oddbilayers[twr] = trgReq_bits[std::make_pair(twr,2)] & trgReq_bits[std::make_pair(twr,3)];
-      //and now compute the 3 in a row combinations:
-      int comb = 0;
-      while(comb<16)
-	{  
-	  bitword |=(((trgReq_bits_evenbilayers[twr]&3)==3) & ((trgReq_bits_oddbilayers[twr]&1)==1))<<comb; 
-	  bitword |=(((trgReq_bits_oddbilayers[twr]&3)==3) & ((trgReq_bits_evenbilayers[twr]&2)==2))<<comb+1; 
-	  
-	  trgReq_bits_evenbilayers[twr] >>= 1;
-	  trgReq_bits_oddbilayers[twr] >>= 1;
-	  comb = comb+2;
-	}
-      rowbits.setTrgReqTriRowBits(twr, bitword);
+        unsigned bitword=0;
+        trgReq_bits_evenbilayers[twr]=0;
+        trgReq_bits_oddbilayers[twr]=0;
+        trgReq_bits_evenbilayers[twr] = trgReq_bits[std::make_pair(twr,0)] & trgReq_bits[std::make_pair(twr,1)];
+        trgReq_bits_oddbilayers[twr] = trgReq_bits[std::make_pair(twr,2)] & trgReq_bits[std::make_pair(twr,3)];
+        //and now compute the 3 in a row combinations:
+        int comb = 0;
+        while(comb<16)
+        {  
+            bitword |=(((trgReq_bits_evenbilayers[twr]&3)==3) & ((trgReq_bits_oddbilayers[twr]&1)==1))<<comb; 
+            bitword |=(((trgReq_bits_oddbilayers[twr]&3)==3) & ((trgReq_bits_evenbilayers[twr]&2)==2))<<comb+1; 
+
+            trgReq_bits_evenbilayers[twr] >>= 1;
+            trgReq_bits_oddbilayers[twr] >>= 1;
+            comb = comb+2;
+        }
+        rowbits.setTrgReqTriRowBits(twr, bitword);
     }
-  
+
 }
 #endif
