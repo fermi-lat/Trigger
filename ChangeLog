@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Fri Apr  6 15:26:04 PDT 2007
+Trigger/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+implement Trigger Engine scheme
+    *
+------------------------------------------------------------
 User: burnett  Fri Apr  6 15:24:31 PDT 2007
 Trigger/src/test/engine
 
