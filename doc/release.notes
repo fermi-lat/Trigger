@@ -5,7 +5,7 @@
  * package manager:T.Burnett 
   <pre>
 
- *  v4r10p1 07-apr-07 THB 
+ *  v4r10p1 07-apr-07 THB Finished for now: set up default engines in physics mode 
  *  v4r10   06-apr-07 THB Implement preliminary version of Trigger engines
  *  v4r9p3  18-mar-07 THB Restore pseudo-trigger bit ACD0; format trigger bit table better
  *  v4r9p1  15-mar-07 THB Make copy of ROI bit in bit 0 [JIRA GRINF-32], apply also to GemConditionSummary
