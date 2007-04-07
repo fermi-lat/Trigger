@@ -5,6 +5,7 @@
  * package manager:T.Burnett 
   <pre>
 
+ *  v4r10p1 07-apr-07 THB 
  *  v4r10   06-apr-07 THB Implement preliminary version of Trigger engines
  *  v4r9p3  18-mar-07 THB Restore pseudo-trigger bit ACD0; format trigger bit table better
  *  v4r9p1  15-mar-07 THB Make copy of ROI bit in bit 0 [JIRA GRINF-32], apply also to GemConditionSummary
@@ -23,7 +24,6 @@
  *  v4r3    24-dec=05 THB Update veto calculation
  *  v4r2p3  16-dec-05 ZGF support new CalTrigTool, drop old/bad cal code entirely.  undo impolite whitespace changes in TriggerAlg.cxx
  *  v4r2p1  11-oct-05 THB check for dead strips when checking for a trigger
- *  v4r4    18-jan-06 THB merge the branch   
  * ------end branch -----------------------------------------
  *  v4r2gr7 18-jan-06 THB tweak of throttle condition to allow more flexibility
  *  v4r2gr6 13-jan-06 THB implement service to manage deadtime
