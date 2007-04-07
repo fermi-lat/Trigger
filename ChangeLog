@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: burnett  Sat Apr  7 14:59:24 PDT 2007
+Trigger/src/test/engine
+
+Modified Files:
+	testmain.cxx 
+Log Message:
+Implement disable feature for the trigger engines, enable only the physics set.as default
+    *
+------------------------------------------------------------
+User: burnett  Sat Apr  7 14:59:24 PDT 2007
 Trigger/src
 
 Modified Files:
