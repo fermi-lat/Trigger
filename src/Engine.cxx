@@ -2,24 +2,28 @@
 *  @file Engine.cxx
 *  @brief Implementation of the class Engine
 *
-*  $Header$
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/Engine.cxx,v 1.1 2007/04/06 22:26:04 burnett Exp $
 */
 #include <stdexcept>
 #include <iostream>
+#include <iomanip>
 
 #include "Engine.h"
+using namespace Trigger;
 
 Engine::Engine( std::vector<Engine::BitStatus>condition , int marker, int prescale )
 : m_condition(condition)
 , m_marker(marker)
 , m_prescale(prescale)
 , m_4range(false)
+, m_scalar(0)
 {}
 
 Engine::Engine( std::string condition_summary ,  int marker, int prescale)
 : m_marker(marker)
 , m_prescale(prescale)
 , m_4range(false)
+, m_scalar(0)
 {
     int k(7);
     m_condition.resize(8);
@@ -55,11 +59,11 @@ void Engine::print(std::ostream& out)const
     for(std::vector<BitStatus>::const_reverse_iterator it= m_condition.rbegin(); it!=m_condition.rend(); ++it){
         out << code[*it] << "      ";
     }
-    out << std::endl;
+    out << std::right << std::setw(4) << m_prescale << "   " << m_marker << std::endl;
 }
 
 
-int Engine::operator()(int gltword) const
+bool Engine::match(int gltword) const
 {
     int i(0);
     for( ; i<8; ++i){
@@ -67,11 +71,17 @@ int Engine::operator()(int gltword) const
         if( c== Engine::X ||  (gltword&1) == c ){
             gltword /=2 ; continue;
         }
-        return -1; // fail
+        return false; // fail to match
     }
-    // pass: check prescale
+    return true;
+}
+
+int Engine::check()const
+{
+    // here for a match: return marker if trigger ok.
+
     if( m_prescale==0 ) return m_marker;
-    if( ++m_scalar < m_prescale) return -1;
+    if( m_prescale<0 || ++m_scalar < m_prescale) return -1;
     m_scalar=0;
     return m_marker;
 }

@@ -1,4 +1,4 @@
-//$Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/mainpage.h,v 1.8 2006/11/10 21:51:39 burnett Exp $
+//$Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/mainpage.h,v 1.9 2007/03/18 14:57:25 burnett Exp $
 // (Special "header" just for doxygen)
 
 /*! @mainpage  package Trigger
@@ -17,7 +17,7 @@ sets a flag to abort processing of subsequent algorithms in the same sequence.
 @param throttle if set, veto when throttle bit is on
 @param vetomask [1+2+4]  if thottle it set, veto if trigger masked with these ...
 @param vetobits[ 1+2]    equals these bits
-
+@param engine [""]   specify data source for engine data. Currently only "default" is recognized.
 
 If the deadtime is enabled, this much time is subtracted from the accumulated livetime associated with the given 
 event, which is copied to the event header. (But note that deadtime is now managed by LivetimeSvc.)

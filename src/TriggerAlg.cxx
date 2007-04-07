@@ -2,7 +2,7 @@
 *  @file TriggerAlg.cxx
 *  @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.65 2007/03/18 18:52:13 burnett Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.66 2007/04/06 22:26:04 burnett Exp $
 */
 
 #include "ThrottleAlg.h"
@@ -110,7 +110,7 @@ private:
     BooleanProperty  m_throttle;
     IntegerProperty m_vetobits;
     IntegerProperty m_vetomask;
-    BooleanProperty m_engine;
+    StringProperty m_engine;
 
     double m_lastTriggerTime; //! time of last trigger, for calculated live time
     double m_liveTime; //! cumulative live time
@@ -136,7 +136,7 @@ private:
     /// use for the names of the bits
     std::map<int, std::string> m_bitNames;
 
-    TriggerTables* m_triggerTables;
+    Trigger::TriggerTables* m_triggerTables;
 };
 
 //------------------------------------------------------------------------------
@@ -148,6 +148,7 @@ TriggerAlg::TriggerAlg(const std::string& name, ISvcLocator* pSvcLocator)
 : Algorithm(name, pSvcLocator), m_event(0)
 , m_total(0)
 , m_triggered(0)
+, m_triggerTables(0)
 {
     declareProperty("mask"    ,  m_mask=0xffffffff); // trigger mask
     declareProperty("deadtime",  m_deadtime=0. );    // deadtime to apply to trigger, in sec.
@@ -155,7 +156,7 @@ TriggerAlg::TriggerAlg(const std::string& name, ISvcLocator* pSvcLocator)
     declareProperty("vetomask",  m_vetomask=1+2+4);  // if thottle it set, veto if trigger masked with these ...
     declareProperty("vetobits",  m_vetobits=1+2);    // equals these bits
 
-    declareProperty("engine",    m_engine = false);  // set true to use default engine
+    declareProperty("engine",    m_engine = "");     // set to "detault"  to use default engine
     for( int i=0; i<8; ++i) { 
         std::stringstream t; t<< "bit "<< i;
         m_bitNames[1<<i] = t.str();
@@ -214,10 +215,14 @@ StatusCode TriggerAlg::initialize()
         return sc;
     }
 
-    if( m_engine){
+    if(! m_engine.value().empty()){
         // selected trigger tables and engines for event selection
+        if( m_engine.value() !="default"){
+            log << MSG::ERROR << "Engine " << m_engine << " can only be \"default\" " << endreq;
+            return StatusCode::FAILURE;
+        }
 
-        m_triggerTables = new TriggerTables();
+        m_triggerTables = new Trigger::TriggerTables();
 
         log << MSG::INFO << "Trigger tables: \n";
             m_triggerTables->print(log.stream());
@@ -318,11 +323,11 @@ StatusCode TriggerAlg::execute()
     m_counts[trigger_bits] +=1;
 
     // apply filter for subsequent processing.
-    if( m_engine){
+    if( m_triggerTables!=0 ){
         int marker = (*m_triggerTables)(trigger_bits & 31); // note only apply to low 5 bits for now
         log << MSG::DEBUG << "Marker is " << marker << endreq;
 
-        if( marker==0 ) {
+        if( marker<0 ) {
             setFilterPassed(false);
             log << MSG::DEBUG << "Event did not trigger, according to engine" << endreq;
             return sc;
@@ -545,7 +550,7 @@ void TriggerAlg::bitSummary(std::ostream& out, std::string label, const std::map
     out << endl << "             bit frequency: "<< label;
     out << endl << setw(col1) << "value"<< setw(6) << "count" ;
     int j, grand_total=0;
-    for(j=0; j<size; ++j) out << setw(6) << m_bitNames[1<<j];
+    for(j=size-1; j>=0; --j) out << setw(6) << m_bitNames[1<<j];
     out << endl << setw(col1) <<" "<< setw(6) << "------"; 
     for( j=0; j<size; ++j) out << setw(6) << "-----";
     vector<int>total(size);
@@ -553,7 +558,7 @@ void TriggerAlg::bitSummary(std::ostream& out, std::string label, const std::map
         int i = (*it).first, n = (*it).second;
         grand_total += n;
         out << endl << setw(col1)<< i << setw(6)<< n ;
-        for(j=0; j<size; ++j){
+        for(j=size-1; j>=0; --j){
             int m = ((i&(1<<j))!=0)? n :0;
             total[j] += m;
             out << setw(6) << m ;
