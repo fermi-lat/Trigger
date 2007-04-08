@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Sun Apr  8 10:36:53 PDT 2007
+Trigger/src
+
+Modified Files:
+	TriggerTables.cxx TriggerTables.h 
+Log Message:
+fix default. change interface of TriggerTable to specify a configuration name
+    *
+------------------------------------------------------------
 TAG
 Tag name: v4r10p1, operation: add
 Package: Trigger
