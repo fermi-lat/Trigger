@@ -1,7 +1,7 @@
 /** @file TriggerTables.h
   *  @brief Declaration of the class TriggerTables
   *
-  *  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerTables.h,v 1.1 2007/04/06 22:26:04 burnett Exp $
+  *  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerTables.h,v 1.2 2007/04/07 21:59:24 burnett Exp $
 */
 
 #ifndef Trigger_TriggerTables_h
@@ -25,7 +25,8 @@ class TriggerTables : public std::vector<Engine> {
 public:
 
     /// ctor -- expect to create the engines
-    TriggerTables();
+    /// @param configuration specify a trigger table 
+    TriggerTables(std::string configuration="default");
 
     /// for a gltword, return associated engine, or -1 if disabled
     int operator()(int gltword)const;

@@ -2,29 +2,41 @@
 *  @file TriggerTables.cxx
 *  @brief Implementation of the class TriggerTables
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerTables.cxx,v 1.1 2007/04/06 22:26:04 burnett Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerTables.cxx,v 1.2 2007/04/07 21:59:24 burnett Exp $
 */
 
 #include "TriggerTables.h"
+
+#include <stdexcept>
+
 using namespace Trigger;
 
 
-TriggerTables::TriggerTables()
+TriggerTables::TriggerTables(std::string type)
 {
 // make a default table for now
+    if( type!="default" ){
+        throw std::invalid_argument("TriggerTables only accepts \"default\" configuration");
+    }
+
     push_back(Engine("1 x x x x x x x", 0,-1)); //0
     push_back(Engine("0 x x x x x 0 1", 0,-1)); //1
     push_back(Engine("0 1 x x x x x x", 0,-1)); //2
     push_back(Engine("0 0 1 x x x x x", 0,-1)); //3
-    push_back(Engine("0 0 0 1 x 1 1 1", 1,-1)); //4
+
+    // CNO guys
+    push_back(Engine("0 0 0 1 x 1 1 1", 1, 0)); //4 addept CNO only with CALHI+CALLO+ROI
     push_back(Engine("0 0 0 1 x x x x", 0,-1)); //5
 
-    push_back(Engine("0 0 0 0 1 x x x", 2, 0)); //6
-    push_back(Engine("0 0 0 0 0 x 1 0", 3, 0)); //7
-    push_back(Engine("0 0 0 0 0 1 0 0", 4, 0)); //8
+    // gamma patterns
+    push_back(Engine("0 0 0 0 1 x x x", 2, 0)); //6  ACDH+ anything
+    push_back(Engine("0 0 0 0 0 x 1 0", 3, 0)); //7  TKR, not ROI possible CALLO
+    push_back(Engine("0 0 0 0 0 1 0 0", 4,-1)); //8  veto CALLO only
     push_back(Engine("0 0 0 0 0 1 1 1", 0, 0)); //9
 
-    push_back(Engine("0 0 0 0 0 0 1 1", 0,-1)); //10
+    // usually vetoed
+    push_back(Engine("0 0 0 0 0 0 1 1", 0,-1)); //10 -veto if TRK+ROI
+    // cannot happen
     push_back(Engine("0 0 0 0 0 0 0 0", 0,-1)); //11
 
     // cache table of Engine for each bit pattern
