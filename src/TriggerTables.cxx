@@ -2,7 +2,7 @@
 *  @file TriggerTables.cxx
 *  @brief Implementation of the class TriggerTables
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerTables.cxx,v 1.2 2007/04/07 21:59:24 burnett Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerTables.cxx,v 1.3 2007/04/08 17:36:53 burnett Exp $
 */
 
 #include "TriggerTables.h"
@@ -25,7 +25,7 @@ TriggerTables::TriggerTables(std::string type)
     push_back(Engine("0 0 1 x x x x x", 0,-1)); //3
 
     // CNO guys
-    push_back(Engine("0 0 0 1 x 1 1 1", 1, 0)); //4 addept CNO only with CALHI+CALLO+ROI
+    push_back(Engine("0 0 0 1 x 1 1 1", 1, 0)); //4 accept CNO only with CALHI+CALLO+ROI
     push_back(Engine("0 0 0 1 x x x x", 0,-1)); //5
 
     // gamma patterns
@@ -35,7 +35,7 @@ TriggerTables::TriggerTables(std::string type)
     push_back(Engine("0 0 0 0 0 1 1 1", 0, 0)); //9
 
     // usually vetoed
-    push_back(Engine("0 0 0 0 0 0 1 1", 0,-1)); //10 -veto if TRK+ROI
+    push_back(Engine("0 0 0 0 0 0 1 1", 0,-1)); //10 veto if TRK+ROI
     // cannot happen
     push_back(Engine("0 0 0 0 0 0 0 0", 0,-1)); //11
 

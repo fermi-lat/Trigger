@@ -2,7 +2,7 @@
 *  @file TriggerAlg.cxx
 *  @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.66 2007/04/06 22:26:04 burnett Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.67 2007/04/07 21:59:24 burnett Exp $
 */
 
 #include "ThrottleAlg.h"
@@ -567,7 +567,7 @@ void TriggerAlg::bitSummary(std::ostream& out, std::string label, const std::map
     out << endl << setw(col1) <<" "<< setw(6) << "------"; 
     for( j=0; j<size; ++j) out << setw(6) << "-----";
     out << endl << setw(col1) << "tot:" << setw(6)<< grand_total;
-    for( j=0; j<size; ++j) out << setw(6) << total[j];
+    for(j=size-1; j>=0; --j) out << setw(6) << total[j];
 
 
 }
