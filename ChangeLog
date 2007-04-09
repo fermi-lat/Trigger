@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Sun Apr  8 20:21:34 PDT 2007
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx TriggerTables.cxx 
+Log Message:
+fix output table
+    *
+------------------------------------------------------------
 TAG
 Tag name: v4r10p2, operation: add
 Package: Trigger
