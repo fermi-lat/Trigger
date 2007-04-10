@@ -2,7 +2,7 @@
 *  @file TriggerAlg.cxx
 *  @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.67 2007/04/07 21:59:24 burnett Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.68 2007/04/09 03:21:34 burnett Exp $
 */
 
 #include "ThrottleAlg.h"
@@ -321,15 +321,16 @@ StatusCode TriggerAlg::execute()
 
     m_total++;
     m_counts[trigger_bits] +=1;
+    int engine(16); // default engine number
 
     // apply filter for subsequent processing.
     if( m_triggerTables!=0 ){
-        int marker = (*m_triggerTables)(trigger_bits & 31); // note only apply to low 5 bits for now
-        log << MSG::DEBUG << "Marker is " << marker << endreq;
+        engine = (*m_triggerTables)(trigger_bits & 31); // note only apply to low 5 bits for now
+        log << MSG::DEBUG << "Engine is " << engine << endreq;
 
-        if( marker<0 ) {
+        if( engine<=0 ) {
             setFilterPassed(false);
-            log << MSG::DEBUG << "Event did not trigger, according to engine" << endreq;
+            log << MSG::DEBUG << "Event did not trigger, according to engine selected by trigger table" << endreq;
             return sc;
         }
     }else {
@@ -365,7 +366,8 @@ StatusCode TriggerAlg::execute()
     log << endreq;
 
     // or in the gem trigger bits, either from hardware, or derived from trigger
-    trigger_bits |= gemBits(trigger_bits) << 8;
+    trigger_bits |= gemBits(trigger_bits) << enums::GEM_offset;
+    trigger_bits |= engine << (2*enums::GEM_offset); // also the engine number (if set)
 
     if( static_cast<int>(h.trigger())==-1 
         || h.trigger()==0  // this seems to happen when reading back from incoming??
