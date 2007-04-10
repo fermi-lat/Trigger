@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Mon Apr  9 19:53:10 PDT 2007
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx TriggerTables.cxx 
+Log Message:
+add support for GltEngine
+    *
+------------------------------------------------------------
 User: burnett  Sun Apr  8 20:21:34 PDT 2007
 Trigger/src
 
