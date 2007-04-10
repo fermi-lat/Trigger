@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: burnett  Tue Apr 10 14:54:11 PDT 2007
+Trigger/src
+
+Modified Files:
+	Engine.cxx Engine.h TriggerAlg.cxx TriggerTables.cxx 
+	TriggerTables.h 
+Log Message:
+set prescale factors to current values; add  JO parameter to allow override.
+    *
+------------------------------------------------------------
 User: burnett  Mon Apr  9 19:53:10 PDT 2007
 Trigger/src
 
