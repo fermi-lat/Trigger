@@ -2,7 +2,7 @@
 *  @file Engine.h
 *  @brief Declaration of the class Engine
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/Engine.h,v 1.1 2007/04/06 22:26:04 burnett Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/Engine.h,v 1.2 2007/04/07 21:59:24 burnett Exp $
 */
 
 
@@ -25,7 +25,7 @@ public:
     /** Initialize an engine
     @param condition the condition table, list of conditions for the bits
     @marker code to return if the condition is satisfied
-    @param prescale prescale factor; if <0 disable the engine
+    @param prescale prescale factor; if <0 disable the engine. If >=0, then allow only every prescale+1 counts
 
     */
     typedef enum { N=0, Y=1, X=2 } BitStatus; ///< for No, Yes, maybe

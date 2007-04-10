@@ -2,7 +2,7 @@
 *  @file TriggerAlg.cxx
 *  @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.68 2007/04/09 03:21:34 burnett Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.69 2007/04/10 02:53:10 burnett Exp $
 */
 
 #include "ThrottleAlg.h"
@@ -110,7 +110,8 @@ private:
     BooleanProperty  m_throttle;
     IntegerProperty m_vetobits;
     IntegerProperty m_vetomask;
-    StringProperty m_engine;
+    StringProperty m_table;
+    IntegerArrayProperty m_prescale;
 
     double m_lastTriggerTime; //! time of last trigger, for calculated live time
     double m_liveTime; //! cumulative live time
@@ -156,7 +157,9 @@ TriggerAlg::TriggerAlg(const std::string& name, ISvcLocator* pSvcLocator)
     declareProperty("vetomask",  m_vetomask=1+2+4);  // if thottle it set, veto if trigger masked with these ...
     declareProperty("vetobits",  m_vetobits=1+2);    // equals these bits
 
-    declareProperty("engine",    m_engine = "");     // set to "detault"  to use default engine
+    declareProperty("engine",    m_table = "");     // set to "detault"  to use default engine
+    declareProperty("prescale",  m_prescale);        // vector of prescale factors
+
     for( int i=0; i<8; ++i) { 
         std::stringstream t; t<< "bit "<< i;
         m_bitNames[1<<i] = t.str();
@@ -215,14 +218,11 @@ StatusCode TriggerAlg::initialize()
         return sc;
     }
 
-    if(! m_engine.value().empty()){
-        // selected trigger tables and engines for event selection
-        if( m_engine.value() !="default"){
-            log << MSG::ERROR << "Engine " << m_engine << " can only be \"default\" " << endreq;
-            return StatusCode::FAILURE;
-        }
+    if(! m_table.value().empty()){
 
-        m_triggerTables = new Trigger::TriggerTables();
+        // selected trigger tables and engines for event selection
+
+        m_triggerTables = new Trigger::TriggerTables(m_table.value(), m_prescale.value());
 
         log << MSG::INFO << "Trigger tables: \n";
             m_triggerTables->print(log.stream());

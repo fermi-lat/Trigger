@@ -2,7 +2,7 @@
 *  @file TriggerTables.cxx
 *  @brief Implementation of the class TriggerTables
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerTables.cxx,v 1.4 2007/04/09 03:21:34 burnett Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerTables.cxx,v 1.5 2007/04/10 02:53:10 burnett Exp $
 */
 
 #include "TriggerTables.h"
@@ -12,33 +12,37 @@
 using namespace Trigger;
 
 
-TriggerTables::TriggerTables(std::string type)
+TriggerTables::TriggerTables(std::string type, const std::vector<int>& prescale)
 {
 // make a default table for now
     if( type!="default" ){
         throw std::invalid_argument("TriggerTables only accepts \"default\" configuration");
     }
+    int psdata[] = {0,0,0,0, 0, 249, 0,0,0 ,0, 49,0};
+    std::vector<int>::const_iterator ps = std::vector<int>(psdata, psdata+12).begin();
+    if( !prescale.empty() ) ps = prescale.begin();
+        
 
     int n(0);
-    push_back(Engine("1 x x x x x x x", n++,-1)); //0
-    push_back(Engine("0 x x x x x 0 1", n++,-1)); //1
-    push_back(Engine("0 1 x x x x x x", n++,-1)); //2
-    push_back(Engine("0 0 1 x x x x x", n++,-1)); //3
+    push_back(Engine("1 x x x x x x x", n++, *ps++)); //0
+    push_back(Engine("0 x x x x x 0 1", n++, *ps++)); //1
+    push_back(Engine("0 1 x x x x x x", n++, *ps++)); //2
+    push_back(Engine("0 0 1 x x x x x", n++, *ps++)); //3
 
     // CNO guys
-    push_back(Engine("0 0 0 1 x 1 1 1", n++, 0)); //4 accept CNO only with CALHI+CALLO+ROI
-    push_back(Engine("0 0 0 1 x x x x", n++,-1)); //5
+    push_back(Engine("0 0 0 1 x 1 1 1", n++, *ps++)); //4 accept CNO only with CALHI+CALLO+ROI
+    push_back(Engine("0 0 0 1 x x x x", n++, *ps++)); //5
 
     // gamma patterns
-    push_back(Engine("0 0 0 0 1 x x x", n++, 0)); //6  ACDH+ anything
-    push_back(Engine("0 0 0 0 0 x 1 0", n++, 0)); //7  TKR, not ROI possible CALLO
-    push_back(Engine("0 0 0 0 0 1 0 0", n++,-1)); //8  veto CALLO only
-    push_back(Engine("0 0 0 0 0 1 1 1", n++, 0)); //9
+    push_back(Engine("0 0 0 0 1 x x x", n++, *ps++)); //6  ACDH+ anything
+    push_back(Engine("0 0 0 0 0 x 1 0", n++, *ps++)); //7  TKR, not ROI possible CALLO
+    push_back(Engine("0 0 0 0 0 1 0 0", n++, *ps++)); //8  veto CALLO only
+    push_back(Engine("0 0 0 0 0 1 1 1", n++, *ps++)); //9
 
     // usually vetoed
-    push_back(Engine("0 0 0 0 0 0 1 1", n++,-1)); //10 veto if TRK+ROI
+    push_back(Engine("0 0 0 0 0 0 1 1", n++, *ps++)); //10 veto if TRK+ROI
     // cannot happen
-    push_back(Engine("0 0 0 0 0 0 0 0", n++,-1)); //11
+    push_back(Engine("0 0 0 0 0 0 0 0", n++, *ps++)); //11
 
     // cache table of Engine for each bit pattern
     m_table.resize(256);

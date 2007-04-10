@@ -1,7 +1,7 @@
 /** @file TriggerTables.h
   *  @brief Declaration of the class TriggerTables
   *
-  *  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerTables.h,v 1.2 2007/04/07 21:59:24 burnett Exp $
+  *  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerTables.h,v 1.3 2007/04/08 17:36:53 burnett Exp $
 */
 
 #ifndef Trigger_TriggerTables_h
@@ -26,7 +26,8 @@ public:
 
     /// ctor -- expect to create the engines
     /// @param configuration specify a trigger table 
-    TriggerTables(std::string configuration="default");
+    /// @param prescale vector of prescale factors: if empty, use default in table
+    TriggerTables(std::string configuration, const std::vector<int>& prescale);
 
     /// for a gltword, return associated engine, or -1 if disabled
     int operator()(int gltword)const;

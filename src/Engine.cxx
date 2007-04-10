@@ -2,7 +2,7 @@
 *  @file Engine.cxx
 *  @brief Implementation of the class Engine
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/Engine.cxx,v 1.1 2007/04/06 22:26:04 burnett Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/Engine.cxx,v 1.2 2007/04/07 21:59:24 burnett Exp $
 */
 #include <stdexcept>
 #include <iostream>
@@ -81,7 +81,7 @@ int Engine::check()const
     // here for a match: return marker if trigger ok.
 
     if( m_prescale==0 ) return m_marker;
-    if( m_prescale<0 || ++m_scalar < m_prescale) return -1;
+    if( m_prescale<0 || m_scalar++ < m_prescale) return -1; 
     m_scalar=0;
     return m_marker;
 }
