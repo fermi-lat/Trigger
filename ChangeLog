@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: burnett  Tue Apr 10 18:31:47 PDT 2007
+Trigger/src
+
+Modified Files:
+	TriggerTables.cxx 
+Log Message:
+set up proviisional tag to support engines
+    *
+------------------------------------------------------------
+User: burnett  Tue Apr 10 18:31:47 PDT 2007
 Trigger/doc
 
 Modified Files:
