@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Tue Apr 24 19:50:08 PDT 2007
+Trigger/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+tag after fixing default prescale factors
+    *
+------------------------------------------------------------
 TAG
 Tag name: v4r11, operation: add
 Package: Trigger
