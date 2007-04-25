@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: burnett  Tue Apr 24 19:50:08 PDT 2007
+Trigger/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+tag after fixing default prescale factors
+    *
+------------------------------------------------------------
+User: burnett  Tue Apr 24 19:50:08 PDT 2007
 Trigger/cmt
 
 Modified Files:
