@@ -2,7 +2,7 @@
 *  @file TriggerTables.cxx
 *  @brief Implementation of the class TriggerTables
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerTables.cxx,v 1.6 2007/04/10 21:54:11 burnett Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerTables.cxx,v 1.7 2007/04/11 01:31:47 burnett Exp $
 */
 
 #include "TriggerTables.h"
@@ -18,10 +18,12 @@ TriggerTables::TriggerTables(std::string type, const std::vector<int>& prescale)
     if( type!="default" ){
         throw std::invalid_argument("TriggerTables only accepts \"default\" configuration");
     }
-    int psdata[] = {0,0,0,0, 0, 249, 0,0,0 ,0, 49,-1};
-    std::vector<int>::const_iterator ps = std::vector<int>(psdata, psdata+12).begin();
-    if( !prescale.empty() ) ps = prescale.begin();
-        
+    static int psdata[] = {0,0,0,0, 0, 249, 0,0,0 ,0, 49,-1};
+    std::vector<int>defaultps(std::vector<int>(psdata, psdata+12));
+    std::vector<int>::const_iterator ps = defaultps.begin();
+    if( !prescale.empty() ){
+        ps = prescale.begin();
+    }
 
     int n(0);
     push_back(Engine("1 x x x x x x x", n++, *ps++)); //0
