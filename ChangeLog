@@ -1,4 +1,16 @@
 ------------------------------------------------------------
+User: kocian  Wed May 30 11:05:59 PDT 2007
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx 
+Added Files:
+	EnginePrescaleCounter.cxx EnginePrescaleCounter.h 
+	TrgConfigSvc.cxx TrgConfigSvc.h 
+Log Message:
+added TrgConfig code
+    *
+------------------------------------------------------------
 User: kocian  Wed May 30 11:05:58 PDT 2007
 Trigger/cmt
 
