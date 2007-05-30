@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: kocian  Wed May 30 11:05:58 PDT 2007
+Trigger/Trigger
+
+Added Files:
+	ITrgConfigSvc.h 
+Log Message:
+added TrgConfig code
+    *
+------------------------------------------------------------
 TAG
 Tag name: v4r11p1, operation: add
 Package: Trigger
