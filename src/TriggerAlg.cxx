@@ -2,7 +2,7 @@
 *  @file TriggerAlg.cxx
 *  @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.70 2007/04/10 21:54:11 burnett Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.71 2007/04/25 02:50:08 burnett Exp $
 */
 
 #include "ThrottleAlg.h"
@@ -18,6 +18,8 @@
 #include "Trigger/ILivetimeSvc.h"
 
 #include "GlastSvc/GlastDetSvc/IGlastDetSvc.h"
+#include "Trigger/ITrgConfigSvc.h"
+#include "EnginePrescaleCounter.h"
 
 
 #include "Event/TopLevel/EventModel.h"
@@ -138,6 +140,11 @@ private:
     std::map<int, std::string> m_bitNames;
 
     Trigger::TriggerTables* m_triggerTables;
+  
+    ITrgConfigSvc *m_trgConfigSvc;
+    EnginePrescaleCounter* m_pcounter;
+    bool m_printtables;
+  
 };
 
 //------------------------------------------------------------------------------
@@ -150,6 +157,7 @@ TriggerAlg::TriggerAlg(const std::string& name, ISvcLocator* pSvcLocator)
 , m_total(0)
 , m_triggered(0)
 , m_triggerTables(0)
+, m_pcounter(0)
 {
     declareProperty("mask"    ,  m_mask=0xffffffff); // trigger mask
     declareProperty("deadtime",  m_deadtime=0. );    // deadtime to apply to trigger, in sec.
@@ -219,7 +227,17 @@ StatusCode TriggerAlg::initialize()
     }
 
     if(! m_table.value().empty()){
-
+      if (m_table.value()=="TrgConfigSvc"){
+	sc = service("TrgConfigSvc", m_trgConfigSvc);
+	if( sc.isFailure() ) {
+	  log << MSG::ERROR << "failed to get the TrgConfigSvc" << endreq;
+	  return sc;
+	}
+	log<<MSG::INFO<<"Using TrgConfigSvc"<<endreq;
+	m_pcounter=new EnginePrescaleCounter(m_prescale.value());
+	m_printtables=true;
+      }else{
+	
         // selected trigger tables and engines for event selection
 
         m_triggerTables = new Trigger::TriggerTables(m_table.value(), m_prescale.value());
@@ -227,6 +245,7 @@ StatusCode TriggerAlg::initialize()
         log << MSG::INFO << "Trigger tables: \n";
             m_triggerTables->print(log.stream());
         log << endreq;
+      }
     }
     return sc;
 }
@@ -333,6 +352,26 @@ StatusCode TriggerAlg::execute()
             log << MSG::DEBUG << "Event did not trigger, according to engine selected by trigger table" << endreq;
             return sc;
         }
+    } else if (m_pcounter!=0){
+      const TrgConfig* tcf=m_trgConfigSvc->getTrgConfig();
+      if (m_printtables){
+        log << MSG::INFO << "Trigger tables: \n";
+	tcf->printContrigurator(log.stream());
+	log<<endreq;
+	m_printtables=false;
+      }
+      if(m_trgConfigSvc->configChanged()){
+	log<<MSG::INFO<<"Trigger configuration changed.";
+	tcf->printContrigurator(log.stream());
+	log<<endreq;
+	m_pcounter->reset();
+      }
+      bool passed=m_pcounter->decrementAndCheck(trigger_bits&31,tcf);
+      if(!passed){
+	setFilterPassed(false);
+	log << MSG::DEBUG << "Event did not trigger, according to engine selected by TrgConfigSvc" << endreq;
+	return sc;
+      }
     }else {
         // apply mask conditions
         if( m_mask!=0 && ( trigger_bits & m_mask) == 0 
