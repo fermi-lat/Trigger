@@ -5,6 +5,8 @@
  * package manager:T.Burnett 
   <pre>
 
+ *  v4r11p1em1 20-jul-07 HMK patch along GlastReleasev11r9 branch for EM
+            to turn TRIROWBITS back on see JIRA GRINF-34
  *  v4r11p1 24-apr-07 THB Fix default engine prescales
  *  v4r11   10-apr-07 THB Trial version of engines with prescales
  *  v4r10p2 08-apr-07 THB Finished for now: set up default engines in physics mode 
