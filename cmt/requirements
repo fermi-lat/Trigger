@@ -1,8 +1,8 @@
 package Trigger
-version v4r11p1
+version v4r11p1em1
 
 author T. Burnett <tburnett@u.washington.edu>
-# $Id: requirements,v 1.69 2007/04/11 01:31:46 burnett Exp $
+# $Id: requirements,v 1.70 2007/04/25 02:50:08 burnett Exp $
 
 # --------------------------
 # define trigger algorithms
@@ -32,6 +32,9 @@ use LdfEvent *
 
 apply_pattern package_Cshlibflags
 macro source "*.cxx" WIN32 "*.h *.cxx"
+
+macro_append cppflags " -DTRIROWBITS "\
+  WIN32      ' /D "TRIROWBITS" '
 
 library Trigger  \
   -s=../Trigger $(source)\
