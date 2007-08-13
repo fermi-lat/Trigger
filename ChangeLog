@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Mon Aug 13 11:39:05 PDT 2007
+Trigger/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+prepare to tag Martin's addition of TrgConfigSvc
+    *
+------------------------------------------------------------
 TAG
 Tag name: v4r11p1em1, operation: add
 Package: Trigger
