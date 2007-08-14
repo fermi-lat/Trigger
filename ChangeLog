@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: heather  Tue Aug 14 09:01:36 PDT 2007
+Trigger/src
+
+Modified Files:
+	EnginePrescaleCounter.cxx TrgConfigSvc.cxx 
+Log Message:
+patch for windows
+    *
+------------------------------------------------------------
+User: heather  Tue Aug 14 09:01:36 PDT 2007
 Trigger/doc
 
 Modified Files:
