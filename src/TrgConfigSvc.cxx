@@ -4,7 +4,7 @@
 @brief keeps track of the GEM trigger configuration
 @author Martin Kocian
 
-$Header: $
+$Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TrgConfigSvc.cxx,v 1.1 2007/05/30 18:05:59 kocian Exp $
 
 */
 
@@ -21,7 +21,7 @@ $Header: $
 #include "Event/TopLevel/Event.h"
 #include "GaudiKernel/IIncidentSvc.h"
 #include <stdlib.h>
-
+#include <assert.h>
 
 
 // declare the service factories for the TrgConfigSvc
