@@ -5,6 +5,7 @@
  * package manager:T.Burnett 
   <pre>
 
+ *  v5r0p1  14-aug-08 HMK explicitly include assert.h for windows
  *  v5r0    13-aug-07 MK  Add TrgConfigSvc and associated code
  *  v4r11p1 24-apr-07 THB Fix default engine prescales
  *  v4r11   10-apr-07 THB Trial version of engines with prescales

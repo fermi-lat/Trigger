@@ -2,9 +2,10 @@
 *  @file EnginePrescaleCounter.cxx
 *  @brief Keeps track of the counters to prescale trigger engines
 *
-*  $Header:  $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/EnginePrescaleCounter.cxx,v 1.1 2007/05/30 18:05:58 kocian Exp $
 */
 #include "EnginePrescaleCounter.h"
+#include <assert.h>
 
 EnginePrescaleCounter::EnginePrescaleCounter(const std::vector<int>& prescales):m_prescales(prescales),m_useprescales(false){
   if (!m_prescales.empty())m_useprescales=true;
