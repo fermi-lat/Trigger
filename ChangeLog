@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Tue Aug 14 09:01:35 PDT 2007
+Trigger/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+patch for windows
+    *
+------------------------------------------------------------
 TAG
 Tag name: v5r0, operation: add
 Package: Trigger
