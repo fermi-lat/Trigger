@@ -2,7 +2,7 @@
  * @file LivetimeSvc.cxx
  * @brief declare, implement the class LivetimeSvc
  *
- * $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/LivetimeSvc.cxx,v 1.2 2006/03/14 05:55:10 burnett Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/LivetimeSvc.cxx,v 1.3 2006/03/21 19:14:41 usher Exp $
  */
 
 #include "Trigger/ILivetimeSvc.h"
@@ -97,7 +97,8 @@ StatusCode LivetimeSvc::initialize ()
     MsgStream log( msgSvc(), name() );
     
     m_efficiency = 1.0 - m_deadtime * m_triggerRate;
-    log << "Applying efficiency of " << m_efficiency*100 << "%" << endreq;
+    log << MSG::INFO 
+        << "Applying efficiency of " << m_efficiency*100 << "%" << endreq;
     return status;
 }
 
