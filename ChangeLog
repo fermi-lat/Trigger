@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Thu Aug 16 11:36:52 PDT 2007
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx 
+Log Message:
+fix deadtime reject processing
+    *
+------------------------------------------------------------
 TAG
 Tag name: v5r0p2, operation: add
 Package: Trigger
