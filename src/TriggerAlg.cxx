@@ -2,7 +2,7 @@
 *  @file TriggerAlg.cxx
 *  @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.72 2007/05/30 18:05:59 kocian Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.73 2007/08/16 05:06:10 heather Exp $
 */
 
 #include "ThrottleAlg.h"
@@ -94,9 +94,6 @@ private:
     unsigned int  anticoincidence(const Event::AcdDigiCol&  planes);
     void bitSummary(std::ostream& out, std::string label, const std::map<int,int>& table);
 
-    //// are we alive?
-    bool alive(double current_time);
-
     /// set gem bits in trigger word, either from real condition summary, or from bits
     unsigned int gemBits(unsigned int  trigger_bits);
 
@@ -108,7 +105,6 @@ private:
     int m_log_hits;
 
     int m_event;
-    DoubleProperty m_deadtime;
     BooleanProperty  m_throttle;
     IntegerProperty m_vetobits;
     IntegerProperty m_vetomask;
@@ -116,11 +112,11 @@ private:
     IntegerArrayProperty m_prescale;
 
     double m_lastTriggerTime; //! time of last trigger, for calculated live time
-    double m_liveTime; //! cumulative live time
 
     // for statistics
     int m_total;
     int m_triggered;
+    int m_deadtime_reject;
     std::map<int,int> m_counts; //map of values for each bit pattern
     std::map<int,int> m_trig_counts; //map of values for each bit pattern, triggered events
 
@@ -155,12 +151,11 @@ const IAlgFactory& TriggerAlgFactory = Factory;
 TriggerAlg::TriggerAlg(const std::string& name, ISvcLocator* pSvcLocator) 
 : Algorithm(name, pSvcLocator), m_event(0)
 , m_total(0)
-, m_triggered(0)
+, m_triggered(0), m_deadtime_reject(0)
 , m_triggerTables(0)
 , m_pcounter(0)
 {
     declareProperty("mask"    ,  m_mask=0xffffffff); // trigger mask
-    declareProperty("deadtime",  m_deadtime=0. );    // deadtime to apply to trigger, in sec.
     declareProperty("throttle",  m_throttle=false);  // if set, veto when throttle bit is on
     declareProperty("vetomask",  m_vetomask=1+2+4);  // if thottle it set, veto if trigger masked with these ...
     declareProperty("vetobits",  m_vetobits=1+2);    // equals these bits
@@ -197,7 +192,6 @@ StatusCode TriggerAlg::initialize()
         if (m_mask==0xffffffff) log.stream() << "No trigger requirement";
         else            log.stream() << "Applying trigger mask: " <<  std::setbase(16) <<m_mask <<std::setbase(10);
 
-        if( m_deadtime>0) log.stream() <<", applying deadtime of " << m_deadtime*1E6 << "u sec ";
         if( m_throttle) log.stream() <<", throttled by rejecting  the value "<< m_vetobits;
     }
     log << endreq;
@@ -251,14 +245,7 @@ StatusCode TriggerAlg::initialize()
 }
 
 
-bool TriggerAlg::alive(double current_time)
-{ 
-    // this is the case when reading back.
-    if (m_deadtime<=0) return true;
-    // ok we actually want to apply a deadtime: in this case *assume* time is increasing!
 
-    return (current_time-m_lastTriggerTime >=m_deadtime);
-}
 
 //------------------------------------------------------------------------------
 StatusCode TriggerAlg::execute() 
@@ -335,6 +322,8 @@ StatusCode TriggerAlg::execute()
     // check for deadtime: set flag only if applying deadtime
     bool killedByDeadtime =  ! m_LivetimeSvc->isLive(header->time()); 
     if( killedByDeadtime) {
+        m_deadtime_reject ++;
+        setFilterPassed(false);
         return sc;
     }
 
@@ -586,6 +575,10 @@ void TriggerAlg::bitSummary(std::ostream& out, std::string label, const std::map
     // purpose and method: make a summary of the bit frequencies to the stream
 
     using namespace std;
+    if( m_deadtime_reject>0){
+        out << "Rejected " << m_deadtime_reject << " events due to deadtime" << endl;
+    }
+
     int size= enums::number_of_trigger_bits;  // bits to expect
     static int col1=16; // width of first column
     out << endl << "             bit frequency: "<< label;
