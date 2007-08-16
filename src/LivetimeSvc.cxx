@@ -2,7 +2,7 @@
  * @file LivetimeSvc.cxx
  * @brief declare, implement the class LivetimeSvc
  *
- * $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/LivetimeSvc.cxx,v 1.3 2006/03/21 19:14:41 usher Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/LivetimeSvc.cxx,v 1.4 2007/08/15 23:56:21 burnett Exp $
  */
 
 #include "Trigger/ILivetimeSvc.h"
@@ -158,13 +158,15 @@ StatusCode LivetimeSvc::queryInterface(const InterfaceID& riid, void** ppvInterf
 StatusCode LivetimeSvc::finalize ()
 {
     MsgStream log( msgSvc(), name() );
-    log << MSG::INFO 
-        << "Processed " << m_total << " livetime requests, accepted "<< m_accepted 
-        << "\n\t\t\t  Invisible triggers generated: "<< m_invisible_trig 
-        << "\n\t\t\t                Total livetime: "<< m_livetime
-        << ", (" << int(100*m_livetime/m_totalTime+0.5) << "% of total)"
-        <<  endreq;
-    
+    if( m_total>0 && m_deadtime>0){
+        log << MSG::INFO 
+            << "Processed " << m_total << " livetime requests, accepted "<< m_accepted 
+            << "\n\t\t\t  Invisible triggers generated: "<< m_invisible_trig 
+            << "\n\t\t\t                Total livetime: "<< m_livetime
+            << ", (" << int(100*m_livetime/m_totalTime+0.5) << "% of total)"
+            <<  endreq;
+    }
+
 
     return StatusCode::SUCCESS;
 }
