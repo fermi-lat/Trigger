@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Thu Aug 16 13:37:22 PDT 2007
+Trigger/src
+
+Modified Files:
+	LivetimeSvc.cxx 
+Log Message:
+only report if we did something.
+    *
+------------------------------------------------------------
 TAG
 Tag name: v5r0p3, operation: add
 Package: Trigger
