@@ -2,7 +2,7 @@
 *  @file TriggerAlg.cxx
 *  @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.71 2007/04/25 02:50:08 burnett Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.72 2007/05/30 18:05:59 kocian Exp $
 */
 
 #include "ThrottleAlg.h"
@@ -228,7 +228,7 @@ StatusCode TriggerAlg::initialize()
 
     if(! m_table.value().empty()){
       if (m_table.value()=="TrgConfigSvc"){
-	sc = service("TrgConfigSvc", m_trgConfigSvc);
+	sc = service("TrgConfigSvc", m_trgConfigSvc, true);
 	if( sc.isFailure() ) {
 	  log << MSG::ERROR << "failed to get the TrgConfigSvc" << endreq;
 	  return sc;
