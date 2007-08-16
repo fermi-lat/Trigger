@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Wed Aug 15 22:06:10 PDT 2007
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx Trigger_load.cxx 
+Log Message:
+patch for windows
+    *
+------------------------------------------------------------
 User: heather  Wed Aug 15 22:06:09 PDT 2007
 Trigger/doc
 
