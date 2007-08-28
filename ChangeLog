@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: heather  Mon Aug 27 21:28:13 PDT 2007
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx 
+Log Message:
+stash gem engine in trigger word too
+    *
+------------------------------------------------------------
+User: heather  Mon Aug 27 21:28:13 PDT 2007
 Trigger/cmt
 
 Modified Files:
