@@ -2,7 +2,7 @@
 *  @file TriggerAlg.cxx
 *  @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.73 2007/08/16 05:06:10 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.74 2007/08/16 18:36:52 burnett Exp $
 */
 
 #include "ThrottleAlg.h"
@@ -136,11 +136,11 @@ private:
     std::map<int, std::string> m_bitNames;
 
     Trigger::TriggerTables* m_triggerTables;
-  
+
     ITrgConfigSvc *m_trgConfigSvc;
     EnginePrescaleCounter* m_pcounter;
     bool m_printtables;
-  
+
 };
 
 //------------------------------------------------------------------------------
@@ -221,25 +221,25 @@ StatusCode TriggerAlg::initialize()
     }
 
     if(! m_table.value().empty()){
-      if (m_table.value()=="TrgConfigSvc"){
-	sc = service("TrgConfigSvc", m_trgConfigSvc, true);
-	if( sc.isFailure() ) {
-	  log << MSG::ERROR << "failed to get the TrgConfigSvc" << endreq;
-	  return sc;
-	}
-	log<<MSG::INFO<<"Using TrgConfigSvc"<<endreq;
-	m_pcounter=new EnginePrescaleCounter(m_prescale.value());
-	m_printtables=true;
-      }else{
-	
-        // selected trigger tables and engines for event selection
+        if (m_table.value()=="TrgConfigSvc"){
+            sc = service("TrgConfigSvc", m_trgConfigSvc, true);
+            if( sc.isFailure() ) {
+                log << MSG::ERROR << "failed to get the TrgConfigSvc" << endreq;
+                return sc;
+            }
+            log<<MSG::INFO<<"Using TrgConfigSvc"<<endreq;
+            m_pcounter=new EnginePrescaleCounter(m_prescale.value());
+            m_printtables=true;
+        }else{
 
-        m_triggerTables = new Trigger::TriggerTables(m_table.value(), m_prescale.value());
+            // selected trigger tables and engines for event selection
 
-        log << MSG::INFO << "Trigger tables: \n";
+            m_triggerTables = new Trigger::TriggerTables(m_table.value(), m_prescale.value());
+
+            log << MSG::INFO << "Trigger tables: \n";
             m_triggerTables->print(log.stream());
-        log << endreq;
-      }
+            log << endreq;
+        }
     }
     return sc;
 }
@@ -330,6 +330,7 @@ StatusCode TriggerAlg::execute()
     m_total++;
     m_counts[trigger_bits] +=1;
     int engine(16); // default engine number
+    int gemengine(16);
 
     // apply filter for subsequent processing.
     if( m_triggerTables!=0 ){
@@ -342,25 +343,29 @@ StatusCode TriggerAlg::execute()
             return sc;
         }
     } else if (m_pcounter!=0){
-      const TrgConfig* tcf=m_trgConfigSvc->getTrgConfig();
-      if (m_printtables){
-        log << MSG::INFO << "Trigger tables: \n";
-	tcf->printContrigurator(log.stream());
-	log<<endreq;
-	m_printtables=false;
-      }
-      if(m_trgConfigSvc->configChanged()){
-	log<<MSG::INFO<<"Trigger configuration changed.";
-	tcf->printContrigurator(log.stream());
-	log<<endreq;
-	m_pcounter->reset();
-      }
-      bool passed=m_pcounter->decrementAndCheck(trigger_bits&31,tcf);
-      if(!passed){
-	setFilterPassed(false);
-	log << MSG::DEBUG << "Event did not trigger, according to engine selected by TrgConfigSvc" << endreq;
-	return sc;
-      }
+        const TrgConfig* tcf=m_trgConfigSvc->getTrgConfig();
+        if (m_printtables){
+            log << MSG::INFO << "Trigger tables: \n";
+            tcf->printContrigurator(log.stream());
+            log<<endreq;
+            m_printtables=false;
+        }
+        if(m_trgConfigSvc->configChanged()){
+            log<<MSG::INFO<<"Trigger configuration changed.";
+            tcf->printContrigurator(log.stream());
+            log<<endreq;
+            m_pcounter->reset();
+        }
+        bool passed=m_pcounter->decrementAndCheck(trigger_bits&31,tcf);
+        if(!passed){
+            setFilterPassed(false);
+            log << MSG::DEBUG << "Event did not trigger, according to engine selected by TrgConfigSvc" << endreq;
+            return sc;
+        }
+        // Retrieve the engine numbers for both the GEM and GLT
+        gemengine = tcf->lut()->engineNumber(gemBits(trigger_bits));
+        engine= tcf->lut()->engineNumber(trigger_bits&31);
+
     }else {
         // apply mask conditions
         if( m_mask!=0 && ( trigger_bits & m_mask) == 0 
@@ -396,6 +401,7 @@ StatusCode TriggerAlg::execute()
     // or in the gem trigger bits, either from hardware, or derived from trigger
     trigger_bits |= gemBits(trigger_bits) << enums::GEM_offset;
     trigger_bits |= engine << (2*enums::GEM_offset); // also the engine number (if set)
+    trigger_bits |= gemengine << (3*enums::GEM_offset); // also the GEM engine number (if set)
 
     if( static_cast<int>(h.trigger())==-1 
         || h.trigger()==0  // this seems to happen when reading back from incoming??
