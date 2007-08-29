@@ -2,7 +2,7 @@
 *  @file TriggerAlg.cxx
 *  @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.75 2007/08/28 04:28:13 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.76 2007/08/29 12:28:06 heather Exp $
 */
 
 #include "ThrottleAlg.h"
@@ -404,7 +404,7 @@ StatusCode TriggerAlg::execute()
     
     unsigned int triggerWordTwo = 0;
     triggerWordTwo |= gltengine;
-    triggerWordTwo |= gemengine << 5; // also the GEM engine number (if set)
+    triggerWordTwo |= gemengine << enums::ENGINE_offset; // also the GEM engine number (if set)
 
     if( static_cast<int>(h.trigger())==-1 
         || h.trigger()==0  // this seems to happen when reading back from incoming??
