@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Wed Aug 29 06:24:05 PDT 2007
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx 
+Log Message:
+use enums
+    *
+------------------------------------------------------------
 User: heather  Wed Aug 29 05:28:06 PDT 2007
 Trigger/src
 
