@@ -2,7 +2,7 @@
 *  @file TriggerAlg.cxx
 *  @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.74 2007/08/16 18:36:52 burnett Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.75 2007/08/28 04:28:13 heather Exp $
 */
 
 #include "ThrottleAlg.h"
@@ -330,7 +330,7 @@ StatusCode TriggerAlg::execute()
     m_total++;
     m_counts[trigger_bits] +=1;
     int engine(16); // default engine number
-    int gemengine(16);
+    int gemengine(16),gltengine(16);
 
     // apply filter for subsequent processing.
     if( m_triggerTables!=0 ){
@@ -364,7 +364,7 @@ StatusCode TriggerAlg::execute()
         }
         // Retrieve the engine numbers for both the GEM and GLT
         gemengine = tcf->lut()->engineNumber(gemBits(trigger_bits));
-        engine= tcf->lut()->engineNumber(trigger_bits&31);
+        gltengine= tcf->lut()->engineNumber(trigger_bits&31);
 
     }else {
         // apply mask conditions
@@ -401,7 +401,10 @@ StatusCode TriggerAlg::execute()
     // or in the gem trigger bits, either from hardware, or derived from trigger
     trigger_bits |= gemBits(trigger_bits) << enums::GEM_offset;
     trigger_bits |= engine << (2*enums::GEM_offset); // also the engine number (if set)
-    trigger_bits |= gemengine << (3*enums::GEM_offset); // also the GEM engine number (if set)
+    
+    unsigned int triggerWordTwo = 0;
+    triggerWordTwo |= gltengine;
+    triggerWordTwo |= gemengine << 5; // also the GEM engine number (if set)
 
     if( static_cast<int>(h.trigger())==-1 
         || h.trigger()==0  // this seems to happen when reading back from incoming??
@@ -409,6 +412,7 @@ StatusCode TriggerAlg::execute()
     {
         // expect it to be zero if not set.
         h.setTrigger(trigger_bits);
+        h.setTriggerWordTwo(triggerWordTwo);
     }else  if (h.trigger() != 0xbaadf00d && trigger_bits != h.trigger() ) {
         // trigger bits already set: reading digiRoot file.
         log << MSG::INFO;

@@ -5,8 +5,9 @@
  * package manager:T.Burnett 
   <pre>
 
- *  v5r0p3  16-aug-08 THB Fix deadtime processing for accounting.
- *  v5r0p2  15-aug-08 HMK Toby's patch to LivetimeSvc's setup msg and make
+ *  v5r1    28-aug-07 HMK Store engine numbers from gemSummary and trigger
+ *  v5r0p3  16-aug-07 THB Fix deadtime processing for accounting.
+ *  v5r0p2  15-aug-07 HMK Toby's patch to LivetimeSvc's setup msg and make
  *          configData use public so that Gleam can find the shared lib
  *  v5r0p1  14-aug-08 HMK explicitly include assert.h for windows
  *  v5r0    13-aug-07 MK  Add TrgConfigSvc and associated code
