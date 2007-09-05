@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: heather  Wed Sep  5 09:43:37 PDT 2007
+Trigger/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+moving TriRowBits to own gaudi alg
+    *
+------------------------------------------------------------
+User: heather  Wed Sep  5 09:43:37 PDT 2007
 Trigger/cmt
 
 Modified Files:
