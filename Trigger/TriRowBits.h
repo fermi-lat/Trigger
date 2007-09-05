@@ -2,7 +2,7 @@
  * @file TriRowBits.h
  * @brief header for class TriRowBits
 
- $Header: /nfs/slac/g/glast/ground/cvs/Trigger/Trigger/TriRowBits.h,v 1.3 2005/02/14 12:26:50 chamont Exp $
+ $Header: /nfs/slac/g/glast/ground/cvs/Trigger/Trigger/TriRowBits.h,v 1.4 2005/03/30 04:04:21 cohen Exp $
  * @author Luis C. Reyes - lreyes@milkyway.gsfc.nasa.gov
 */
 
@@ -15,6 +15,7 @@
 #include "GaudiKernel/StreamBuffer.h"
 #include "GaudiKernel/ContainedObject.h"
 #include "GaudiKernel/ObjectVector.h"
+#include "GaudiKernel/IInterface.h"
 
 #include "Event/TopLevel/Definitions.h"
 #include "Event/TopLevel/EventModel.h"
@@ -26,7 +27,9 @@
 * author Luis C. Reyes   lreyes@milkyway.gsfc.nasa.gov
 */
  
-#define NUM_TWRS 16
+//#define NUM_TWRS 16
+static const NUM_TWRS=16;
+
 static const CLID& CLID_TriRowBitsTds = InterfaceID("TriRowBitsTds", 1, 0);
 
 
