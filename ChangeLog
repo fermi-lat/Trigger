@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Wed Sep  5 09:43:37 PDT 2007
+Trigger/Trigger
+
+Modified Files:
+	TriRowBits.h 
+Log Message:
+moving TriRowBits to own gaudi alg
+    *
+------------------------------------------------------------
 TAG
 Tag name: v5r1, operation: add
 Package: Trigger
