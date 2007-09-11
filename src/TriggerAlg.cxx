@@ -2,7 +2,7 @@
 *  @file TriggerAlg.cxx
 *  @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.77 2007/08/29 13:24:05 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.78 2007/09/05 16:43:38 heather Exp $
 */
 
 #include "ThrottleAlg.h"
@@ -97,6 +97,8 @@ private:
 
     int m_event;
     BooleanProperty  m_throttle;
+    BooleanProperty  m_applyPrescales;
+    BooleanProperty  m_useGltWordForData;
     IntegerProperty m_vetobits;
     IntegerProperty m_vetomask;
     StringProperty m_table;
@@ -153,6 +155,8 @@ TriggerAlg::TriggerAlg(const std::string& name, ISvcLocator* pSvcLocator)
 
     declareProperty("engine",    m_table = "");     // set to "default"  to use default engine table
     declareProperty("prescale",  m_prescale=std::vector<int>());        // vector of prescale factors
+    declareProperty("applyPrescales",  m_applyPrescales=false);  // use TrgConfigSvc to termine trg engine but don't prescale
+    declareProperty("useGltWordForData",  m_useGltWordForData=false);  // even if a GEM word exists use the Glt word
 
     for( int i=0; i<8; ++i) { 
         std::stringstream t; t<< "bit "<< i;
@@ -347,7 +351,14 @@ StatusCode TriggerAlg::execute()
             log<<endreq;
             m_pcounter->reset();
         }
-        bool passed=m_pcounter->decrementAndCheck(trigger_bits&31,tcf);
+	bool passed=true;
+	if (m_applyPrescales==true){
+	  if (gemBits(0)==0 || m_useGltWordForData==true) {// this is either MC or user wants glt word used for prescaling
+	    passed=m_pcounter->decrementAndCheck(trigger_bits&31,tcf);
+	  } else {//this is data and we want to use the GEM summary word
+	    passed=m_pcounter->decrementAndCheck(gemBits(0),tcf); 
+	  }
+	}
         if(!passed){
             setFilterPassed(false);
             log << MSG::DEBUG << "Event did not trigger, according to engine selected by TrgConfigSvc" << endreq;
@@ -372,7 +383,6 @@ StatusCode TriggerAlg::execute()
 
         }
     }
-
     // passed trigger: continue processing
 
     m_triggered++;
