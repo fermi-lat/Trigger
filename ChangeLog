@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: kocian  Tue Sep 11 14:15:12 PDT 2007
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx 
+Log Message:
+new options to get engine number but no prescaling
+    *
+------------------------------------------------------------
 TAG
 Tag name: v5r2, operation: add
 Package: Trigger
