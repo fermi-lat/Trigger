@@ -5,6 +5,7 @@
  * package manager:T.Burnett 
   <pre>
 
+ *  v5r2p1  13-sep-07 THB Fix summary formatting to add white space 
  *  v5r2    05-sep-07 HMK Move TriRowBits calculation into its own GaudiAlg
  *  v5r1    28-aug-07 HMK Store engine numbers from gemSummary and trigger
  *  v5r0p3  16-aug-07 THB Fix deadtime processing for accounting.

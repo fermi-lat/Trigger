@@ -2,7 +2,7 @@
 *  @file TriggerAlg.cxx
 *  @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.78 2007/09/05 16:43:38 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.79 2007/09/11 21:15:12 kocian Exp $
 */
 
 #include "ThrottleAlg.h"
@@ -550,7 +550,11 @@ StatusCode TriggerAlg::finalize() {
         bitSummary(log.stream(), "all events", m_counts);
         if( m_triggered < m_total )
             bitSummary(log.stream(), "triggered events", m_trig_counts);
+       if( m_deadtime_reject>0){
+            log << "\n\t\tRejected " << m_deadtime_reject << " events due to deadtime";
+       }
     }
+
 
     log << endreq;
 
@@ -564,10 +568,6 @@ void TriggerAlg::bitSummary(std::ostream& out, std::string label, const std::map
     // purpose and method: make a summary of the bit frequencies to the stream
 
     using namespace std;
-    if( m_deadtime_reject>0){
-        out << "Rejected " << m_deadtime_reject << " events due to deadtime" << endl;
-    }
-
     int size= enums::number_of_trigger_bits;  // bits to expect
     static int col1=16; // width of first column
     out << endl << "             bit frequency: "<< label;
