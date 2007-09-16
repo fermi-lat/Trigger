@@ -2,7 +2,7 @@
 *  @file TriggerAlg.cxx
 *  @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.79 2007/09/11 21:15:12 kocian Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.80 2007/09/13 22:15:35 burnett Exp $
 */
 
 #include "ThrottleAlg.h"
@@ -344,6 +344,12 @@ StatusCode TriggerAlg::execute()
             tcf->printContrigurator(log.stream());
             log<<endreq;
             m_printtables=false;
+            if(! m_applyPrescales ) {
+                log << MSG::INFO << 
+                    "TrgConfigSvc selected, but is disabled since the prescale and inhibits are not active:\n"
+                    "\t\tset 'applyPrescales' to actually have a trigger. "
+                    << endreq;
+            }
         }
         if(m_trgConfigSvc->configChanged()){
             log<<MSG::INFO<<"Trigger configuration changed.";
