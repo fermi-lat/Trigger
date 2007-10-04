@@ -2,7 +2,7 @@
 *  @file TriggerAlg.cxx
 *  @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.80 2007/09/13 22:15:35 burnett Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.81 2007/09/16 03:46:56 burnett Exp $
 */
 
 #include "ThrottleAlg.h"
@@ -217,12 +217,12 @@ StatusCode TriggerAlg::initialize()
 
     if(! m_table.value().empty()){
         if (m_table.value()=="TrgConfigSvc"){
+            log<<MSG::INFO<<"Using TrgConfigSvc"<<endreq;
             sc = service("TrgConfigSvc", m_trgConfigSvc, true);
             if( sc.isFailure() ) {
                 log << MSG::ERROR << "failed to get the TrgConfigSvc" << endreq;
                 return sc;
             }
-            log<<MSG::INFO<<"Using TrgConfigSvc"<<endreq;
             m_pcounter=new EnginePrescaleCounter(m_prescale.value());
             m_printtables=true;
         }else{
@@ -339,6 +339,12 @@ StatusCode TriggerAlg::execute()
         }
     } else if (m_pcounter!=0){
         const TrgConfig* tcf=m_trgConfigSvc->getTrgConfig();
+        if(!m_printtables && m_trgConfigSvc->configChanged()){
+            log<<MSG::INFO<<"Trigger configuration changed.";
+            tcf->printContrigurator(log.stream());
+            log<<endreq;
+            m_pcounter->reset();
+        }
         if (m_printtables){
             log << MSG::INFO << "Trigger tables: \n";
             tcf->printContrigurator(log.stream());
@@ -350,12 +356,6 @@ StatusCode TriggerAlg::execute()
                     "\t\tset 'applyPrescales' to actually have a trigger. "
                     << endreq;
             }
-        }
-        if(m_trgConfigSvc->configChanged()){
-            log<<MSG::INFO<<"Trigger configuration changed.";
-            tcf->printContrigurator(log.stream());
-            log<<endreq;
-            m_pcounter->reset();
         }
 	bool passed=true;
 	if (m_applyPrescales==true){

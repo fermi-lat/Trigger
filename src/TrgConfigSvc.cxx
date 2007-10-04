@@ -4,7 +4,7 @@
 @brief keeps track of the GEM trigger configuration
 @author Martin Kocian
 
-$Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TrgConfigSvc.cxx,v 1.1 2007/05/30 18:05:59 kocian Exp $
+$Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TrgConfigSvc.cxx,v 1.2 2007/08/14 16:01:36 heather Exp $
 
 */
 
@@ -16,6 +16,7 @@ $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TrgConfigSvc.cxx,v 1.1 2007/05
 #include "GaudiKernel/SmartDataPtr.h"
 #include "LdfEvent/LsfMetaEvent.h"
 //#include "configData/db/LatcDBImplOld.h"
+#include "configData/db/LatcDBImpl.h"
 #include "configData/db/LatcDBImplFile.h"
 #include "Event/TopLevel/EventModel.h"
 #include "Event/TopLevel/Event.h"
@@ -41,12 +42,10 @@ TrgConfigSvc::TrgConfigSvc(const std::string& name,ISvcLocator* svc)
 
     // declare the properties
 
-    declareProperty("configureFromFile",       m_configureFromFile=false);
+    declareProperty("configureFrom",       m_configureFrom="Default");// options are Default, File, Moot
     declareProperty("xmlFile", m_xmlFile="");
-    declareProperty("configureFromMOOT",    m_configureFromMoot=false);
     declareProperty("useKeyFromData",  m_useKeyFromData=true);
     declareProperty("fixedKey",  m_fixedKey=1852);
-    declareProperty("useDefaultConfiguration",  m_useDefaultConfiguration=true);
 }
 
 StatusCode  TrgConfigSvc::queryInterface (const InterfaceID& riid, void **ppvIF)
@@ -90,14 +89,18 @@ StatusCode TrgConfigSvc::initialize ()
         log << MSG::ERROR << "Failed to set properties" << endreq;
 	return StatusCode::FAILURE;
     }
-    if((int)m_configureFromFile+(int)m_configureFromMoot+(int)m_useDefaultConfiguration!=1){
-      log << MSG::ERROR << "Pick exactly one configuration source out of MOOT, file, and Default" << endreq;
+    if(m_configureFrom.value()!="Default"&&m_configureFrom.value()!="Moot"&&m_configureFrom.value()!="File"){
+      log << MSG::ERROR << "Pick exactly one configuration source out of Moot, File, and Default" << endreq;
       return StatusCode::FAILURE;
     }
-    if (m_configureFromMoot && m_useKeyFromData){
-      //temporary fix to disable MOOT config 
-      log<<MSG::ERROR<<"Configuring from MOOT is disabled in this version for lack of mootCore"<<endreq;
-      return StatusCode::FAILURE;
+    // print a message about the configuration
+    log<<MSG::INFO<<"Configuration taken from "<<m_configureFrom.value()<<endreq;
+    if (m_configureFrom.value()=="Moot"){
+      if( m_useKeyFromData)log<<MSG::INFO<<"Using MOOT key from data"<<endreq;
+      else log<<MSG::INFO<<"Using fixed MOOT key "<<m_fixedKey<<endreq;
+    }
+
+    if (m_configureFrom.value()=="Moot" && m_useKeyFromData){
       // Get ready to listen for BeginEvent
       IIncidentSvc* incSvc;
       sc = service("IncidentSvc", incSvc, true);
@@ -110,15 +113,12 @@ StatusCode TrgConfigSvc::initialize ()
     }
 
 
-    if (m_configureFromMoot){
-      //temporary fix to disable MOOT config 
-      log<<MSG::ERROR<<"Configuring from MOOT is disabled in this version for lack of mootCore"<<endreq;
-      return StatusCode::FAILURE;
-      //m_trgconfig=new TrgConfigDB(new LatcDBImplOld);
-      //if(m_useKeyFromData==false)m_trgconfig->updateKey(m_fixedKey);
+    if (m_configureFrom.value()=="Moot"){
+      m_trgconfig=new TrgConfigDB(new LatcDBImpl);
+      if(m_useKeyFromData==false)m_trgconfig->updateKey(m_fixedKey);
     }else{
       LatcDBImplFile* fc=new LatcDBImplFile;
-      if (m_useDefaultConfiguration){
+      if (m_configureFrom.value()=="Default"){
 	std::string xmlfile=std::string(getenv("CONFIGDATAROOT"))+"/src/defaultTrgConfig.xml";
 	log << MSG::INFO << "Using default GEM configuration from "<<xmlfile<< endreq;
 	fc->setFilename(xmlfile);
@@ -135,20 +135,15 @@ StatusCode TrgConfigSvc::initialize ()
 
 const TrgConfig* TrgConfigSvc::getTrgConfig() 
 {
-  if(m_configureFromMoot && m_useKeyFromData && !m_eventread){
-    //temporary fix to disable MOOT config 
+  if(m_configureFrom.value()=="Moot" && m_useKeyFromData && !m_eventread){
     MsgStream log( msgSvc(), name() );
-    log<<MSG::ERROR<<"Configuring from MOOT is disabled in this version for lack of mootCore"<<endreq;
-    assert(0);
-    /*
     m_eventread=true;
     
     // update the configuration 
     SmartDataPtr<LsfEvent::MetaEvent> meta(eventSvc(), "/Event/MetaEvent");
     unsigned int latckey=meta->keys()->LATC_master();
-    //    std::cout<<"Latc key "<<latckey<<std::endl;
+    //std::cout<<"Latc key "<<latckey<<std::endl;
     m_configchanged=m_trgconfig->updateKey(latckey);
-    */
   }
   return m_trgconfig;
  
