@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: kocian  Wed Oct  3 17:26:30 PDT 2007
+Trigger/src
+
+Modified Files:
+	TrgConfigSvc.cxx TrgConfigSvc.h TriggerAlg.cxx 
+Log Message:
+added MOOT capability
+    *
+------------------------------------------------------------
 TAG
 Tag name: v5r3p2, operation: add
 Package: Trigger
