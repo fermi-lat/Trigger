@@ -4,7 +4,7 @@
 @brief provides the GEM configuration
 @author Martin Kocian
 
-$Header:  $
+$Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TrgConfigSvc.h,v 1.1 2007/05/30 18:05:59 kocian Exp $
 
 */
 #ifndef TrgConfigSvc_H
@@ -55,12 +55,10 @@ public:
 private:
     IDataProviderSvc*       eventSvc()       const {return m_eventSvc;}
     TrgConfigDB* m_trgconfig;
-    BooleanProperty m_configureFromFile;
+    StringProperty m_configureFrom;
     StringProperty m_xmlFile;
-    BooleanProperty m_configureFromMoot;
     BooleanProperty m_useKeyFromData;
     UnsignedIntegerProperty m_fixedKey;
-    BooleanProperty m_useDefaultConfiguration;
     IDataProviderSvc * m_eventSvc ;
     bool m_eventread;
     bool m_configchanged;
