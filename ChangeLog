@@ -1,5 +1,15 @@
 ------------------------------------------------------------
 User: fewtrell  Tue Oct 16 06:40:51 PDT 2007
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx 
+Log Message:
+Cal Trigger now calculated from MC if available (fallback to MC) - most of logic handled in CalXtalResponse/CalTrigTool
+
+    *
+------------------------------------------------------------
+User: fewtrell  Tue Oct 16 06:40:51 PDT 2007
 Trigger/doc
 
 Modified Files:
