@@ -5,6 +5,7 @@
  * package manager:T.Burnett 
   <pre>
 
+ *  v5r5    16-oct-07 ZGF No longer calculate Cal Trig info directly from Digi - leave it up to CalTrigTool (currently uses mc if it's available, otherwise falls back to CalDigi)
  *  v5r2p2  15-sep-07 THB Add info message to inform about trigger prescale and inhibit status.
  *  v5r2p1  13-sep-07 THB Fix summary formatting to add white space 
  *  v5r2    05-sep-07 HMK Move TriRowBits calculation into its own GaudiAlg
