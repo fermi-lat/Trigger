@@ -2,7 +2,7 @@
 *  @file TriggerAlg.cxx
 *  @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.81 2007/09/16 03:46:56 burnett Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.82 2007/10/04 00:26:30 kocian Exp $
 */
 
 #include "ThrottleAlg.h"
@@ -20,7 +20,6 @@
 #include "Event/TopLevel/Event.h"
 
 #include "Event/Digi/TkrDigi.h"
-#include "Event/Digi/CalDigi.h"
 #include "Event/Digi/AcdDigi.h"
 #include "Event/Digi/GltDigi.h"
 
@@ -43,6 +42,7 @@
 
 #include <map>
 #include <vector>
+#include <algorithm>
 
 namespace { // local definitions of convenient inline functions
     inline unsigned three_in_a_row(unsigned bits)
@@ -207,12 +207,12 @@ StatusCode TriggerAlg::initialize()
         return sc;
     }
 
-    // this tool needs to be shared by CalDigiAlg, XtalDigiTool & TriggerAlg, so I am
-    // giving it global ownership
-    sc = toolSvc()->retrieveTool("CalTrigTool", m_calTrigTool);
+    sc = toolSvc()->retrieveTool("CalTrigTool", 
+                                 m_calTrigTool,
+                                 this);
     if (sc.isFailure() ) {
-        log << MSG::ERROR << "  Unable to create CalTrigTool" << endreq;
-        return sc;
+      log << MSG::ERROR << "  Unable to create CalTrigTool" << endreq;
+      return sc;
     }
 
     if(! m_table.value().empty()){
@@ -254,9 +254,6 @@ StatusCode TriggerAlg::execute()
     SmartDataPtr<Event::TkrDigiCol> tkr(eventSvc(), EventModel::Digi::TkrDigiCol);
     if( tkr==0 ) log << MSG::DEBUG << "No tkr digis found" << endreq;
 
-    SmartDataPtr<Event::CalDigiCol> cal(eventSvc(), EventModel::Digi::CalDigiCol);
-    if( cal==0 ) log << MSG::DEBUG << "No cal digis found" << endreq;
-
     SmartDataPtr<Event::AcdDigiCol> acd(eventSvc(), EventModel::Digi::AcdDigiCol);
     if( acd==0 ) log << MSG::DEBUG << "No acd digis found" << endreq;
 
@@ -269,27 +266,31 @@ StatusCode TriggerAlg::execute()
         | (acd!=0? anticoincidence(acd) : 0);
 
 
-    // calorimter is either the new glt, or old cal
-    if( glt!=0 ){ trigger_bits |= calorimeter(glt) ;}
-    else if( cal!=0 ) {
-        /// try to create new glt
-        Event::GltDigi *newGlt(0);
-        newGlt = m_calTrigTool->setupGltDigi(eventSvc());
-        if (!newGlt)
-            log << MSG::ERROR << "Failure to create new GltDigi in TDS." << endreq;
-
-        CalUtil::CalArray<CalUtil::DiodeNum, bool> calTrigBits;
-        calTrigBits.fill(false);
-        sc = m_calTrigTool->calcGlobalTrig(cal, calTrigBits, newGlt);
-        if (sc.isFailure()) {
-            log << MSG::ERROR << "Failure to run cal trigger code" << endreq;
-            return sc;
-        }
-
-        trigger_bits |= (calTrigBits[CalUtil::LRG_DIODE] ? enums::b_LO_CAL:0) 
-            |  (calTrigBits[CalUtil::SM_DIODE] ? enums::b_HI_CAL:0);
+    // calorimeter is either the new glt, or old cal
+    if( glt!=0 ) { 
+      trigger_bits |= calorimeter(glt) ;
     }
-
+    else {
+      /// try to create new glt
+      Event::GltDigi *newGlt(0);
+      newGlt = m_calTrigTool->setupGltDigi();
+      if (!newGlt)
+        log << MSG::ERROR << "Failure to create new GltDigi in TDS." << endreq;
+      
+      /// empty return val from calTrigTOol
+      CalUtil::CalArray<CalUtil::DiodeNum, bool> calTrigBits;
+      fill(calTrigBits.begin(), calTrigBits.end(), false);
+      
+      /// calculate cal trigger response
+      sc = m_calTrigTool->calcGlobalTrig(calTrigBits, newGlt);
+      if (sc.isFailure()) {
+        log << MSG::ERROR << "Failure to run cal trigger code" << endreq;
+        return sc;
+      }
+        
+      trigger_bits |= (calTrigBits[CalUtil::LRG_DIODE] ? enums::b_LO_CAL:0) 
+        |  (calTrigBits[CalUtil::SM_DIODE] ? enums::b_HI_CAL:0);
+    }
 
     SmartDataPtr<Event::EventHeader> header(eventSvc(), EventModel::EventHeader);
 
