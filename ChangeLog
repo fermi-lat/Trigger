@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: burnett  Sat Oct 20 14:57:02 PDT 2007
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx 
+Log Message:
+remove obsolete code involving ACDL, old ROI, using upper part of GltWord.
+    *
+------------------------------------------------------------
 TAG
 Tag name: v5r5, operation: add
 Package: Trigger
