@@ -2,7 +2,7 @@
 *  @file TriggerAlg.cxx
 *  @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.82 2007/10/04 00:26:30 kocian Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.83 2007/10/16 13:40:51 fewtrell Exp $
 */
 
 #include "ThrottleAlg.h"
@@ -167,7 +167,9 @@ TriggerAlg::TriggerAlg(const std::string& name, ISvcLocator* pSvcLocator)
     m_bitNames[enums::b_ROI]    = "ROI";
     m_bitNames[enums::b_ACDH]   = "CNO";
     m_bitNames[enums::b_Track]  = "TKR";
+#if 0 // do not use now
     m_bitNames[enums::b_ACDL]   = "ACDL";
+#endif
 }
 //------------------------------------------------------------------------------
 /*! 
@@ -307,7 +309,6 @@ StatusCode TriggerAlg::execute()
             int roi = Throttle.calculate(tkr,acd, vetoThresholdMeV);
             if( roi!=0){
                 trigger_bits |= enums::b_ROI;
-                trigger_bits |= roi; // hit both for now
             }
         }
     }
@@ -405,11 +406,11 @@ StatusCode TriggerAlg::execute()
     if(log.isActive()) log.stream() << "Processing run/event " << h.run() << "/" << h.event() << " trigger & mask = "
         << std::setbase(16) << (m_mask==0 ? trigger_bits : trigger_bits & m_mask);
     log << endreq;
-
+#if 0 // this is masked off and was never used
     // or in the gem trigger bits, either from hardware, or derived from trigger
     trigger_bits |= gemBits(trigger_bits) << enums::GEM_offset;
     trigger_bits |= engine << (2*enums::GEM_offset); // also the engine number (if set)
-    
+#endif
     unsigned int triggerWordTwo = 0;
     triggerWordTwo |= gltengine;
     triggerWordTwo |= gemengine << enums::ENGINE_offset; // also the GEM engine number (if set)
@@ -528,13 +529,16 @@ unsigned int TriggerAlg::anticoincidence(const Event::AcdDigiCol& tiles)
         // check if hitMapBit is set (veto) which will correspond to 0.3 MIP.
         // 20060109 Agreed at Analysis Meeting that onboard threshold is 0.3 MIP
         const AcdDigi& digi = **it;
+#if 0 // disable this now
         if ( (digi.getHitMapBit(Event::AcdDigi::A)
             || digi.getHitMapBit(Event::AcdDigi::B))  ){
                 ret |= enums::b_ACDL; 
             }
-            // now trigger high if either PMT is above threshold
-            if (   digi.getCno(Event::AcdDigi::A) 
-                || digi.getCno(Event::AcdDigi::B) ) ret |= enums::b_ACDH;
+#endif
+
+        // now trigger high if either PMT is above threshold
+        if (   digi.getCno(Event::AcdDigi::A) 
+           || digi.getCno(Event::AcdDigi::B) ) ret |= enums::b_ACDH;
     } 
     return ret;
 }
@@ -575,7 +579,11 @@ void TriggerAlg::bitSummary(std::ostream& out, std::string label, const std::map
     // purpose and method: make a summary of the bit frequencies to the stream
 
     using namespace std;
+#if 0
     int size= enums::number_of_trigger_bits;  // bits to expect
+#else
+    int size(5); // this is it: no more ACDL
+#endif 
     static int col1=16; // width of first column
     out << endl << "             bit frequency: "<< label;
     out << endl << setw(col1) << "value"<< setw(6) << "count" ;
