@@ -1,8 +1,8 @@
 package Trigger
-version v5r5p1
+version v5r6
 
 author T. Burnett <tburnett@u.washington.edu>
-# $Id: requirements,v 1.78 2007/09/16 03:46:56 burnett Exp $
+# $Id: requirements,v 1.79 2007/10/25 15:55:45 burnett Exp $
 
 # --------------------------
 # define trigger algorithms
@@ -28,6 +28,7 @@ use CalibSvc *
 use Event *
 use GlastSvc *
 use LdfEvent *
+use gr_app *
 
 # get flags to build shared library
 
