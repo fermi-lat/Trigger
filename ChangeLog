@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Mon Oct 29 20:20:46 PDT 2007
+Trigger/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+use gr_app
+    *
+------------------------------------------------------------
 TAG
 Tag name: v5r5p1, operation: add
 Package: Trigger
