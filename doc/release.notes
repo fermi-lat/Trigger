@@ -5,6 +5,7 @@
  * package manager:T.Burnett 
   <pre>
 
+ *  v5r6    30-oct-07 HMK use gr_app
  *  v5r5p1  25-oct-07 THB Remove obsolete bits ACDL and ROI copy
  *  v5r5    16-oct-07 ZGF No longer calculate Cal Trig info directly from Digi - leave it up to CalTrigTool (currently uses mc if it's available, otherwise falls back to CalDigi)
  *  v5r2p2  15-sep-07 THB Add info message to inform about trigger prescale and inhibit status.
