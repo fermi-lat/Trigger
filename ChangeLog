@@ -1,5 +1,16 @@
 ------------------------------------------------------------
 User: kocian  Fri Nov  2 11:53:49 PDT 2007
+Trigger/src
+
+Modified Files:
+	LivetimeSvc.cxx TriggerAlg.cxx 
+Removed Files:
+	ThrottleAlg.cxx ThrottleAlg.h 
+Log Message:
+added GEM simulation, window simulation, improved deadtime, ROI config
+    *
+------------------------------------------------------------
+User: kocian  Fri Nov  2 11:53:49 PDT 2007
 Trigger/Trigger
 
 Modified Files:
