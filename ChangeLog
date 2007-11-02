@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: kocian  Fri Nov  2 11:53:49 PDT 2007
+Trigger/Trigger
+
+Modified Files:
+	ILivetimeSvc.h 
+Log Message:
+added GEM simulation, window simulation, improved deadtime, ROI config
+    *
+------------------------------------------------------------
 TAG
 Tag name: v5r6, operation: add
 Package: Trigger
