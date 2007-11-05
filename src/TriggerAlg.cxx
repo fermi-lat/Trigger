@@ -2,7 +2,7 @@
 *  @file TriggerAlg.cxx
 *  @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.84 2007/10/20 21:57:02 burnett Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.85 2007/11/02 18:53:49 kocian Exp $
 */
 
 //#include "ThrottleAlg.h"
@@ -44,6 +44,7 @@
 
 #include "CalXtalResponse/ICalTrigTool.h"
 
+#include <cassert>
 #include <map>
 #include <vector>
 #include <algorithm>
@@ -444,7 +445,7 @@ StatusCode TriggerAlg::execute()
 	  if (m_isMc || m_useGltWordForData==true) {// this is either MC or user wants glt word used for prescaling
 	    passed=m_pcounter->decrementAndCheck(gemBits(trigger_bits),tcf);
 	  } else {//this is data and we want to use the GEM summary word
-	    assert(gem);
+	    assert(gem!=0);
 	    passed=m_pcounter->decrementAndCheck(gem->conditionSummary(),tcf); 
 	  }
 	}
