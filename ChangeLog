@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: heather  Sun Nov  4 20:53:55 PST 2007
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx 
+Log Message:
+win patch for assert
+    *
+------------------------------------------------------------
+User: heather  Sun Nov  4 20:53:55 PST 2007
 Trigger/doc
 
 Modified Files:
