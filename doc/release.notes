@@ -5,6 +5,8 @@
  * package manager:T.Burnett 
   <pre>
 
+ *  v6r0p1  04-nov-07 HMK win patch for assert
+ *  v6r0    02-nov-07 MK
  *  v5r6    30-oct-07 HMK use gr_app
  *  v5r5p1  25-oct-07 THB Remove obsolete bits ACDL and ROI copy
  *  v5r5    16-oct-07 ZGF No longer calculate Cal Trig info directly from Digi - leave it up to CalTrigTool (currently uses mc if it's available, otherwise falls back to CalDigi)
