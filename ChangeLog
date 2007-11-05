@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Sun Nov  4 20:53:54 PST 2007
+Trigger/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+win patch for assert
+    *
+------------------------------------------------------------
 TAG
 Tag name: v6r0, operation: add
 Package: Trigger
