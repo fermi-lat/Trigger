@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: kocian  Tue Nov  6 14:36:56 PST 2007
+Trigger/src
+
+Modified Files:
+	LivetimeSvc.cxx TriggerAlg.cxx 
+Log Message:
+restored interleave functionality in LivetimeSvc
+    *
+------------------------------------------------------------
+User: kocian  Tue Nov  6 14:36:56 PST 2007
 Trigger/Trigger
 
 Modified Files:
