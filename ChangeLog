@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: kocian  Tue Nov  6 14:36:56 PST 2007
+Trigger/Trigger
+
+Modified Files:
+	ILivetimeSvc.h 
+Log Message:
+restored interleave functionality in LivetimeSvc
+    *
+------------------------------------------------------------
 TAG
 Tag name: v6r0p1, operation: add
 Package: Trigger
