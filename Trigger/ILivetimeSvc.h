@@ -2,7 +2,7 @@
 * @file ILivetimeSvc.h
 * @brief definition of the interface for ILivetimeSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/Trigger/ILivetimeSvc.h,v 1.2 2006/03/14 05:55:10 burnett Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/Trigger/ILivetimeSvc.h,v 1.3 2007/11/02 18:53:49 kocian Exp $
 */
 #ifndef _H_ILivetimeSvc
 #define _H_ILivetimeSvc
@@ -41,6 +41,9 @@ public:
     virtual enums::GemState checkState(double current_time)=0;
 
     virtual double livetime()=0; ///< return the accumulated livetime
+
+    /// set a new trigger rate, return the old value
+    virtual double setTriggerRate(double rate)=0;
 
     /// get number of GEM clock ticks
     virtual unsigned int ticks(double time) const=0;
