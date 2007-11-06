@@ -2,7 +2,7 @@
 *  @file TriggerAlg.cxx
 *  @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.85 2007/11/02 18:53:49 kocian Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.86 2007/11/05 04:53:55 heather Exp $
 */
 
 //#include "ThrottleAlg.h"
@@ -476,10 +476,10 @@ StatusCode TriggerAlg::execute()
     // check for deadtime: set flag only if applying deadtime
     
     if(m_applyDeadtime){
-      enums::GemState gemstate=m_LivetimeSvc->checkState(header->time());
+      enums::GemState gemstate=m_LivetimeSvc->checkState(now);
       if (gemstate==enums::DEADZONE)m_deadzone++;
       else if (gemstate==enums::BUSY)m_busy++;
-      if( gemstate!=enums::LIVE) {
+      if( !m_LivetimeSvc->isLive(now)) { 
         m_deadtime_reject ++;
         setFilterPassed(false);
         return sc;
@@ -487,7 +487,7 @@ StatusCode TriggerAlg::execute()
       bool longdeadtime=false;
       if(m_pcounter!=0 && gltengine!=-1) // using TrgConfigSvc
 	longdeadtime=m_trgConfigSvc->getTrgConfig()->trgEngine()->fourRangeReadout(gltengine);
-      m_LivetimeSvc->tryToRegisterEvent(header->time(),longdeadtime);
+        m_LivetimeSvc->tryToRegisterEvent(now,longdeadtime);
     } 
     
     m_triggered++;

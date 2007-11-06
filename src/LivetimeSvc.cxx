@@ -50,7 +50,7 @@ public:
 
 
     virtual double livetime(); ///< return the accumulated livetime
-
+    double setTriggerRate(double rate);
 /**
  *
  *  @fn     unsigned int ticks (double time)
@@ -66,12 +66,16 @@ private:
     LivetimeSvc ( const std::string& name, ISvcLocator* al );
 
     DoubleProperty m_deadtime; ///< deadtime per trigger (nominal 25 us)
+    DoubleProperty m_triggerRate; ///< background trigger rate
     DoubleProperty m_deadtimelong; ///< deadtime per trigger for large events
     DoubleProperty m_frequency; ///< background trigger rate
+    BooleanProperty  m_interleave;
+    double m_efficiency;
     double m_livetime; ///< update with request
     double m_totalTime;
 
     int m_total, m_accepted;
+    int m_invisible_trig;
     double m_lastTriggerTime;
     double m_previousDeadtime; 
     enum state {live, deadzone, busy}; 
@@ -90,14 +94,16 @@ LivetimeSvc::LivetimeSvc(const std::string& name,ISvcLocator* svc)
 , m_totalTime(0)
 , m_total(0)
 , m_accepted(0)
+, m_invisible_trig(0)
 , m_lastTriggerTime(0)
 , m_previousDeadtime(0)
 {
     // declare the properties and set defaults
-    declareProperty("Deadtime",    m_deadtime=26.4e-6 );  // deadtime to apply to trigger, in sec.
-    declareProperty("DeadtimeLong", m_deadtimelong=65.0e-6); // deadtime for large events
+    declareProperty("Deadtime",    m_deadtime=26.45e-6 );  // deadtime to apply to trigger, in sec.
+    declareProperty("DeadtimeLong", m_deadtimelong=65.4e-6); // deadtime for four-range events
     declareProperty("clockrate", m_frequency=20e6);  // 20 MHz clock
-
+    declareProperty("TriggerRate", m_triggerRate=2000.);  // effective total trigger rate
+    declareProperty("InterleaveMode", m_interleave=true);  // Apply efficiency correction?
 }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 StatusCode LivetimeSvc::initialize () 
@@ -109,7 +115,11 @@ StatusCode LivetimeSvc::initialize ()
     // open the message log
     MsgStream log( msgSvc(), name() );
     m_deadzoneTime=100e-9; // 2 clock tick dead zone
-    
+    m_efficiency = 1.0 - m_deadtime * m_triggerRate;
+    if (m_interleave==true){
+      log << MSG::INFO 
+	  << "Interleave mode. Applying efficiency of " << m_efficiency*100 << "%" << endreq;
+    }
     return status;
 }
 
@@ -119,15 +129,24 @@ bool LivetimeSvc::tryToRegisterEvent(double current_time, bool highdeadtime)
    ++m_total;
 
    if (m_deadtime<=0) return true;
-
-   bool live = current_time-m_lastTriggerTime >= m_previousDeadtime;
+   bool live;
+   if(m_interleave==true){
+     live = current_time-m_lastTriggerTime >= m_deadtime;
+   }else{
+     live = current_time-m_lastTriggerTime >= m_previousDeadtime;
+   }
    if( live ){
      // here if valid. Update the livetime
      if( m_lastTriggerTime>0){
        double elapsed(current_time-m_lastTriggerTime);
-       m_livetime += elapsed-m_previousDeadtime;
-       
        m_totalTime+= elapsed;
+       if(m_interleave==true){
+	 double ntrig( RandPoisson::shoot(elapsed*m_triggerRate));
+	 m_invisible_trig+=(int)ntrig;
+	 m_livetime += elapsed-ntrig*m_deadtime;
+       }else{
+	 m_livetime += elapsed-m_previousDeadtime;
+       }
      }
      m_lastTriggerTime = current_time;
      if (highdeadtime){
@@ -143,9 +162,29 @@ bool LivetimeSvc::tryToRegisterEvent(double current_time, bool highdeadtime)
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 bool LivetimeSvc::isLive(double current_time)
 {
-  if (m_deadtime<=0) return true;
-  bool live = current_time-m_lastTriggerTime >= m_previousDeadtime;
+  if (m_deadtime<=0) return true; // for backward compatibility
+  bool live=true;
+  if(m_interleave==true){
+    live = current_time-m_lastTriggerTime >= m_deadtime;
+    if( live && m_efficiency<1.0){
+      // put in random
+      double r = RandFlat::shoot();
+      if( r > m_efficiency){
+	live=false;
+      }
+    }
+  }else{
+    live = current_time-m_lastTriggerTime >= m_previousDeadtime;
+  }
   return live;
+}
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+double LivetimeSvc::setTriggerRate(double rate)
+{
+    double old = m_triggerRate;
+    m_triggerRate = rate;
+    m_efficiency = 1.0 - m_deadtime * m_triggerRate;
+    return old;
 }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 enums::GemState LivetimeSvc::checkState(double current_time)
@@ -180,6 +219,7 @@ StatusCode LivetimeSvc::finalize ()
     if( m_total>0 && m_deadtime>0){
         log << MSG::INFO 
             << "Processed " << m_total << " livetime requests, accepted "<< m_accepted 
+            << "\n\t\t\t  Invisible triggers generated: "<< m_invisible_trig 
             << "\n\t\t\t                Total livetime: "<< m_livetime
             << ", (" << int(100*m_livetime/m_totalTime+0.5) << "% of total)"
             <<  endreq;
