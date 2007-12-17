@@ -5,7 +5,7 @@
  * package manager:T.Burnett 
   <pre>
 
- *  v6r0p2  16-dec-07 LSR limit info message about trigger bit mis-matches
+ *  v6r0p4  16-dec-07 LSR limit info message about trigger bit mis-matches
  *  v6r0p1  04-nov-07 HMK win patch for assert
  *  v6r0    02-nov-07 MK
  *  v5r6    30-oct-07 HMK use gr_app
