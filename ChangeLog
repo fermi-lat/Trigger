@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: lsrea  Sun Dec 16 18:41:38 PST 2007
+Trigger/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+limit mis-matched bits info to first 10 events
+mask off all but lowest 5 bits before comparing
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: v6r0p3, operation: add
 Package: Trigger
