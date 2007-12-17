@@ -2,7 +2,7 @@
 *  @file TriggerAlg.cxx
 *  @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.86 2007/11/05 04:53:55 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.87 2007/11/06 22:36:56 kocian Exp $
 */
 
 //#include "ThrottleAlg.h"
@@ -60,6 +60,8 @@ namespace { // local definitions of convenient inline functions
         return bitword;
     }
     inline unsigned layer_bit(int layer){ return 1 << layer;}
+
+    int numInfoMessages = 10;
 }
 //------------------------------------------------------------------------------
 /*! \class TriggerAlg
@@ -152,6 +154,9 @@ private:
     bool m_printtables;
     bool m_isMc;
     TrgRoi *m_roi;
+
+    unsigned int m_triggerMask;
+    int m_infoCount;
 
 };
 
@@ -267,6 +272,9 @@ StatusCode TriggerAlg::initialize()
       m_roi=new TrgRoi;
       roiDefaultSetup();
     }
+
+    m_triggerMask = (1<<enums::number_of_trigger_bits)-1;
+    m_infoCount = 0;
     return sc;
 }
 
@@ -529,13 +537,24 @@ StatusCode TriggerAlg::execute()
         // expect it to be zero if not set.
         h.setTrigger(triggerword);
         h.setTriggerWordTwo(triggerWordTwo);
-    }else  if (h.trigger() != 0xbaadf00d && trigger_bits != h.trigger() ) {
-        // trigger bits already set: reading digiRoot file.
-        log << MSG::INFO;
-        if(log.isActive()) log.stream() << "Trigger bits read back do not agree with recalculation! " 
-            << std::setbase(16) <<trigger_bits << " vs. " << h.trigger();
-        log << endreq;
-    }
+    }else  if (h.trigger() != 0xbaadf00d 
+        && ((trigger_bits&m_triggerMask) != (h.trigger()&m_triggerMask) )) {
+            m_infoCount++;
+            if(m_infoCount<=numInfoMessages) {
+                // trigger bits already set: reading digiRoot file.
+                log << MSG::INFO;
+                if(log.isActive()) {
+                    log.stream() << "Trigger bits read back do not agree with recalculation! " 
+                        << std::setbase(16) <<trigger_bits << " vs. " << h.trigger();
+                    if(m_infoCount==numInfoMessages) {
+                        log << endreq;
+                        log << "Message suppressed after " << std::setbase(10) 
+                            << numInfoMessages << " events" ;
+                    }
+                }
+            }
+            log << endreq;
+        }
     // fill GEM structure for MC
     if (m_isMc && gem == 0){
       //make vetotilelist object
@@ -796,7 +815,6 @@ StatusCode TriggerAlg::finalize() {
 	log << "\n\t\tRejected " << m_deadtime_reject << " events due to deadtime";
       }
     }
-
 
     log << endreq;
 
