@@ -27,6 +27,7 @@
 #include "LdfEvent/DiagnosticData.h"
 #include "LdfEvent/EventSummaryData.h"
 #include "LdfEvent/Gem.h"
+#include "LdfEvent/LsfMetaEvent.h"
 #include "enums/TriggerBits.h"
 #include "enums/GemState.h"
 
@@ -60,8 +61,6 @@ namespace { // local definitions of convenient inline functions
         return bitword;
     }
     inline unsigned layer_bit(int layer){ return 1 << layer;}
-
-    int numInfoMessages = 10;
 }
 //------------------------------------------------------------------------------
 /*! \class TriggerAlg
@@ -124,9 +123,9 @@ private:
     unsigned int m_triggered;
     unsigned int m_deadtime_reject;
     unsigned int m_window_reject;
-    unsigned int m_prescaled;
-    unsigned int m_busy;
-    unsigned int m_deadzone;
+    unsigned long long m_prescaled;
+    unsigned long long m_busy;
+    unsigned long long m_deadzone;
     std::map<unsigned int,unsigned int> m_counts; //map of values for each bit pattern
     std::map<unsigned int,unsigned int> m_window_counts; //map of values for each bit pattern, window mask applied
     std::map<unsigned int,unsigned int> m_prescaled_counts; //map of values for each bit pattern, after prescaling
@@ -154,9 +153,8 @@ private:
     bool m_printtables;
     bool m_isMc;
     TrgRoi *m_roi;
-
-    unsigned int m_triggerMask;
-    int m_infoCount;
+    bool m_firstevent;
+    double m_firstTriggerTime;
 
 };
 
@@ -175,6 +173,8 @@ TriggerAlg::TriggerAlg(const std::string& name, ISvcLocator* pSvcLocator)
 , m_triggerTables(0)
 , m_pcounter(0)
 , m_isMc(0)
+, m_firstevent(true)
+, m_firstTriggerTime(0)
 {
     declareProperty("mask"    ,  m_mask=0xffffffff); // trigger mask
     declareProperty("throttle",  m_throttle=false);  // if set, veto when throttle bit is on
@@ -272,9 +272,6 @@ StatusCode TriggerAlg::initialize()
       m_roi=new TrgRoi;
       roiDefaultSetup();
     }
-
-    m_triggerMask = (1<<enums::number_of_trigger_bits)-1;
-    m_infoCount = 0;
     return sc;
 }
 
@@ -304,6 +301,9 @@ StatusCode TriggerAlg::execute()
 
     SmartDataPtr<LdfEvent::Gem> gem(eventSvc(), "/Event/Gem"); 
     if( gem==0 ) log << MSG::DEBUG << "No GEM found" << endreq;
+
+    SmartDataPtr<LsfEvent::MetaEvent> metaTds(eventSvc(), "/Event/MetaEvent");
+    if( metaTds==0) log<< MSG::DEBUG <<"No Meta event found."<<endreq;
 
     //    SmartDataPtr<LdfEvent::EventSummaryData> evsum(eventSvc(), "/Event/EventSummary"); 
         //if( evsum==0 ) log << MSG::DEBUG << "No event summary found" << endreq;
@@ -449,15 +449,14 @@ StatusCode TriggerAlg::execute()
             }
         }
 	bool passed=true;
-	if (m_applyPrescales==true){
-	  if (m_isMc || m_useGltWordForData==true) {// this is either MC or user wants glt word used for prescaling
-	    passed=m_pcounter->decrementAndCheck(gemBits(trigger_bits),tcf);
-	  } else {//this is data and we want to use the GEM summary word
-	    assert(gem!=0);
-	    passed=m_pcounter->decrementAndCheck(gem->conditionSummary(),tcf); 
-	  }
+	if (m_isMc || m_useGltWordForData==true) {// this is either MC or user wants glt word used for prescaling
+	  passed=m_pcounter->decrementAndCheck(gemBits(trigger_bits),tcf);
+	} else {//this is data and we want to use the GEM summary word
+	  assert(gem!=0);
+	  passed=m_pcounter->decrementAndCheck(gem->conditionSummary(),tcf); 
 	}
-        if(!passed){
+	header->setPrescaleExpired(passed);
+        if(!passed && m_applyPrescales==true){
             setFilterPassed(false);
 	    m_prescaled++;
             log << MSG::DEBUG << "Event did not trigger, according to engine selected by TrgConfigSvc" << endreq;
@@ -465,7 +464,9 @@ StatusCode TriggerAlg::execute()
         }
         // Retrieve the engine numbers for both the GEM and GLT
 	gemengine = tcf->lut()->engineNumber(gemword);
+	header->setGemPrescale(tcf->trgEngine()->prescale(gemengine));
         gltengine= tcf->lut()->engineNumber(gemBits(trigger_bits));
+	header->setGltPrescale(tcf->trgEngine()->prescale(gltengine));
 
     }else {
         // apply throttle filter if requested
@@ -508,10 +509,14 @@ StatusCode TriggerAlg::execute()
       deltaevtime=0xffff;
     }
     m_lastTriggerTime=now;
+    if(m_firstevent){
+      m_firstTriggerTime=now;
+      m_firstevent=false;
+    }
     if (m_applyDeadtime) 
       header->setLivetime(m_LivetimeSvc->livetime());
     else
-      header->setLivetime(header->time());
+      header->setLivetime(header->time()-m_firstTriggerTime);
 
     Event::EventHeader& h = header;
 
@@ -537,24 +542,13 @@ StatusCode TriggerAlg::execute()
         // expect it to be zero if not set.
         h.setTrigger(triggerword);
         h.setTriggerWordTwo(triggerWordTwo);
-    }else  if (h.trigger() != 0xbaadf00d 
-        && ((trigger_bits&m_triggerMask) != (h.trigger()&m_triggerMask) )) {
-            m_infoCount++;
-            if(m_infoCount<=numInfoMessages) {
-                // trigger bits already set: reading digiRoot file.
-                log << MSG::INFO;
-                if(log.isActive()) {
-                    log.stream() << "Trigger bits read back do not agree with recalculation! " 
-                        << std::setbase(16) <<trigger_bits << " vs. " << h.trigger();
-                    if(m_infoCount==numInfoMessages) {
-                        log << endreq;
-                        log << "Message suppressed after " << std::setbase(10) 
-                            << numInfoMessages << " events" ;
-                    }
-                }
-            }
-            log << endreq;
-        }
+    }else  if (h.trigger() != 0xbaadf00d && trigger_bits != h.trigger() ) {
+        // trigger bits already set: reading digiRoot file.
+        log << MSG::INFO;
+        if(log.isActive()) log.stream() << "Trigger bits read back do not agree with recalculation! " 
+            << std::setbase(16) <<trigger_bits << " vs. " << h.trigger();
+        log << endreq;
+    }
     // fill GEM structure for MC
     if (m_isMc && gem == 0){
       //make vetotilelist object
@@ -569,12 +563,12 @@ StatusCode TriggerAlg::execute()
 
       LdfEvent::GemDataCondArrivalTime gemCondTimeTds;
       gemCondTimeTds.init(0);// no conditions arrival time in Monte Carlo
-      unsigned livetime=0;
+      unsigned long long livetime=0;
       if(m_applyDeadtime)
-	livetime=m_LivetimeSvc->ticks(m_LivetimeSvc->livetime()) & 0xffffff;
+	livetime=m_LivetimeSvc->ticks(m_LivetimeSvc->livetime());
       else
-	livetime=m_LivetimeSvc->ticks(now)&0xffffff;
-      gemTds->initSummary(livetime,m_prescaled&0xffffff,
+	livetime=m_LivetimeSvc->ticks(now-m_firstTriggerTime);
+      gemTds->initSummary(livetime & 0xffffff,m_prescaled&0xffffff,
       			  m_busy&0xffffff,gemCondTimeTds,
       			  m_LivetimeSvc->ticks(now) & 0x1ffffff, ppsTimeTds, 
       			  deltaevtime,deltawotime);
@@ -584,8 +578,26 @@ StatusCode TriggerAlg::execute()
         log << MSG::ERROR << "could not register /Event/Gem " << endreq;
         return sc;
       }
+      // Meta event GEM scalers
+      LsfEvent::MetaEvent *meta= metaTds;
+      if (meta==0){
+	meta=new LsfEvent::MetaEvent;
+	sc = eventSvc()->registerObject("/Event/MetaEvent", meta);
+	if (sc.isFailure()) {
+	  log << MSG::INFO << "Failed to register MetaEvent" << endreq;
+	  return sc;
+	}
+      }
+      unsigned long long elapsed=0;
+      if(m_applyDeadtime)
+	elapsed=m_LivetimeSvc->ticks(m_LivetimeSvc->elapsed());
+      else
+	elapsed=m_LivetimeSvc->ticks(now-m_firstTriggerTime);
+      lsfData::GemScalers gs(elapsed,livetime,
+			     m_prescaled, m_busy,
+			     header->event(),m_deadzone);
+      meta->setScalers(gs);
     }
-
     return sc;
 }
 //------------------------------------------------------------------------------
@@ -815,6 +827,7 @@ StatusCode TriggerAlg::finalize() {
 	log << "\n\t\tRejected " << m_deadtime_reject << " events due to deadtime";
       }
     }
+
 
     log << endreq;
 

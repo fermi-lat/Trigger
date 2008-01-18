@@ -2,7 +2,7 @@
 * @file ILivetimeSvc.h
 * @brief definition of the interface for ILivetimeSvc
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/Trigger/ILivetimeSvc.h,v 1.3 2007/11/02 18:53:49 kocian Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/Trigger/ILivetimeSvc.h,v 1.4 2007/11/06 22:36:56 kocian Exp $
 */
 #ifndef _H_ILivetimeSvc
 #define _H_ILivetimeSvc
@@ -42,11 +42,13 @@ public:
 
     virtual double livetime()=0; ///< return the accumulated livetime
 
+    virtual double elapsed()=0; ///< return the elapsed time
+
     /// set a new trigger rate, return the old value
     virtual double setTriggerRate(double rate)=0;
 
     /// get number of GEM clock ticks
-    virtual unsigned int ticks(double time) const=0;
+    virtual unsigned long long ticks(double time) const=0;
 };
 
 #endif  // _H_ILivetimeSvc
