@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: kocian  Fri Jan 18 14:43:35 PST 2008
+Trigger/Trigger
+
+Modified Files:
+	ILivetimeSvc.h 
+Log Message:
+added GEM scalers and writing of prescales to TDS
+    *
+------------------------------------------------------------
 TAG
 Tag name: v6r0p4, operation: add
 Package: Trigger
