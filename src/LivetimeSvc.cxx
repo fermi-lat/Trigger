@@ -2,7 +2,7 @@
  * @file LivetimeSvc.cxx
  * @brief declare, implement the class LivetimeSvc
  *
- * $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/LivetimeSvc.cxx,v 1.5 2007/08/16 20:37:22 burnett Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/LivetimeSvc.cxx,v 1.7 2007/11/06 22:36:56 kocian Exp $
  */
 
 #include "Trigger/ILivetimeSvc.h"
@@ -45,19 +45,22 @@ public:
 
     ///check if valid trigger
     virtual bool isLive(double current_time);
-    // check state at time current_time
+    /// check state at time current_time
     virtual enums::GemState checkState(double current_time);
 
 
     virtual double livetime(); ///< return the accumulated livetime
+    /// set the trigger rate for interleave mode
     double setTriggerRate(double rate);
+    /// elapsed time
+    virtual double elapsed();
 /**
  *
  *  @fn     unsigned int ticks (double time)
  *  @brief  Returns the low 32 bits of the number of elapsed ticks
  *          of the LAT system clock
  **/
-  unsigned int ticks(double time) const;
+  unsigned long long ticks(double time) const;
    
 private:
     /// Allow only SvcFactory to instantiate the service.
@@ -202,6 +205,11 @@ double LivetimeSvc::livetime() ///< return the accumulated livetime
     return m_livetime;
 }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+double LivetimeSvc::elapsed() ///< return the accumulated elapsed time
+{
+    return m_totalTime;
+}
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 StatusCode LivetimeSvc::queryInterface(const InterfaceID& riid, void** ppvInterface)
 {
     if ( IID_ILivetimeSvc.versionMatch(riid) )  {
@@ -231,15 +239,9 @@ StatusCode LivetimeSvc::finalize ()
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   
-unsigned int LivetimeSvc::ticks(double time) const
+unsigned long long LivetimeSvc::ticks(double time) const
 {
-  /*
-    | Haven't been careful about the absolute phasing
-    | Note that 32 bits is enough to cover the necessary range. At
-    | 20MHz, a 32 bit number covers about 217 seconds. We only need
-    | to cover about 128 seconds.
-  */
-  return (unsigned int)(m_frequency * time);
+  return (unsigned long long)(m_frequency * time);
 }
 
 

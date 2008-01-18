@@ -5,6 +5,7 @@
  * package manager:T.Burnett 
   <pre>
 
+ *  v6r1    18-jan-08 MLK Added GEM scalers and writing of prescales to TDS
  *  v6r0p4  16-dec-07 LSR limit info message about trigger bit mis-matches
  *  v6r0p1  04-nov-07 HMK win patch for assert
  *  v6r0    02-nov-07 MK
