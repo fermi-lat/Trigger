@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: kocian  Fri Jan 18 14:43:35 PST 2008
+Trigger/src
+
+Modified Files:
+	LivetimeSvc.cxx TriggerAlg.cxx 
+Log Message:
+added GEM scalers and writing of prescales to TDS
+    *
+------------------------------------------------------------
+User: kocian  Fri Jan 18 14:43:35 PST 2008
 Trigger/doc
 
 Modified Files:
