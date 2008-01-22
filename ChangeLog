@@ -1,5 +1,15 @@
 ------------------------------------------------------------
 User: fewtrell  Tue Jan 22 14:16:05 PST 2008
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx 
+Log Message:
+update to new CalXtalResponse::CalTrigTool v0r18
+
+    *
+------------------------------------------------------------
+User: fewtrell  Tue Jan 22 14:16:05 PST 2008
 Trigger/doc
 
 Modified Files:
