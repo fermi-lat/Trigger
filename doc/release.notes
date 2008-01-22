@@ -5,6 +5,10 @@
  * package manager:T.Burnett 
   <pre>
 
+ *  v6r1p1  22-jan-08 ZGF 
+    - Uses latest CalXtalResponse::CalTrigTool
+    - Now responsible for creation & registration of GltDigi TDS object (used to be responsibility of CalTrigTool)
+    - removed unused references to GlastDetSvc from TriggerAlg 
  *  v6r1    18-jan-08 MLK Added GEM scalers and writing of prescales to TDS
  *  v6r0p4  16-dec-07 LSR limit info message about trigger bit mis-matches
  *  v6r0p1  04-nov-07 HMK win patch for assert
