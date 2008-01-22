@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: fewtrell  Tue Jan 22 14:16:04 PST 2008
+Trigger/Trigger
+
+Modified Files:
+	TriRowBits.h 
+Log Message:
+update to new CalXtalResponse::CalTrigTool v0r18
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: v6r1, operation: add
 Package: Trigger
