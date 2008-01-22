@@ -2,7 +2,7 @@
  * @file TriRowBits.h
  * @brief header for class TriRowBits
 
- $Header: /nfs/slac/g/glast/ground/cvs/Trigger/Trigger/TriRowBits.h,v 1.4 2005/03/30 04:04:21 cohen Exp $
+ $Header: /nfs/slac/g/glast/ground/cvs/Trigger/Trigger/TriRowBits.h,v 1.5 2007/09/05 16:43:37 heather Exp $
  * @author Luis C. Reyes - lreyes@milkyway.gsfc.nasa.gov
 */
 
@@ -28,7 +28,7 @@
 */
  
 //#define NUM_TWRS 16
-static const NUM_TWRS=16;
+static const unsigned NUM_TWRS=16;
 
 static const CLID& CLID_TriRowBitsTds = InterfaceID("TriRowBitsTds", 1, 0);
 
@@ -60,7 +60,7 @@ namespace TriRowBitsTds{
 
       //! Initialize arrays
       inline TriRowBits::TriRowBits(){
-          for(int i=0; i<NUM_TWRS; i++)
+          for(unsigned i=0; i<NUM_TWRS; i++)
 	    {
 	      m_DigiTriRowBits[i]=0;
 	      m_TrgReqTriRowBits[i]=0;
@@ -93,7 +93,7 @@ namespace TriRowBitsTds{
       inline std::ostream& TriRowBits::fillStream( std::ostream& s ) const
 	{
 	  s <<"Tower   DigiTriRow   TrgReqTriRow \n";
-	  for(int i=0; i<NUM_TWRS; i++)
+	  for(unsigned i=0; i<NUM_TWRS; i++)
 	    {
 	      if(m_DigiTriRowBits[i]!=0 || m_TrgReqTriRowBits[i]!=0)
 		s<<i<<" "<<m_DigiTriRowBits[i]<<" "<< m_TrgReqTriRowBits[i]<<"\n";
