@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: kocian  Thu Apr 17 13:30:06 PDT 2008
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx 
+Log Message:
+fixed cno vector bug
+    *
+------------------------------------------------------------
+User: kocian  Thu Apr 17 13:30:06 PDT 2008
 Trigger/doc
 
 Modified Files:
