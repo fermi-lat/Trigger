@@ -2,7 +2,7 @@
 *  @file TriggerAlg.cxx
 *  @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.89 2008/01/18 22:43:35 kocian Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.90 2008/01/22 22:16:05 fewtrell Exp $
 */
 
 //#include "ThrottleAlg.h"
@@ -717,9 +717,16 @@ unsigned int TriggerAlg::anticoincidence(const Event::AcdDigiCol& tiles, unsigne
 	  // cno vector
 	  unsigned int garc,gafe;
 	  garc=gafe=0xff;
-	  unsigned int pmt=digi.getCno(Event::AcdDigi::A) ? Event::AcdDigi::A : Event::AcdDigi::B;
-	  idents::AcdId::convertToGarcGafe(id,pmt,garc,gafe);
-	  cnovector|=1<<garc;
+          if (digi.getCno(Event::AcdDigi::A)){
+	    unsigned int pmt= Event::AcdDigi::A;
+	    idents::AcdId::convertToGarcGafe(id,pmt,garc,gafe);
+	    cnovector|=1<<garc;
+          }
+          if (digi.getCno(Event::AcdDigi::B)){
+	    unsigned int pmt= Event::AcdDigi::B;
+	    idents::AcdId::convertToGarcGafe(id,pmt,garc,gafe);
+	    cnovector|=1<<garc;
+          }
 	}
     } 
     return ret;

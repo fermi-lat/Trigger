@@ -5,6 +5,7 @@
  * package manager:T.Burnett 
   <pre>
 
+ *  v6r1p2  17-apr-08 MLK Fixed bug in cno vector creation
  *  v6r1p1  22-jan-08 ZGF 
     - Uses latest CalXtalResponse::CalTrigTool
     - Now responsible for creation & registration of GltDigi TDS object (used to be responsibility of CalTrigTool)
