@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: kocian  Wed Jun 11 11:45:15 PDT 2008
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx 
+Log Message:
+Protected TriggerAlg against missing CAL digis
+    *
+------------------------------------------------------------
 TAG
 Tag name: Trigger-06-01-02, operation: add
 Package: Trigger
