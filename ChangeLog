@@ -1,5 +1,17 @@
 ------------------------------------------------------------
 User: echarles  Fri Jun 13 15:19:14 PDT 2008
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx Trigger_load.cxx mainpage.h 
+Removed Files:
+      Tag: v6r1p2
+	TrgConfigSvc.cxx TrgConfigSvc.h 
+Log Message:
+Switched to using ConfigSvc instead of TrgConfigSvc
+    *
+------------------------------------------------------------
+User: echarles  Fri Jun 13 15:19:14 PDT 2008
 Trigger/Trigger
 
 Removed Files:
