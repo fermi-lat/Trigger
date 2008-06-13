@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: echarles  Fri Jun 13 15:19:15 PDT 2008
+Trigger/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+Switched to using ConfigSvc instead of TrgConfigSvc
+    *
+------------------------------------------------------------
 User: echarles  Fri Jun 13 15:19:14 PDT 2008
 Trigger/src
 
