@@ -1,4 +1,4 @@
-//$Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/mainpage.h,v 1.12 2007/09/05 16:43:38 heather Exp $
+//$Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/mainpage.h,v 1.13 2007/11/27 21:04:25 kocian Exp $
 // (Special "header" just for doxygen)
 
 /*! @mainpage  package Trigger
@@ -51,19 +51,33 @@ This new version has the GEM bits coped to the upper 8 bits of the trigger word.
 @param TriggerRate  [2000.]     effective total trigger rate.
 @param InterleaveMode [true]    Apply efficiency correction for interleave mode.
 
-\section s5 TrgConfigSvc properties
+\section s5 ConfigSvc properties
 
-To use the TrgConfigSvc, we first must set up TriggerAlg as follows:
-TriggerAlg.engine="TrgConfigSvc";
+To use the ConfigSvc, we first must set up TriggerAlg as follows:
+TriggerAlg.engine="ConfigSvc";
 
-Note that there are three mutually exclusive ways to use the TrgConfigSvc:  Using the default configuration, 
-an input XML file, or MOOT
+ConfigSvc uses MootSvc to access MOOT to get the configuration file names in MOOT, then
+uses configData to read those xml files to get the configuration parameters
 
-@param configureFrom ["Default"]  Where do we find the configuration? Options are "Default", "File", "Moot".
-@param xmlFile path to the config XML file if configuring from a file.
+In all cases a null value means to take the value from MootSvc and any non-null value 
+must be a full path to the override file.
 
-@param useKeyFromData [true] if set to true use the DB key stored in the event data to find configuration.
-@param fixedKey [1852] if useKeyFromData is false, then use this fixed key for all events.
+@param GemXml [""]    Full path to GEM LATC xml.              
+@param RoiXml [""]    Full path to ROI LATC xml.
+@param GammaFilterXml [""]    Full path to GAMMA filter xml description.
+@param DgnFilterXml   [""]    Full path to DGN filter xml description.
+@param MipFilterXml   [""]    Full path to MIP filter xml description.            
+@param HipFilterXml   [""]    Full path to HIP filter xml description                        
+
+
+\section s6 MootSvc properties
+
+@param MootArchive  [""] Full path to MOOT archive.  "" Means use $MOOT_ARCHIVE if defined, "/afs/slac/g/glast/moot" otherwise
+@param UseEventKeys [true] Get keys from Event
+@param scid [0]  Force a value for the sourceID.  0 -> take value from event, Flight == 77.
+@param StartTime [0]  Force a value for the run start time. 0 -> take value from event
+@param MootConfigKey [0]  Force a value for the MOOT key.  0 -> Get the value from MOOT
+@param NoMoot[false]  true means don't use MOOT at all.
 
   <hr>
   \section requirements requirements
