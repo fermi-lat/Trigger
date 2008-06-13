@@ -2,7 +2,7 @@
 *  @file TriggerAlg.cxx
 *  @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.91 2008/04/17 20:30:06 kocian Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.92 2008/06/11 18:45:14 kocian Exp $
 */
 
 //#include "ThrottleAlg.h"
@@ -11,9 +11,9 @@
 
 #include "Trigger/ILivetimeSvc.h"
 
-#include "Trigger/ITrgConfigSvc.h"
+#include "ConfigSvc/IConfigSvc.h"
 #include "EnginePrescaleCounter.h"
-
+#include "configData/fsw/FswEfcSampler.h"
 
 #include "Event/TopLevel/EventModel.h"
 #include "Event/TopLevel/Event.h"
@@ -100,6 +100,12 @@ private:
     void roiDefaultSetup();
     unsigned int throttle(unsigned int tkrvector, std::vector<unsigned int>& tilelist, unsigned short &roivector); 
 
+    //! add the FSW prescale values and MOOT Key to the meta event
+    StatusCode handleMetaEvent( LsfEvent::MetaEvent& metaEvent, unsigned int triggerEngine );
+
+    //! map the engine to the DGN prescaler
+    enums::Lsf::LeakedPrescaler dgnPrescaler(unsigned engine);
+
     /// create new GltDigi object & populate it w/ known
     /// fields
     static Event::GltDigi *createGltDigi(const Event::GltDigi::CalTriggerVec calLOVec,
@@ -151,13 +157,14 @@ private:
 
     Trigger::TriggerTables* m_triggerTables;
 
-    ITrgConfigSvc *m_trgConfigSvc;
+    IConfigSvc *m_configSvc(0);
     EnginePrescaleCounter* m_pcounter;
     bool m_printtables;
     bool m_isMc;
     TrgRoi *m_roi;
     bool m_firstevent;
     double m_firstTriggerTime;
+    unsigned m_mootKey;
 
 };
 
@@ -176,17 +183,19 @@ TriggerAlg::TriggerAlg(const std::string& name, ISvcLocator* pSvcLocator)
 , m_triggerTables(0)
 , m_pcounter(0)
 , m_isMc(0)
+, m_roi(0)
 , m_firstevent(true)
 , m_firstTriggerTime(0)
+, m_mootKey(0)
 {
     declareProperty("mask"    ,  m_mask=0xffffffff); // trigger mask
     declareProperty("throttle",  m_throttle=false);  // if set, veto when throttle bit is on
     declareProperty("vetomask",  m_vetomask=1+2+4);  // if thottle it set, veto if trigger masked with these ...
     declareProperty("vetobits",  m_vetobits=1+2);    // equals these bits
 
-    declareProperty("engine",    m_table = "");     // set to "default"  to use default engine table
+    declareProperty("engine",    m_table = "ConfigSvc");     // set to "default"  to use default engine table
     declareProperty("prescale",  m_prescale=std::vector<int>());        // vector of prescale factors
-    declareProperty("applyPrescales",  m_applyPrescales=false);  // if using TrgConfigSvc, do we want to prescale events
+    declareProperty("applyPrescales",  m_applyPrescales=false);  // if using ConfigSvc, do we want to prescale events
     declareProperty("useGltWordForData",  m_useGltWordForData=false);  // even if a GEM word exists use the Glt word
     declareProperty("applyWindowMask",  m_applyWindowMask=false);  // Do we want to use a window open mask?
     declareProperty("applyDeadtime",  m_applyDeadtime=false);  // Do we want to apply deadtime?
@@ -240,13 +249,13 @@ StatusCode TriggerAlg::initialize()
       log << MSG::ERROR << "  Unable to create CalTrigTool" << endreq;
       return sc;
     }
-
+    
     if(! m_table.value().empty()){
-        if (m_table.value()=="TrgConfigSvc"){
-            log<<MSG::INFO<<"Using TrgConfigSvc"<<endreq;
-            sc = service("TrgConfigSvc", m_trgConfigSvc, true);
+        if (m_table.value()=="ConfigSvc"){
+            log<<MSG::INFO<<"Using ConfigSvc for Trigger Config"<<endreq;
+            sc = service("ConfigSvc", m_configSvc, true);
             if( sc.isFailure() ) {
-                log << MSG::ERROR << "failed to get the TrgConfigSvc" << endreq;
+                log << MSG::ERROR << "failed to get the ConfigSvc" << endreq;
                 return sc;
             }
             m_pcounter=new EnginePrescaleCounter(m_prescale.value());
@@ -301,6 +310,12 @@ StatusCode TriggerAlg::execute()
 
     SmartDataPtr<LsfEvent::MetaEvent> metaTds(eventSvc(), "/Event/MetaEvent");
     if( metaTds==0) log<< MSG::DEBUG <<"No Meta event found."<<endreq;
+
+    // GET the MOOT key
+    unsigned mKey = m_configSvc->getMootKey();
+    bool configChanged = mKey != m_mootKey;
+    m_mootKey = mKey;
+    const TrgConfig* tcf(0);
 
     //    SmartDataPtr<LdfEvent::EventSummaryData> evsum(eventSvc(), "/Event/EventSummary"); 
         //if( evsum==0 ) log << MSG::DEBUG << "No event summary found" << endreq;
@@ -385,8 +400,13 @@ StatusCode TriggerAlg::execute()
         return StatusCode::FAILURE;
     }
     */
-    if(m_pcounter){ //using TrgConfigSvc
-      m_roi=const_cast<TrgRoi*>(m_trgConfigSvc->getTrgConfig()->roi());
+    if(m_pcounter){ //using ConfigSvc
+      tcf = m_configSvc->getTrgConfig();
+      m_roi=const_cast<TrgRoi*>(tcf->roi());
+      if ( m_roi == 0 ) {
+	log << MSG::ERROR << "Failed to get ROI mapping from MOOT" << endreq;
+	return StatusCode::FAILURE;
+      } 
     }
     if (tkrvector!=0 && tilelist.size()!=0){
       trigger_bits |= throttle(tkrvector,tilelist,roivector);
@@ -399,8 +419,8 @@ StatusCode TriggerAlg::execute()
     // or any trigger bit was set if window open mask was not available.
     if (m_applyWindowMask){
       unsigned windowOpen=0;
-      if (m_pcounter){ // using TrgConfigSvc
-	windowOpen=trigger_bits & m_trgConfigSvc->getTrgConfig()->windowParams()->windowMask();
+      if (m_pcounter){ // using ConfigSvc
+	windowOpen=trigger_bits & tcf->windowParams()->windowMask();
       }else{
 	windowOpen=trigger_bits&m_mask;
       }
@@ -422,7 +442,7 @@ StatusCode TriggerAlg::execute()
     }
     m_lastWindowTime=now;
     
-    
+
     int engine(16); // default engine number
     int gemengine(16),gltengine(16);
     unsigned int gemword= gem ? gem->conditionSummary() : gemBits(trigger_bits);
@@ -438,22 +458,25 @@ StatusCode TriggerAlg::execute()
             log << MSG::DEBUG << "Event did not trigger, according to engine selected by trigger table" << endreq;
             return sc;
         }
-    } else if (m_pcounter!=0){
-        const TrgConfig* tcf=m_trgConfigSvc->getTrgConfig();
-        if(!m_printtables && m_trgConfigSvc->configChanged()){
+    } else if (m_pcounter!=0){        
+	if ( tcf == 0 ) {
+	  log << MSG::ERROR << "Failed to get trigger config from ConfigSvc." << endreq;
+	  return StatusCode::FAILURE;
+	}
+        if(!m_printtables && configChanged ){
             log<<MSG::INFO<<"Trigger configuration changed.";
-            tcf->printContrigurator(log.stream());
+            if ( tcf != 0 ) tcf->printContrigurator(log.stream());
             log<<endreq;
             m_pcounter->reset();
         }
         if (m_printtables){
             log << MSG::INFO << "Trigger tables: \n";
-            tcf->printContrigurator(log.stream());
+            if ( tcf != 0 ) tcf->printContrigurator(log.stream());
             log<<endreq;
             m_printtables=false;
             if(! m_applyPrescales ) {
                 log << MSG::INFO << 
-                    "TrgConfigSvc selected, but prescale factors and inhibits are not active:\n"
+                    "ConfigSvc selected, but prescale factors and inhibits are not active:\n"
                     "\t\tset 'applyPrescales' to activate them. "
                     << endreq;
             }
@@ -469,7 +492,7 @@ StatusCode TriggerAlg::execute()
         if(!passed && m_applyPrescales==true){
             setFilterPassed(false);
 	    m_prescaled++;
-            log << MSG::DEBUG << "Event did not trigger, according to engine selected by TrgConfigSvc" << endreq;
+            log << MSG::DEBUG << "Event did not trigger, according to engine selected by ConfigSvc" << endreq;
             return sc;
         }
         // Retrieve the engine numbers for both the GEM and GLT
@@ -504,8 +527,8 @@ StatusCode TriggerAlg::execute()
         return sc;
       }
       bool longdeadtime=false;
-      if(m_pcounter!=0 && gltengine!=-1) // using TrgConfigSvc
-	longdeadtime=m_trgConfigSvc->getTrgConfig()->trgEngine()->fourRangeReadout(gltengine);
+      if(m_pcounter!=0 && gltengine!=-1) // using ConfigSvc
+	longdeadtime= tcf->trgEngine()->fourRangeReadout(gltengine);
       m_LivetimeSvc->tryToRegisterEvent(now,longdeadtime);
     } 
     
@@ -560,6 +583,8 @@ StatusCode TriggerAlg::execute()
         log << endreq;
     }
     // fill GEM structure for MC
+    LsfEvent::MetaEvent *meta = metaTds;
+
     if (m_isMc && gem == 0){
       //make vetotilelist object
       makeGemTileList(tilelist,vetoTileList);
@@ -588,8 +613,7 @@ StatusCode TriggerAlg::execute()
         log << MSG::ERROR << "could not register /Event/Gem " << endreq;
         return sc;
       }
-      // Meta event GEM scalers
-      LsfEvent::MetaEvent *meta= metaTds;
+      // Meta event GEM scalers     
       if (meta==0){
 	meta=new LsfEvent::MetaEvent;
 	sc = eventSvc()->registerObject("/Event/MetaEvent", meta);
@@ -607,7 +631,12 @@ StatusCode TriggerAlg::execute()
 			     m_prescaled, m_busy,
 			     header->event(),m_deadzone);
       meta->setScalers(gs);
+      
     }
+
+
+    sc = handleMetaEvent(*meta,gemengine);    
+
     return sc;
 }
 //------------------------------------------------------------------------------
@@ -887,6 +916,96 @@ void TriggerAlg::bitSummary(std::ostream& out, std::string label, const std::map
     for(j=size-1; j>=0; --j) out << setw(6) << total[j];
 
 
+}
+
+
+enums::Lsf::LeakedPrescaler TriggerAlg::dgnPrescaler( unsigned triggerEngine ) {
+  static std::map<unsigned int, enums::Lsf::LeakedPrescaler> dgnMap;
+  if ( dgnMap.size() == 0 ) {
+    dgnMap[0] = enums::Lsf::COND30;
+    dgnMap[1] = enums::Lsf::COND29;
+    dgnMap[2] = enums::Lsf::COND28;
+    dgnMap[3] = enums::Lsf::COND27;
+    dgnMap[4] = enums::Lsf::COND26;
+    dgnMap[5] = enums::Lsf::COND25;
+    dgnMap[6] = enums::Lsf::COND24;
+    dgnMap[7] = enums::Lsf::COND23;
+    dgnMap[8] = enums::Lsf::COND22;
+    dgnMap[9] = enums::Lsf::COND21;
+    dgnMap[10] = enums::Lsf::COND20;
+    dgnMap[11] = enums::Lsf::COND19;    
+  }
+  std::map<unsigned int, enums::Lsf::LeakedPrescaler>::iterator itr = dgnMap.find(triggerEngine);
+  return itr == dgnMap.end() ? enums::Lsf::UNSUPPORTED : itr->second;
+}
+
+
+StatusCode TriggerAlg::handleMetaEvent( LsfEvent::MetaEvent& metaEvent, unsigned int triggerEngine ) {
+
+  if ( m_configSvc == 0 ) return StatusCode::FAILURE;
+  
+  unsigned handlerMask(0);  
+  const lsfData::GammaHandler* gamma = metaEvent.gammaFilter();
+  unsigned gammaPS = LSF_INVALID_UINT;
+  enums::Lsf::LeakedPrescaler gammaSamp = enums::Lsf::UNSUPPORTED;
+  enums::Lsf::RsdState gammaState = enums::Lsf::INVALID;
+  if ( gamma != 0 ) {
+    const FswEfcSampler* efc = m_configSvc->getFSWPrescalerInfo( metaEvent.datagram().mode(), enums::Lsf::GAMMA );    
+    handlerMask |= 1;
+    if ( efc != 0 ) {
+      gammaSamp = gamma->prescaler() ;
+      gammaState = gamma->state();
+      gammaPS = efc->prescaleFactor(gammaState, gammaSamp);
+    }
+  }
+  const lsfData::DgnHandler* dgn = metaEvent.dgnFilter();
+  unsigned dgnPS = LSF_INVALID_UINT;
+  enums::Lsf::LeakedPrescaler dgnSamp = enums::Lsf::UNSUPPORTED;
+  enums::Lsf::RsdState dgnState = enums::Lsf::INVALID;
+  if ( dgn != 0 ) {
+    dgnSamp = dgnPrescaler(triggerEngine);
+    const FswEfcSampler* efc = m_configSvc->getFSWPrescalerInfo( metaEvent.datagram().mode(), enums::Lsf::DGN );    
+    handlerMask |= 2;
+    if ( efc != 0 ) {      
+      dgnState = dgn->state();   
+      dgnPS = efc->prescaleFactor(dgnState, dgnSamp);
+    }
+  }
+  const lsfData::MipHandler* mip = metaEvent.mipFilter();
+  unsigned mipPS = LSF_INVALID_UINT;
+  enums::Lsf::LeakedPrescaler mipSamp = enums::Lsf::UNSUPPORTED;
+  enums::Lsf::RsdState mipState = enums::Lsf::INVALID;
+  if ( mip != 0 ) {
+    const FswEfcSampler* efc = m_configSvc->getFSWPrescalerInfo( metaEvent.datagram().mode(), enums::Lsf::MIP );    
+    handlerMask |= 4;
+    if ( efc != 0 ) {
+      mipState = mip->state();
+      mipSamp = mip->prescaler();
+      mipPS = efc->prescaleFactor(mipState, mipSamp);      
+    }
+  }
+  unsigned hipPS = LSF_INVALID_UINT;
+  enums::Lsf::LeakedPrescaler hipSamp = enums::Lsf::UNSUPPORTED;
+  enums::Lsf::RsdState hipState = enums::Lsf::INVALID;
+  const lsfData::HipHandler* hip = metaEvent.hipFilter();
+  if ( hip != 0 ) {
+    const FswEfcSampler* efc = m_configSvc->getFSWPrescalerInfo( metaEvent.datagram().mode(), enums::Lsf::HIP );    
+    handlerMask |= 8;
+    if ( efc != 0 ) {
+      hipState = hip->state();
+      hipSamp = hip->prescaler();
+      hipPS = efc->prescaleFactor(hipState, hipSamp);
+    }
+  }
+
+  /*
+  std::cout << "Prescale Factors. " << triggerEngine << ' ' << handlerMask 
+	    << "  GAMMA: " << gammaState << ':' << gammaSamp << ' ' << gammaPS 
+	    << "  DGN  : " << dgnState << ':' << dgnSamp << ' ' << dgnPS 
+	    << "  MIP  : " << mipState << ':' << mipSamp << ' ' << mipPS 
+	    << "  HIP  : " << hipState << ':' << hipSamp << ' ' << hipPS << std::endl;
+  */
+  return StatusCode::SUCCESS;
 }
 
 
