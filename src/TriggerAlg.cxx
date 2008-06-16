@@ -2,7 +2,7 @@
 *  @file TriggerAlg.cxx
 *  @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.92 2008/06/11 18:45:14 kocian Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.93 2008/06/13 22:19:14 echarles Exp $
 */
 
 //#include "ThrottleAlg.h"
@@ -944,8 +944,10 @@ StatusCode TriggerAlg::handleMetaEvent( LsfEvent::MetaEvent& metaEvent, unsigned
 
   if ( m_configSvc == 0 ) return StatusCode::FAILURE;
   
+  metaEvent.setMootKey( m_configSvc->getMootKey() );
+
   unsigned handlerMask(0);  
-  const lsfData::GammaHandler* gamma = metaEvent.gammaFilter();
+  lsfData::GammaHandler* gamma = const_cast<lsfData::GammaHandler*>(metaEvent.gammaFilter());
   unsigned gammaPS = LSF_INVALID_UINT;
   enums::Lsf::LeakedPrescaler gammaSamp = enums::Lsf::UNSUPPORTED;
   enums::Lsf::RsdState gammaState = enums::Lsf::INVALID;
@@ -955,10 +957,12 @@ StatusCode TriggerAlg::handleMetaEvent( LsfEvent::MetaEvent& metaEvent, unsigned
     if ( efc != 0 ) {
       gammaSamp = gamma->prescaler() ;
       gammaState = gamma->state();
-      gammaPS = efc->prescaleFactor(gammaState, gammaSamp);
+      gammaPS = efc->prescaleFactor(gammaState, gammaSamp);      
     }
+    gamma->setPrescaleFactor(gammaPS);
   }
-  const lsfData::DgnHandler* dgn = metaEvent.dgnFilter();
+  
+  lsfData::DgnHandler* dgn = const_cast<lsfData::DgnHandler*>(metaEvent.dgnFilter());
   unsigned dgnPS = LSF_INVALID_UINT;
   enums::Lsf::LeakedPrescaler dgnSamp = enums::Lsf::UNSUPPORTED;
   enums::Lsf::RsdState dgnState = enums::Lsf::INVALID;
@@ -970,8 +974,9 @@ StatusCode TriggerAlg::handleMetaEvent( LsfEvent::MetaEvent& metaEvent, unsigned
       dgnState = dgn->state();   
       dgnPS = efc->prescaleFactor(dgnState, dgnSamp);
     }
+    dgn->setPrescaleFactor(dgnPS);
   }
-  const lsfData::MipHandler* mip = metaEvent.mipFilter();
+  lsfData::MipHandler* mip = const_cast<lsfData::MipHandler*>(metaEvent.mipFilter());
   unsigned mipPS = LSF_INVALID_UINT;
   enums::Lsf::LeakedPrescaler mipSamp = enums::Lsf::UNSUPPORTED;
   enums::Lsf::RsdState mipState = enums::Lsf::INVALID;
@@ -983,11 +988,12 @@ StatusCode TriggerAlg::handleMetaEvent( LsfEvent::MetaEvent& metaEvent, unsigned
       mipSamp = mip->prescaler();
       mipPS = efc->prescaleFactor(mipState, mipSamp);      
     }
+    mip->setPrescaleFactor(mipPS);
   }
   unsigned hipPS = LSF_INVALID_UINT;
   enums::Lsf::LeakedPrescaler hipSamp = enums::Lsf::UNSUPPORTED;
   enums::Lsf::RsdState hipState = enums::Lsf::INVALID;
-  const lsfData::HipHandler* hip = metaEvent.hipFilter();
+  lsfData::HipHandler* hip = const_cast<lsfData::HipHandler*>(metaEvent.hipFilter());
   if ( hip != 0 ) {
     const FswEfcSampler* efc = m_configSvc->getFSWPrescalerInfo( metaEvent.datagram().mode(), enums::Lsf::HIP );    
     handlerMask |= 8;
@@ -996,6 +1002,7 @@ StatusCode TriggerAlg::handleMetaEvent( LsfEvent::MetaEvent& metaEvent, unsigned
       hipSamp = hip->prescaler();
       hipPS = efc->prescaleFactor(hipState, hipSamp);
     }
+    hip->setPrescaleFactor(hipPS);
   }
 
   /*
