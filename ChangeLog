@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: echarles  Mon Jun 16 13:26:28 PDT 2008
+Trigger/Trigger
+
+Removed Files:
+	ITrgConfigSvc.h 
+Log Message:
+tag v6r2: Switched to using ConfigSvc instead of TrgConfigSvc
+    *
+------------------------------------------------------------
 TAG
 Tag name: v6r1p2, operation: add
 Package: Trigger
