@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: echarles  Mon Jun 16 13:26:29 PDT 2008
+Trigger/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+tag v6r2: Switched to using ConfigSvc instead of TrgConfigSvc
+    *
+------------------------------------------------------------
 User: echarles  Mon Jun 16 13:26:28 PDT 2008
 Trigger/Trigger
 
