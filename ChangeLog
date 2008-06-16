@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+TAG
+Tag name: v6r1p2, operation: add
+Package: Trigger
+User: heather  Sun Jun 15 20:48:36 2008
+Files:
+  Trigger/Trigger/ITrgConfigSvc.h  1.1
+
+    *
+------------------------------------------------------------
 User: echarles  Fri Jun 13 15:19:15 PDT 2008
 Trigger/cmt
 
