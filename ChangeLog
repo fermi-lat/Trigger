@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: kocian  Tue Jun 17 15:20:38 PDT 2008
+Trigger/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+removed negative updates for livetime
+    *
+------------------------------------------------------------
 TAG
 Tag name: Trigger-06-02-00, operation: add
 Package: Trigger
