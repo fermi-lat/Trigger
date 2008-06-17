@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: kocian  Tue Jun 17 15:20:40 PDT 2008
+Trigger/src
+
+Modified Files:
+	LivetimeSvc.cxx 
+Log Message:
+removed negative updates for livetime
+    *
+------------------------------------------------------------
 User: kocian  Tue Jun 17 15:20:38 PDT 2008
 Trigger/doc
 
