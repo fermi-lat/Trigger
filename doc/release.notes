@@ -5,6 +5,7 @@
  * package manager:T.Burnett 
   <pre>
 
+ *  v6r3    17-jun-08 MLK Removed decrements of livetime in interleave mode
  *  v6r2    16-jun-08 EAC Switched to using ConfigSvc instead of TrgConfigSvc
     - Remove TrgConfigSvc
     - Set MOOT key and prescale factors in MetaEvent
