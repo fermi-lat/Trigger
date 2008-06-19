@@ -2,7 +2,7 @@
 *  @file TriggerAlg.cxx
 *  @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.93 2008/06/13 22:19:14 echarles Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.94 2008/06/16 20:26:29 echarles Exp $
 */
 
 //#include "ThrottleAlg.h"
@@ -157,7 +157,7 @@ private:
 
     Trigger::TriggerTables* m_triggerTables;
 
-    IConfigSvc *m_configSvc(0);
+    IConfigSvc *m_configSvc;
     EnginePrescaleCounter* m_pcounter;
     bool m_printtables;
     bool m_isMc;
@@ -181,6 +181,7 @@ TriggerAlg::TriggerAlg(const std::string& name, ISvcLocator* pSvcLocator)
 , m_triggered(0), m_deadtime_reject(0), m_window_reject(0), m_prescaled(0)
 , m_busy(0), m_deadzone(0)
 , m_triggerTables(0)
+, m_configSvc(0)
 , m_pcounter(0)
 , m_isMc(0)
 , m_roi(0)
