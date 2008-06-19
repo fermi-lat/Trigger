@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Wed Jun 18 20:36:35 PDT 2008
+Trigger/cmt
+
+Modified Files:
+      Tag: configSvc-patch-06-2008
+	requirements 
+Log Message:
+patch for rhel4 build
+    *
+------------------------------------------------------------
 TAG
 Tag name: Trigger-06-03-00, operation: add
 Package: Trigger
