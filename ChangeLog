@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Wed Jun 18 20:39:29 PDT 2008
+Trigger/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+patch for rhel4
+    *
+------------------------------------------------------------
 TAG
 Tag name: v6r2gr1, operation: add
 Package: Trigger
