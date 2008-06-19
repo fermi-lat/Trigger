@@ -5,6 +5,7 @@
  * package manager:T.Burnett 
   <pre>
 
+ *  v6r2gr1 18-Jun-08 HMK patch for rhel4 build
  *  v6r2    16-jun-08 EAC Switched to using ConfigSvc instead of TrgConfigSvc
     - Remove TrgConfigSvc
     - Set MOOT key and prescale factors in MetaEvent
