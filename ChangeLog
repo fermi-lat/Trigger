@@ -1,5 +1,15 @@
 ------------------------------------------------------------
 User: heather  Wed Jun 18 20:36:35 PDT 2008
+Trigger/src
+
+Modified Files:
+      Tag: configSvc-patch-06-2008
+	TriggerAlg.cxx 
+Log Message:
+patch for rhel4 build
+    *
+------------------------------------------------------------
+User: heather  Wed Jun 18 20:36:35 PDT 2008
 Trigger/doc
 
 Modified Files:
