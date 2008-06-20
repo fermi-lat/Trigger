@@ -2,7 +2,7 @@
  * @file LivetimeSvc.cxx
  * @brief declare, implement the class LivetimeSvc
  *
- * $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/LivetimeSvc.cxx,v 1.5 2007/08/16 20:37:22 burnett Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/LivetimeSvc.cxx,v 1.7 2007/11/06 22:36:56 kocian Exp $
  */
 
 #include "Trigger/ILivetimeSvc.h"
@@ -129,12 +129,7 @@ bool LivetimeSvc::tryToRegisterEvent(double current_time, bool highdeadtime)
    ++m_total;
 
    if (m_deadtime<=0) return true;
-   bool live;
-   if(m_interleave==true){
-     live = current_time-m_lastTriggerTime >= m_deadtime;
-   }else{
-     live = current_time-m_lastTriggerTime >= m_previousDeadtime;
-   }
+   bool live = current_time-m_lastTriggerTime >= m_previousDeadtime;
    if( live ){
      // here if valid. Update the livetime
      if( m_lastTriggerTime>0){
@@ -143,7 +138,9 @@ bool LivetimeSvc::tryToRegisterEvent(double current_time, bool highdeadtime)
        if(m_interleave==true){
 	 double ntrig( RandPoisson::shoot(elapsed*m_triggerRate));
 	 m_invisible_trig+=(int)ntrig;
-	 m_livetime += elapsed-ntrig*m_deadtime;
+         double livetimeinc=elapsed-m_previousDeadtime-ntrig*m_deadtime;
+         if (livetimeinc<0)livetimeinc=0;
+         m_livetime += livetimeinc;
        }else{
 	 m_livetime += elapsed-m_previousDeadtime;
        }
@@ -165,7 +162,7 @@ bool LivetimeSvc::isLive(double current_time)
   if (m_deadtime<=0) return true; // for backward compatibility
   bool live=true;
   if(m_interleave==true){
-    live = current_time-m_lastTriggerTime >= m_deadtime;
+    live = current_time-m_lastTriggerTime >= m_previousDeadtime;
     if( live && m_efficiency<1.0){
       // put in random
       double r = RandFlat::shoot();
