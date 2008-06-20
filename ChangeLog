@@ -1,5 +1,15 @@
 ------------------------------------------------------------
 User: heather  Thu Jun 19 21:20:50 PDT 2008
+Trigger/src
+
+Modified Files:
+      Tag: GlastReleasev13r9p23
+	LivetimeSvc.cxx 
+Log Message:
+move Martin's updates to Big Run branch
+    *
+------------------------------------------------------------
+User: heather  Thu Jun 19 21:20:50 PDT 2008
 Trigger/doc
 
 Modified Files:
