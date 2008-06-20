@@ -1,8 +1,8 @@
 package Trigger
-version v6r0p4
+version v6r0p4gr1
 
 author T. Burnett <tburnett@u.washington.edu>
-# $Id: requirements,v 1.82 2007/12/17 02:41:38 lsrea Exp $
+# $Id: requirements,v 1.83 2007/12/17 02:43:18 lsrea Exp $
 
 # --------------------------
 # define trigger algorithms
