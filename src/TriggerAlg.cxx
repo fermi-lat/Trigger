@@ -2,7 +2,7 @@
 *  @file TriggerAlg.cxx
 *  @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.87 2007/11/06 22:36:56 kocian Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.88 2007/12/17 02:41:38 lsrea Exp $
 */
 
 //#include "ThrottleAlg.h"
@@ -22,6 +22,7 @@
 
 #include "Event/Digi/TkrDigi.h"
 #include "Event/Digi/AcdDigi.h"
+#include "Event/Digi/CalDigi.h"
 #include "Event/Digi/GltDigi.h"
 
 #include "LdfEvent/DiagnosticData.h"
@@ -296,6 +297,9 @@ StatusCode TriggerAlg::execute()
     SmartDataPtr<Event::AcdDigiCol> acd(eventSvc(), EventModel::Digi::AcdDigiCol);
     if( acd==0 ) log << MSG::DEBUG << "No acd digis found" << endreq;
 
+    SmartDataPtr<Event::CalDigiCol> cal(eventSvc(), EventModel::Digi::CalDigiCol);
+    if( cal==0 ) log << MSG::DEBUG << "No cal digis found" << endreq;
+
     SmartDataPtr<Event::GltDigi> glt(eventSvc(),   EventModel::Digi::Event+"/GltDigi");
     if( glt==0 ) log << MSG::DEBUG << "No digi bits found" << endreq;
 
@@ -327,7 +331,7 @@ StatusCode TriggerAlg::execute()
     if( glt!=0 ) { 
       trigger_bits |= calorimeter(glt,callovector,calhivector) ;
     }
-    else {
+    else if (cal != 0){
       /// try to create new glt
       Event::GltDigi *newGlt(0);
       newGlt = m_calTrigTool->setupGltDigi();
