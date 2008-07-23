@@ -2,7 +2,7 @@
 *  @file TriggerAlg.cxx
 *  @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.94 2008/06/16 20:26:29 echarles Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.95 2008/06/19 03:39:29 heather Exp $
 */
 
 //#include "ThrottleAlg.h"
@@ -22,7 +22,6 @@
 #include "Event/Digi/TkrDigi.h"
 #include "Event/Digi/AcdDigi.h"
 #include "Event/Digi/CalDigi.h"
-#include "Event/Digi/GltDigi.h"
 
 #include "LdfEvent/DiagnosticData.h"
 #include "LdfEvent/EventSummaryData.h"
@@ -85,10 +84,14 @@ public:
 private:
     //! determine tracker trigger bits
     unsigned int  tracker(const Event::TkrDigiCol&  planes, unsigned short &tkrvector);
-    //! determine calormiter trigger bits from existing GltDigi
-    /// @return the bits
-    unsigned int  calorimeter(const Event::GltDigi&  glt, unsigned short &callowvector, unsigned short &calhivector);
 
+  /// determine cal trigger bits
+  /// \param callovector destination for callo triggers (1 bit per
+  /// tower
+  /// \param callovector destination for calhi triggers (1 bit per
+  /// tower
+  StatusCode calorimeter(unsigned short &callovector, unsigned short &calhivector);
+  
     //! calculate ACD trigger bits
     /// @return the bits
     unsigned int  anticoincidence(const Event::AcdDigiCol&  planes, unsigned short &cnovector, std::vector<unsigned int>& vetotilelist);
@@ -106,12 +109,6 @@ private:
     //! map the engine to the DGN prescaler
     enums::Lsf::LeakedPrescaler dgnPrescaler(unsigned engine);
 
-    /// create new GltDigi object & populate it w/ known
-    /// fields
-    static Event::GltDigi *createGltDigi(const Event::GltDigi::CalTriggerVec calLOVec,
-                                         const Event::GltDigi::CalTriggerVec calHIVec);
-    /// register GltDigi object in TDS.
-  StatusCode registerGltDigi(Event::GltDigi *gltDigi);
     unsigned int m_mask;
     int m_acd_hits;
     int m_log_hits;
@@ -300,9 +297,6 @@ StatusCode TriggerAlg::execute()
     SmartDataPtr<Event::CalDigiCol> cal(eventSvc(), EventModel::Digi::CalDigiCol);
     if( cal==0 ) log << MSG::DEBUG << "No cal digis found" << endreq;
 
-    SmartDataPtr<Event::GltDigi> glt(eventSvc(),   EventModel::Digi::Event+"/GltDigi");
-    if( glt==0 ) log << MSG::DEBUG << "No digi bits found" << endreq;
-
     SmartDataPtr<Event::DigiEvent> de(eventSvc(),   EventModel::Digi::Event);
     if( de==0 ) log << MSG::DEBUG << "No digi event found" << endreq;
 
@@ -333,49 +327,20 @@ StatusCode TriggerAlg::execute()
     LdfEvent::GemTileList vetoTileList;
     vetoTileList.clear();
     std::vector<unsigned int> tilelist;
+
     unsigned int trigger_bits = 
         (  tkr!=0? tracker(tkr,tkrvector) : 0 )
         | (acd!=0? anticoincidence(acd, cnovector,tilelist) : 0);
-    // CAL CASE 1: Get bits from existing GltDigi class
-    if( glt!=0 ) { 
-      trigger_bits |= calorimeter(glt,callovector,calhivector) ;
-    }
+    
 
-    // CAL CASE 2: Populate new GltDigi class with info from CalTrigTool
-    else if(cal!=0){
-      //-- Retrieve Trigger Vectors from CalTrigTool --//
-      sc = m_calTrigTool->getCALTriggerVector(idents::CalXtalId::LARGE, callovector);
-      if (sc.isFailure())
-        return sc;
-      sc = m_calTrigTool->getCALTriggerVector(idents::CalXtalId::SMALL, calhivector);
-      if (sc.isFailure())
-               return sc;
-         
-      // set cal lo trigger bit
-      trigger_bits |= (callovector != 0) ? enums::b_LO_CAL : 0;
-      // set cal hii trigger bit
-      trigger_bits |= (calhivector != 0) ? enums::b_HI_CAL : 0;
- 
-      // create new GltDigi
-      // object
-      std::auto_ptr<Event::GltDigi> newGltDigi(createGltDigi(callovector, calhivector));
-      if (!newGltDigi.get()) {
-        log << MSG::ERROR << "Unable to create new GltDigi object" << endreq;
-        return StatusCode::FAILURE;
-      } 
-     
-      // register the new GltDigi object (we already know that
-      // TDS GltDigi is currently blank.
-      sc = registerGltDigi(newGltDigi.get());
-      if (sc.isFailure()) {
-        log << MSG::ERROR << "Unable to register GltDigi object" << endreq;
-        return StatusCode::FAILURE;
-      }
+    /// process calorimeter trigger bits
+    if (calorimeter(callovector, calhivector).isFailure())
+      return StatusCode::FAILURE;
 
-      // release ownership if object was sucessfully
-      // registered.
-      newGltDigi.release();
-    }
+    trigger_bits |= 
+      (callovector ? enums::b_LO_CAL:0) |
+      (calhivector ? enums::b_HI_CAL:0);
+    
 
     SmartDataPtr<Event::EventHeader> header(eventSvc(), EventModel::EventHeader);
 
@@ -707,18 +672,6 @@ unsigned int TriggerAlg::tracker(const Event::TkrDigiCol&  planes, unsigned shor
     if(tkr_trig_flag) return enums::b_Track;
     else return 0;
 }
-//------------------------------------------------------------------------------
-unsigned int TriggerAlg::calorimeter(const Event::GltDigi& glt,unsigned short &callovector, unsigned short &calhivector)
-{
-    // purpose and method: calculate CAL trigger bits from the list of bits
-    bool local=glt.getCALLOtrigger(), 
-        hical = glt.getCALHItrigger();
-    callovector=glt.getCALLOTriggerVec();
-    calhivector=glt.getCALHITriggerVec();
-    return (local ? enums::b_LO_CAL:0) 
-        |  (hical ? enums::b_HI_CAL:0);
-
-}
 
 //------------------------------------------------------------------------------
 unsigned int TriggerAlg::anticoincidence(const Event::AcdDigiCol& tiles, unsigned short& cnovector, std::vector<unsigned int> &vetotilelist)
@@ -1016,21 +969,12 @@ StatusCode TriggerAlg::handleMetaEvent( LsfEvent::MetaEvent& metaEvent, unsigned
   return StatusCode::SUCCESS;
 }
 
+StatusCode TriggerAlg::calorimeter(unsigned short &callovector, unsigned short &calhivector) {
+    if(m_calTrigTool->getCALTriggerVector(idents::CalXtalId::LARGE, callovector).isFailure())
+      return StatusCode::FAILURE;
+    if(m_calTrigTool->getCALTriggerVector(idents::CalXtalId::SMALL, calhivector).isFailure())
+      return StatusCode::FAILURE;
 
-Event::GltDigi *TriggerAlg::createGltDigi(const Event::GltDigi::CalTriggerVec calLOVec,
-                                          const Event::GltDigi::CalTriggerVec calHIVec) {
-  Event::GltDigi *gltDigi(new Event::GltDigi());
-  if (!gltDigi)
-    return 0;
+    return StatusCode::SUCCESS;
+}
 
-  gltDigi->setCALLOTriggerVec(calLOVec);
-  gltDigi->setCALHITriggerVec(calHIVec);
-   
-  return gltDigi;
-}
- 
-StatusCode TriggerAlg::registerGltDigi(Event::GltDigi *gltDigi) {
-  static const std::string gltPath( EventModel::Digi::Event+"/GltDigi");
- 
-  return eventSvc()->registerObject(gltPath, gltDigi);
-}
