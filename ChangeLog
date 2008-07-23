@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: fewtrell  Wed Jul 23 13:29:11 PDT 2008
+Trigger/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+all code referencing GltDigi in Cal section has been removed as it is now obsolete
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: v6r0p4gr2, operation: add
 Package: Trigger
