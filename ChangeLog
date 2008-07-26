@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: kocian  Fri Jul 25 17:41:19 PDT 2008
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx 
+Log Message:
+bug fix so TriggerAlg does not crash when not using ConfigSvc
+    *
+------------------------------------------------------------
 User: kocian  Fri Jul 25 17:41:18 PDT 2008
 Trigger/doc
 
