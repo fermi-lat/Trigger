@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: kocian  Fri Jul 25 17:41:18 PDT 2008
+Trigger/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+bug fix so TriggerAlg does not crash when not using ConfigSvc
+    *
+------------------------------------------------------------
 TAG
 Tag name: Trigger-06-03-02, operation: add
 Package: Trigger
