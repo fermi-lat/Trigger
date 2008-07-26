@@ -5,6 +5,7 @@
  * package manager:T.Burnett 
   <pre>
 
+ *  v6r3p3  25-jul-08 MLK Bug fix (crashed when not using ConfigSvc).
  *  v6r3p2  23-jul-08 ZGF All code referencing GltDigi in cal section has been removed as it is now obsolete.
  *  v6r3p1  18-jun-08 HMK patch TriggerAlg.cxx for rhel4
  *  v6r3    17-jun-08 MLK Removed decrements of livetime in interleave mode
