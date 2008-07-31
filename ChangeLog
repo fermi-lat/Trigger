@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: fewtrell  Thu Jul 31 09:04:22 PDT 2008
+Trigger/doc
+
+Modified Files:
+	release.notes 
+Log Message:
+
+ v6r3p4  31-jul-08 ZGF Tweeked behavior in digi-read mode.  Trigger word comparison compares only least significant 8 bits. mismatch msg moved from INFO level to WARNING.
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: Trigger-06-03-03, operation: add
 Package: Trigger
