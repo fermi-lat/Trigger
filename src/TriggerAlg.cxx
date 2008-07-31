@@ -2,7 +2,7 @@
 *  @file TriggerAlg.cxx
 *  @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.96 2008/07/23 20:29:11 fewtrell Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.97 2008/07/26 00:41:18 kocian Exp $
 */
 
 //#include "ThrottleAlg.h"
@@ -544,11 +544,15 @@ StatusCode TriggerAlg::execute()
         // expect it to be zero if not set.
         h.setTrigger(triggerword);
         h.setTriggerWordTwo(triggerWordTwo);
-    }else  if (h.trigger() != 0xbaadf00d && trigger_bits != h.trigger() ) {
+    }else  if (h.trigger() != 0xbaadf00d && 
+               (trigger_bits&0xff) != (h.trigger()&0xff) ) {
         // trigger bits already set: reading digiRoot file.
-        log << MSG::INFO;
+        log << MSG::WARNING;
         if(log.isActive()) log.stream() << "Trigger bits read back do not agree with recalculation! " 
-            << std::setbase(16) <<trigger_bits << " vs. " << h.trigger();
+                                        << std::setbase(16) 
+                                        << (trigger_bits&0xff )
+                                        << " vs. " << (h.trigger()&0xff )
+                                        << " event " << std::setbase(10) << h.event();
         log << endreq;
     }
     // fill GEM structure for MC
