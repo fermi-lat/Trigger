@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: echarles  Fri Aug  1 16:44:01 PDT 2008
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx 
+Log Message:
+tag v6r4p1: Added checks on FMX keys in filter handlers between MOOT and event data
+    *
+------------------------------------------------------------
 User: echarles  Fri Aug  1 16:44:00 PDT 2008
 Trigger/doc
 
