@@ -1,13 +1,4 @@
 ------------------------------------------------------------
-User: echarles  Fri Aug  1 16:44:00 PDT 2008
-Trigger/cmt
-
-Modified Files:
-	requirements 
-Log Message:
-tag v6r4p1: Added checks on FMX keys in filter handlers between MOOT and event data
-    *
-------------------------------------------------------------
 TAG
 Tag name: Trigger-06-04-00, operation: add
 Package: Trigger
