@@ -4,6 +4,7 @@
  *  
  * package manager:T.Burnett 
   <pre>
+ *  v6r4p1  01-aug-08 EAC Added checks on FMX keys in filter handlers between MOOT and event data
  *  v6r4    31-jul-08 HMK identical to v6r3p4.  Given all the changes since
  *          v6r3p1, it seems prudent to make this a new revision tag
  *  v6r3p4  31-jul-08 ZGF Tweeked behavior in digi-read mode.  Trigger word comparison compares only least significant 8 bits. mismatch msg moved from INFO level to WARNING.

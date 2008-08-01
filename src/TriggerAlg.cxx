@@ -2,7 +2,7 @@
 *  @file TriggerAlg.cxx
 *  @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.97 2008/07/26 00:41:18 kocian Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.98 2008/07/31 16:04:22 fewtrell Exp $
 */
 
 //#include "ThrottleAlg.h"
@@ -109,6 +109,9 @@ private:
     //! map the engine to the DGN prescaler
     enums::Lsf::LeakedPrescaler dgnPrescaler(unsigned engine);
 
+    /// Check the FMX keys from MOOT against those from event data, return false if we should fail the job
+    bool checkFmxKey(unsigned mootKey, unsigned evtKey, enums::Lsf::Mode, enums::Lsf::HandlerId) const;
+    
     unsigned int m_mask;
     int m_acd_hits;
     int m_log_hits;
@@ -119,6 +122,7 @@ private:
     BooleanProperty  m_applyWindowMask;
     BooleanProperty  m_applyDeadtime;
     BooleanProperty  m_useGltWordForData;
+    BooleanProperty  m_failOnFmxKeyMismatch;
     IntegerProperty m_vetobits;
     IntegerProperty m_vetomask;
     StringProperty m_table;
@@ -197,7 +201,8 @@ TriggerAlg::TriggerAlg(const std::string& name, ISvcLocator* pSvcLocator)
     declareProperty("useGltWordForData",  m_useGltWordForData=false);  // even if a GEM word exists use the Glt word
     declareProperty("applyWindowMask",  m_applyWindowMask=false);  // Do we want to use a window open mask?
     declareProperty("applyDeadtime",  m_applyDeadtime=false);  // Do we want to apply deadtime?
-
+    declareProperty("failOnFmxKeyMismatch",  m_failOnFmxKeyMismatch=true);  // Do we want to fail if the FMX key doesn't match?
+    
     for( int i=0; i<8; ++i) { 
         std::stringstream t; t<< "bit "<< i;
         m_bitNames[1<<i] = t.str();
@@ -909,17 +914,23 @@ StatusCode TriggerAlg::handleMetaEvent( LsfEvent::MetaEvent& metaEvent, unsigned
   metaEvent.setMootKey( m_configSvc->getMootKey() );
 
   unsigned handlerMask(0);  
+  unsigned fmxKey(0);
+
   lsfData::GammaHandler* gamma = const_cast<lsfData::GammaHandler*>(metaEvent.gammaFilter());
   unsigned gammaPS = LSF_INVALID_UINT;
   enums::Lsf::LeakedPrescaler gammaSamp = enums::Lsf::UNSUPPORTED;
   enums::Lsf::RsdState gammaState = enums::Lsf::INVALID;
   if ( gamma != 0 ) {
-    const FswEfcSampler* efc = m_configSvc->getFSWPrescalerInfo( metaEvent.datagram().mode(), enums::Lsf::GAMMA );    
+    const FswEfcSampler* efc = m_configSvc->getFSWPrescalerInfo( metaEvent.datagram().mode(), 
+								 enums::Lsf::GAMMA, fmxKey );    
     handlerMask |= 1;
     if ( efc != 0 ) {
       gammaSamp = gamma->prescaler() ;
       gammaState = gamma->state();
       gammaPS = efc->prescaleFactor(gammaState, gammaSamp);      
+      if ( ! checkFmxKey(fmxKey,gamma->cfgKey(),metaEvent.datagram().mode(),enums::Lsf::GAMMA) ) {
+	return StatusCode::FAILURE;
+      }
     }
     gamma->setPrescaleFactor(gammaPS);
   }
@@ -930,11 +941,15 @@ StatusCode TriggerAlg::handleMetaEvent( LsfEvent::MetaEvent& metaEvent, unsigned
   enums::Lsf::RsdState dgnState = enums::Lsf::INVALID;
   if ( dgn != 0 ) {
     dgnSamp = dgnPrescaler(triggerEngine);
-    const FswEfcSampler* efc = m_configSvc->getFSWPrescalerInfo( metaEvent.datagram().mode(), enums::Lsf::DGN );    
+    const FswEfcSampler* efc = m_configSvc->getFSWPrescalerInfo( metaEvent.datagram().mode(), 
+								 enums::Lsf::DGN, fmxKey  );    
     handlerMask |= 2;
     if ( efc != 0 ) {      
       dgnState = dgn->state();   
       dgnPS = efc->prescaleFactor(dgnState, dgnSamp);
+      if ( ! checkFmxKey(fmxKey,dgn->cfgKey(),metaEvent.datagram().mode(),enums::Lsf::DGN) ) {
+	return StatusCode::FAILURE;
+      }
     }
     dgn->setPrescaleFactor(dgnPS);
   }
@@ -943,12 +958,16 @@ StatusCode TriggerAlg::handleMetaEvent( LsfEvent::MetaEvent& metaEvent, unsigned
   enums::Lsf::LeakedPrescaler mipSamp = enums::Lsf::UNSUPPORTED;
   enums::Lsf::RsdState mipState = enums::Lsf::INVALID;
   if ( mip != 0 ) {
-    const FswEfcSampler* efc = m_configSvc->getFSWPrescalerInfo( metaEvent.datagram().mode(), enums::Lsf::MIP );    
+    const FswEfcSampler* efc = m_configSvc->getFSWPrescalerInfo( metaEvent.datagram().mode(), 
+								 enums::Lsf::MIP, fmxKey  );    
     handlerMask |= 4;
     if ( efc != 0 ) {
       mipState = mip->state();
       mipSamp = mip->prescaler();
       mipPS = efc->prescaleFactor(mipState, mipSamp);      
+      if ( ! checkFmxKey(fmxKey,mip->cfgKey(),metaEvent.datagram().mode(),enums::Lsf::MIP) ) {
+	return StatusCode::FAILURE;
+      }
     }
     mip->setPrescaleFactor(mipPS);
   }
@@ -957,12 +976,16 @@ StatusCode TriggerAlg::handleMetaEvent( LsfEvent::MetaEvent& metaEvent, unsigned
   enums::Lsf::RsdState hipState = enums::Lsf::INVALID;
   lsfData::HipHandler* hip = const_cast<lsfData::HipHandler*>(metaEvent.hipFilter());
   if ( hip != 0 ) {
-    const FswEfcSampler* efc = m_configSvc->getFSWPrescalerInfo( metaEvent.datagram().mode(), enums::Lsf::HIP );    
+    const FswEfcSampler* efc = m_configSvc->getFSWPrescalerInfo( metaEvent.datagram().mode(), 
+								 enums::Lsf::HIP, fmxKey  );    
     handlerMask |= 8;
     if ( efc != 0 ) {
       hipState = hip->state();
       hipSamp = hip->prescaler();
       hipPS = efc->prescaleFactor(hipState, hipSamp);
+      if ( ! checkFmxKey(fmxKey,hip->cfgKey(),metaEvent.datagram().mode(),enums::Lsf::HIP) ) {
+	return StatusCode::FAILURE;
+      }
     }
     hip->setPrescaleFactor(hipPS);
   }
@@ -986,3 +1009,42 @@ StatusCode TriggerAlg::calorimeter(unsigned short &callovector, unsigned short &
     return StatusCode::SUCCESS;
 }
 
+bool TriggerAlg::checkFmxKey(unsigned mootKey, unsigned evtKey, 
+			     enums::Lsf::Mode mode, enums::Lsf::HandlerId handler) const {
+
+  // mootKey == 0 means we didn't get a cdm from MOOT, but from a file, don't really check
+  if ( mootKey == 0 ) return true;
+  // if the keys match we are ok
+  if ( mootKey == evtKey ) return true;
+  
+  // houston, we have a problem...  
+
+  // only warn once per mode X handler
+  int handlerXMode = 1000*mode + handler;
+  static std::set<int> warnedSet;
+  if ( warnedSet.find(handlerXMode) == warnedSet.end() ) {
+    warnedSet.insert(handlerXMode);
+    MsgStream log(msgSvc(), name());
+    log << MSG::ERROR << "FMX key from moot (" << mootKey 
+	<< ") doesn't match key from data (" << evtKey << " for ";
+    switch (handler) {
+    case enums::Lsf::PASS_THRU:
+      log << "PASS_THRU"; break;
+    case enums::Lsf::GAMMA:
+      log << "GAMMA"; break;
+    case enums::Lsf::ASC:
+      log << "ASC"; break;
+    case enums::Lsf::MIP:
+      log << "MIP"; break;
+    case enums::Lsf::HIP:
+      log << "HIP"; break;
+    case enums::Lsf::DGN:
+      log << "DGN"; break;
+    default:
+      log << "Some weird unknown"; break;
+    }
+    log << " handler in mode " << mode << "!!!" << endreq;
+  }
+  // return value depends on failOnFmxKeyMismatch job option
+  return m_failOnFmxKeyMismatch.value() ? false : true;
+}
