@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: ecephas  Fri Aug 15 14:42:37 PDT 2008
+GlastRelease-scons/Trigger
+
+Added Files:
+	TriggerLib.py 
+Log Message:
+Added Lib file (e.g., <package>Lib.py) for each package that creates a library.
+    *
+------------------------------------------------------------
 User: ecephas  Fri Aug 15 14:22:45 PDT 2008
 GlastRelease-scons/Trigger
 
