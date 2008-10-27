@@ -1,4 +1,19 @@
 ------------------------------------------------------------
+User: ecephas  Mon Oct 27 11:41:04 PDT 2008
+GlastRelease-scons/Trigger
+
+Modified Files:
+	SConscript 
+Log Message:
+
+
+Changed 
+	Trigger = libEnv.SharedLibrary('Trigger',  listFiles(['Trigger/*.cxx']) + listFiles(['src/Trigger/*.cxx']))
+to
+	Trigger = libEnv.SharedLibrary('Trigger',  listFiles(['src/*.cxx']))
+
+    *
+------------------------------------------------------------
 User: ecephas  Fri Aug 15 14:42:37 PDT 2008
 GlastRelease-scons/Trigger
 
