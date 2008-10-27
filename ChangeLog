@@ -1,4 +1,20 @@
 ------------------------------------------------------------
+User: ecephas  Mon Oct 27 11:42:03 PDT 2008
+GlastRelease-scons/Trigger
+
+Modified Files:
+	TriggerLib.py 
+Log Message:
+Added the following libraries:
+
+	env.Tool('addLibrary', library = env['gaudiLibs'])
+     	env.Tool('addLibrary', library = env['clhepLibs'])
+     	env.Tool('EventLib')
+     	env.Tool('configDataLib')
+     	env.Tool('CalXtalResponseLib')
+
+    *
+------------------------------------------------------------
 User: ecephas  Mon Oct 27 11:41:04 PDT 2008
 GlastRelease-scons/Trigger
 
