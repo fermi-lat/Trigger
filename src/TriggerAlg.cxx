@@ -2,7 +2,7 @@
 *  @file TriggerAlg.cxx
 *  @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.98 2008/07/31 16:04:22 fewtrell Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.99 2008/08/01 23:44:01 echarles Exp $
 */
 
 //#include "ThrottleAlg.h"
@@ -563,10 +563,23 @@ StatusCode TriggerAlg::execute()
     // fill GEM structure for MC
     LsfEvent::MetaEvent *meta = metaTds;
 
-    if (m_isMc && gem == 0){
+    //check for overlays
+    bool isOverlay = false;
+    SmartDataPtr<Event::TkrDigiCol> 
+        overlayDigiCol(eventSvc(), EventModel::Overlay::TkrDigiCol);
+
+    if(overlayDigiCol && gem!=0) {
+        isOverlay = true;
+        tkrvector = gem->tkrVector();
+    }
+
+    if (m_isMc && (gem == 0 || isOverlay)){
       //make vetotilelist object
       makeGemTileList(tilelist,vetoTileList);
-      LdfEvent::Gem *gemTds = new LdfEvent::Gem();
+      LdfEvent::Gem* gemTds;
+      if(gem==0) { gemTds = new LdfEvent::Gem();}
+      else       { gemTds = gem; }
+
       gemTds->initTrigger(tkrvector,roivector,
 			  callovector,calhivector,
 			  cnovector,gemword,
@@ -586,11 +599,14 @@ StatusCode TriggerAlg::execute()
       			  m_LivetimeSvc->ticks(now) & 0x1ffffff, ppsTimeTds, 
       			  deltaevtime,deltawotime);
       
-      sc = eventSvc()->registerObject("/Event/Gem", gemTds);
-      if( sc.isFailure() ) {
-        log << MSG::ERROR << "could not register /Event/Gem " << endreq;
-        return sc;
+      if(!isOverlay) {
+          sc = eventSvc()->registerObject("/Event/Gem", gemTds);
+          if( sc.isFailure() ) {
+              log << MSG::ERROR << "could not register /Event/Gem " << endreq;
+              return sc;
+          }
       }
+
       // Meta event GEM scalers     
       if (meta==0){
 	meta=new LsfEvent::MetaEvent;
