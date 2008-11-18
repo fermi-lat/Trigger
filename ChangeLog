@@ -1,5 +1,15 @@
 ------------------------------------------------------------
 User: lsrea  Tue Nov 18 13:03:38 PST 2008
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx 
+Log Message:
+Fix a virtual bug in the way TriggerAlg does the overlay processing
+
+    *
+------------------------------------------------------------
+User: lsrea  Tue Nov 18 13:03:38 PST 2008
 Trigger/doc
 
 Modified Files:
