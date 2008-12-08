@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: ecephas  Mon Dec  8 13:40:13 PST 2008
+GlastRelease-scons/Trigger
+
+Modified Files:
+	SConscript 
+Log Message:
+Check in SConscript for Trigger v6r4p1 (for branch-tag, GlastReleasev15r49) 
+    *
+------------------------------------------------------------
 TAG
 Tag name: Trigger-06-04-03, operation: add
 Package: Trigger
