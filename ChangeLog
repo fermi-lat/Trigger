@@ -2,6 +2,16 @@
 TAG
 Tag name: Trigger-06-04-01, operation: add
 Package: Trigger
+User: ecephas  Mon Dec  8 16:08:43 2008
+Files:
+  Trigger/TriggerLib.py  1.2
+  Trigger/TriggerLib.py  1.2
+
+    *
+------------------------------------------------------------
+TAG
+Tag name: Trigger-06-04-01, operation: add
+Package: Trigger
 User: ecephas  Mon Dec  8 13:40:19 2008
 Files:
   Trigger/SConscript  1.5
