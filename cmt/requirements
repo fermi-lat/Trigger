@@ -2,7 +2,7 @@ package Trigger
 version v6r4p3
 
 author T. Burnett <tburnett@u.washington.edu>
-# $Id: requirements,v 1.88 2008/11/12 18:51:21 lsrea Exp $
+# $Id: requirements,v 1.89 2008/11/18 21:03:58 lsrea Exp $
 
 # --------------------------
 # define trigger algorithms
@@ -28,6 +28,7 @@ private
 use CalibSvc *
 
 use Event *
+use OverlayEvent *
 use GlastSvc *
 use LdfEvent *
 use gr_app *
