@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: usher  Thu Dec 18 15:42:13 PST 2008
+Trigger/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+Rearrangement of Trigger... TriggerInfoAlg now calculates the trigger primitives in the same manner previously done in TriggerAlg, TriggerAlg then uses this information (from TDS object TriggerInfo). This always insertion of a step in between for the overlay
+    *
+------------------------------------------------------------
 User: usher  Thu Dec 18 15:39:24 PST 2008
 Trigger/src
 
