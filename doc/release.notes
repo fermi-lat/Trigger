@@ -4,6 +4,7 @@
  *  
  * package manager:T.Burnett 
   <pre>
+ *  v7r0p0  18-Dec-08  TU Split TriggerAlg with TriggerInfoAlg now calculating primitives
  *  v6r4p3  18-Nov-08 LSR Fix a bug in the logic for handling overlays in TriggerAlg. 
                              Note that the code will need to be changed again 
                              once we get the next iteration of Overlay
