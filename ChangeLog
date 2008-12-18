@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: usher  Thu Dec 18 15:39:24 PST 2008
+Trigger/src
+
+Added Files:
+	TriggerInfoAlg.cxx 
+Log Message:
+Initial import of new algorithm to calculate/load the trigger primitives used by TriggerAlg.
+    *
+------------------------------------------------------------
 TAG
 Tag name: Trigger-06-04-01, operation: add
 Package: Trigger
