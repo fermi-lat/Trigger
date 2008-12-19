@@ -13,7 +13,11 @@ ApplicationMgr.ExtSvc += {"LivetimeSvc"};
 #include "$CALIBSVCROOT/src/defaultOptions.txt"
 #include "$CALXTALRESPONSEROOT/src/defaultOptions.txt"
 
-ApplicationMgr.TopAlg = {"TriggerAlg"};
+// For test use default tables
+TriggerInfoAlg.engine = "default";
+TriggerAlg.engine     = "default";
+
+ApplicationMgr.TopAlg = {"TriggerInfoAlg","TriggerAlg"};
 // Set output level threshold (2=DEBUG, 3=INFO, 4=WARNING, 5=ERROR, 6=FATAL )
 MessageSvc.OutputLevel      = 2;
 
