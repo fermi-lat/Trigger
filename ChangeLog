@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+TAG
+Tag name: v7r0p0, operation: mov
+Package: Trigger
+User: glastrm  Thu Dec 18 16:07:52 2008
+Files:
+  Trigger/SConscript  1.6
+
+    *
+------------------------------------------------------------
 User: glastrm  Thu Dec 18 16:07:46 PST 2008
 Trigger
 
