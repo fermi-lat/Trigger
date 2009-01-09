@@ -1,5 +1,16 @@
 ------------------------------------------------------------
 TAG
+Tag name: GlastRelease-15-49-00, operation: add
+Package: Trigger
+User: glastrm  Fri Jan  9 12:48:02 2009
+Files:
+  Trigger/TriggerLib.py  1.2
+  Trigger/SConscript  1.7
+  Trigger/src/TriggerInfoAlg.cxx  1.1
+
+    *
+------------------------------------------------------------
+TAG
 Tag name: GlastRelease-15-50-10, operation: del
 Package: Trigger
 User: glastrm  Fri Jan  9 08:31:15 2009
