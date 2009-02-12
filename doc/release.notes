@@ -4,6 +4,7 @@
  *  
  * package manager:T.Burnett 
   <pre>
+ *  v7r1p0  12-Feb-09  TU Use deltaEventTime and deltaWindowOpenTime from TriggerInfo when sim with overlays
  *  v7r0p1  19-Dec-08  TU Include TriggerInfoAlg in the test job JO file
  *  v7r0p0  18-Dec-08  TU Split TriggerAlg with TriggerInfoAlg now calculating primitives
  *  v6r4p3  18-Nov-08 LSR Fix a bug in the logic for handling overlays in TriggerAlg. 
