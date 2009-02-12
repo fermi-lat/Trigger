@@ -2,7 +2,7 @@
 *  @file TriggerAlg.cxx
 *  @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /usr/local/CVS/SLAC/Trigger/src/TriggerAlg.cxx,v 1.99 2008/08/01 23:44:01 echarles Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.102 2008/12/18 23:42:13 usher Exp $
 */
 
 
@@ -288,7 +288,11 @@ StatusCode TriggerAlg::execute()
     // Start by recovering the trigger primitives from the TriggerInfo object which
     // we can find in the TDS (created by TriggerInfoAlg)
     SmartDataPtr<Event::TriggerInfo> triggerInfo(eventSvc(), "/Event/TriggerInfo");
-    if( triggerInfo == 0) log << MSG::DEBUG << "No TriggerInfo found" << endreq;
+    if( triggerInfo == 0) 
+    {
+        log << MSG::ERROR << "No TriggerInfo found" << endreq;
+        return StatusCode::FAILURE;
+    }
 
     // set bits in the trigger word
     unsigned short tkrvector    = triggerInfo->getTkrVector();
@@ -332,13 +336,14 @@ StatusCode TriggerAlg::execute()
 
     // record window open time
     double         now = header->time();
-    unsigned short deltawotime;
+    unsigned short deltawotime = triggerInfo->getDeltaWindowOpenTime();
 
-    if(m_lastWindowTime!=0)
+    // Overlay events will set deltawotime if using them, otherwise get from livetime service
+    if(deltawotime == 0xffff && m_lastWindowTime != 0)
     {
-        deltawotime = m_LivetimeSvc->ticks(now-m_lastWindowTime) < 0xffff ? m_LivetimeSvc->ticks(now-m_lastWindowTime): 0xffff;
-    }else{
-        deltawotime = 0xffff;
+        deltawotime = m_LivetimeSvc->ticks(now-m_lastWindowTime) < 0xffff 
+                    ? m_LivetimeSvc->ticks(now-m_lastWindowTime)
+                    : 0xffff;
     }
     m_lastWindowTime = now;
 
@@ -451,12 +456,14 @@ StatusCode TriggerAlg::execute()
     m_triggered++;
     m_trig_counts[trigger_bits] +=1;
 
-    unsigned short deltaevtime;
-    if(m_lastTriggerTime!=0)
+    unsigned short deltaevtime = triggerInfo->getDeltaEventTime();
+
+    // If using overlays then deltaevtime is supplied, otherwise use livetime service to determine
+    if(deltaevtime == 0xffff && m_lastTriggerTime !=0 )
     {
-        deltaevtime = m_LivetimeSvc->ticks(now-m_lastTriggerTime)<0xffff ? m_LivetimeSvc->ticks(now-m_lastTriggerTime) : 0xffff;
-    }else{
-        deltaevtime = 0xffff;
+        deltaevtime = m_LivetimeSvc->ticks(now-m_lastTriggerTime)<0xffff 
+                    ? m_LivetimeSvc->ticks(now-m_lastTriggerTime) 
+                    : 0xffff;
     }
 
     m_lastTriggerTime=now;
