@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: usher  Thu Feb 12 08:54:58 PST 2009
+Trigger/src
+
+Modified Files:
+	TriggerAlg.cxx TriggerInfoAlg.cxx 
+Log Message:
+If runninig with overlays, use deltaEventTime and deltaWindowOpenTime from TriggerInfo (and overlay event) instead of from livetime service - is not used by TriggerAlg in deadtime calculations, still defer to livetime service for that
+    *
+------------------------------------------------------------
 TAG
 Tag name: Trigger-06-04-01, operation: mov
 Package: Trigger
