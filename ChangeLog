@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: cohen  Wed Sep  9 08:06:15 PDT 2009
+Trigger/src/test
+
+Modified Files:
+	jobOptions.txt 
+Log Message:
+fix a few warnings plus a bug in m_mask, to prepare for rhel4 build
+    *
+------------------------------------------------------------
+User: cohen  Wed Sep  9 08:06:15 PDT 2009
 Trigger/src
 
 Modified Files:
