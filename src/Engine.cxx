@@ -2,7 +2,7 @@
 *  @file Engine.cxx
 *  @brief Implementation of the class Engine
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/Engine.cxx,v 1.2 2007/04/07 21:59:24 burnett Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/Engine.cxx,v 1.3 2007/04/10 21:54:11 burnett Exp $
 */
 #include <stdexcept>
 #include <iostream>
@@ -27,7 +27,7 @@ Engine::Engine( std::string condition_summary ,  int marker, int prescale)
 {
     int k(7);
     m_condition.resize(8);
-    for( int i=0; i< condition_summary.size(); ++i){
+    for( unsigned int i=0; i< condition_summary.size(); ++i){
         char c=condition_summary[i];
         switch (c){
             case ' ': break;

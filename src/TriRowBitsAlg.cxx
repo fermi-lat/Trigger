@@ -2,7 +2,7 @@
 *  @file TriRowBitsAlg.cxx
 *  @brief Declaration and definition of the algorithm TriRowBitsAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriRowBitsAlg.cxx,v 1.77 2007/08/29 13:24:05 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriRowBitsAlg.cxx,v 1.1 2007/09/05 16:43:38 heather Exp $
 */
 
 
@@ -158,7 +158,7 @@ StatusCode TriRowBitsAlg::execute()
         return StatusCode::SUCCESS;
     }
 
-	bool tkr_trig_flag = false;
+	//bool tkr_trig_flag = false;
     // now look for a three in a row in x-y coincidence
     for( Map::iterator itr = layer_bits.begin(); itr !=layer_bits.end(); ++ itr){
 
