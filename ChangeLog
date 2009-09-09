@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: cohen  Wed Sep  9 08:06:15 PDT 2009
+Trigger/src
+
+Modified Files:
+	Engine.cxx TriRowBitsAlg.cxx TriggerAlg.cxx TriggerInfoAlg.cxx 
+Log Message:
+fix a few warnings plus a bug in m_mask, to prepare for rhel4 build
+    *
+------------------------------------------------------------
 User: heather  Wed Jul  1 09:34:02 PDT 2009
 Trigger/doc
 
