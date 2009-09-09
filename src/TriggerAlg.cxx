@@ -2,7 +2,7 @@
 *  @file TriggerAlg.cxx
 *  @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.102 2008/12/18 23:42:13 usher Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.103 2009/02/12 16:54:58 usher Exp $
 */
 
 
@@ -27,6 +27,8 @@
 
 #include "idents/AcdId.h"
 #include "idents/TowerId.h"
+
+#include "facilities/Util.h"
 
 #include "GaudiKernel/MsgStream.h"
 #include "GaudiKernel/AlgFactory.h"
@@ -91,6 +93,7 @@ private:
     IntegerProperty                     m_vetobits;
     IntegerProperty                     m_vetomask;
     StringProperty                      m_table;
+    StringProperty                      m_maskProperty;
     IntegerArrayProperty                m_prescale;
 
     double                              m_lastTriggerTime; //! time of last trigger, for delta window time
@@ -150,7 +153,7 @@ TriggerAlg::TriggerAlg(const std::string& name, ISvcLocator* pSvcLocator)
 , m_firstTriggerTime(0)
 , m_mootKey(0)
 {
-    declareProperty("mask"    ,              m_mask=0xffffffff);             // trigger mask
+    declareProperty("mask"    ,              m_maskProperty="0xffffffff");   // trigger mask
     declareProperty("throttle",              m_throttle=false);              // if set, veto when throttle bit is on
     declareProperty("vetomask",              m_vetomask=1+2+4);              // if thottle it set, veto if trigger masked with these ...
     declareProperty("vetobits",              m_vetobits=1+2);                // equals these bits
@@ -177,6 +180,9 @@ StatusCode TriggerAlg::initialize()
     // Use the Job options service to set the Algorithm's parameters
     setProperties();
 
+    //translate the string property into an unsigned int
+    m_mask = facilities::Util::stringToUnsigned(m_maskProperty);
+    
     log << MSG::INFO;
     if(log.isActive()) {
         if (m_mask==0xffffffff) log.stream() << "No trigger requirement";

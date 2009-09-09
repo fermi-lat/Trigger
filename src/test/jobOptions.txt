@@ -19,9 +19,10 @@ TriggerAlg.engine     = "default";
 
 ApplicationMgr.TopAlg = {"TriggerInfoAlg","TriggerAlg"};
 // Set output level threshold (2=DEBUG, 3=INFO, 4=WARNING, 5=ERROR, 6=FATAL )
-MessageSvc.OutputLevel      = 2;
+TriggerAlg.OutputLevel      = 2;
+TriggerInfoAlg.OutputLevel      = 2;
 
-TriggerAlg.throttle=true;
-TriggerAlg.mask=6;
+TriggerAlg.throttle = true;
+TriggerAlg.mask = "6";
 
 ApplicationMgr.EvtMax = 10;

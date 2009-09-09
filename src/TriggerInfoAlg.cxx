@@ -2,7 +2,7 @@
 *  @file TriggerInfoAlg.cxx
 *  @brief Declaration and definition of the algorithm TriggerInfoAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerInfoAlg.cxx,v 1.1 2008/12/18 23:39:24 usher Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerInfoAlg.cxx,v 1.2 2009/02/12 16:54:58 usher Exp $
 */
 
 #include "GaudiKernel/MsgStream.h"
@@ -90,14 +90,16 @@ private:
     StringProperty       m_table;
     IntegerArrayProperty m_prescale;
 
-    /// use to calculate cal trigger response from digis if cal trig response has not already
-    /// been calculated
+    IConfigSvc*          m_configSvc;
+
+    /// use to calculate cal trigger response from digis if 
+    /// cal trig response has not already been calculated
     ICalTrigTool*        m_calTrigTool;
 
     /// use for the names of the bits
     std::map<int, std::string> m_bitNames;
 
-    IConfigSvc*          m_configSvc;
+
     Trigger::TriggerTables* m_triggerTables;
     EnginePrescaleCounter* m_pcounter;
     TrgRoi *m_roi;
@@ -352,8 +354,8 @@ unsigned int TriggerInfoAlg::anticoincidence(unsigned short& cnoVector, std::vec
         const Event::AcdDigi& digi = **it;
 
         // If the digi is purely overlay, then skip it for the trigger
-        if (digi.getStatus() == Event::AcdDigi::DIGI_OVERLAY) continue;
-
+        if (digi.getStatus() == (unsigned int)Event::AcdDigi::DIGI_OVERLAY) continue;
+        
         // Digi id
         unsigned int id=digi.getId().id();
         if (id==899)id=1000; // NA tiles are 899 sometimes 
