@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Tue Sep 15 11:45:10 PDT 2009
+Trigger
+
+Modified Files:
+      Tag: GlastReleasev15r47p12
+	SConscript 
+Log Message:
+add mod to set TriggerAlg.mask via StringProperty
+    *
+------------------------------------------------------------
 TAG
 Tag name: Trigger-07-01-01, operation: add
 Package: Trigger
