@@ -4,6 +4,11 @@
  *  
  * package manager:T.Burnett 
   <pre>
+ * EOH
+
+ *  v6r4p1gr1 15-sep-09 HMK modify handling of TriggerAlg.mask to use 
+ *            Gaudi's StringProperty to avoid any questions from conversion
+ *            from int to unsigned int
  *  v6r4p1  01-aug-08 EAC Added checks on FMX keys in filter handlers between MOOT and event data
  *  v6r4    31-jul-08 HMK identical to v6r3p4.  Given all the changes since
  *          v6r3p1, it seems prudent to make this a new revision tag
