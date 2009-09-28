@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Mon Sep 28 08:49:05 PDT 2009
+Trigger
+
+Modified Files:
+      Tag: GlastReleasev15r47p12
+	SConscript 
+Log Message:
+update unit test JO along branch
+    *
+------------------------------------------------------------
 TAG
 Tag name: Trigger-06-04-01-gr1, operation: add
 Package: Trigger
