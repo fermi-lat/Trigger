@@ -6,6 +6,7 @@
   <pre>
  * EOH
 
+ *  v6r4p1gr2 27-sep-09 HMK update test JO
  *  v6r4p1gr1 15-sep-09 HMK modify handling of TriggerAlg.mask to use 
  *            Gaudi's StringProperty to avoid any questions from conversion
  *            from int to unsigned int
