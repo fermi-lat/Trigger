@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+TAG
+Tag name: Trigger-06-04-01-gr2, operation: add
+Package: Trigger
+User: heather  Mon Sep 28 08:49:25 2009
+Files:
+  Trigger/Trigger/ILivetimeSvc.h  1.5
+  Trigger/Trigger/TriRowBits.h  1.6
+
+    *
+------------------------------------------------------------
 User: heather  Mon Sep 28 08:49:06 PDT 2009
 Trigger/src/test
 
