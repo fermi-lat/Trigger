@@ -2,6 +2,36 @@
 TAG
 Tag name: Trigger-06-04-01-gr2, operation: add
 Package: Trigger
+User: heather  Mon Sep 28 08:49:38 2009
+Files:
+  Trigger/.cvsignore  1.2
+  Trigger/TriggerLib.py  1.2
+  Trigger/ChangeLog  1.476
+  Trigger/SConscript  1.8.26.2
+  Trigger/cmt/.cvsignore  1.2
+  Trigger/cmt/requirements  1.87.86.2
+  Trigger/doc/release.notes  1.89.86.2
+  Trigger/src/Engine.cxx  1.3
+  Trigger/src/TriggerTables.cxx  1.8
+  Trigger/src/EnginePrescaleCounter.h  1.1
+  Trigger/src/Trigger_load.cxx  1.10
+  Trigger/src/TriRowBitsAlg.cxx  1.1
+  Trigger/src/LivetimeSvc.cxx  1.9
+  Trigger/src/Trigger_dll.cxx  1.5
+  Trigger/src/mainpage.h  1.14
+  Trigger/src/jobOptions.txt  1.1.1.2
+  Trigger/src/TriggerTables.h  1.4
+  Trigger/src/Engine.h  1.3
+  Trigger/src/TriggerAlg.cxx  1.99.86.1
+  Trigger/src/EnginePrescaleCounter.cxx  1.2
+  Trigger/src/test/jobOptions.txt  1.6.506.1
+  Trigger/src/test/engine/testmain.cxx  1.2
+
+    *
+------------------------------------------------------------
+TAG
+Tag name: Trigger-06-04-01-gr2, operation: add
+Package: Trigger
 User: heather  Mon Sep 28 08:49:25 2009
 Files:
   Trigger/Trigger/ILivetimeSvc.h  1.5
