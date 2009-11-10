@@ -1,5 +1,5 @@
 # -*- python -*-
-# $Header: /nfs/slac/g/glast/ground/cvs/Trigger/SConscript,v 1.9 2009/02/12 17:30:27 glastrm Exp $ 
+# $Header: /nfs/slac/g/glast/ground/cvs/GlastRelease-scons/Trigger/SConscript,v 1.10 2009/09/09 15:17:47 cohen Exp $ 
 # Authors: T. Burnett <tburnett@u.washington.edu>
 # Version: Trigger-07-01-01
 Import('baseEnv')
@@ -12,10 +12,11 @@ libEnv.Tool('TriggerLib', depsOnly = 1)
 Trigger = libEnv.SharedLibrary('Trigger',  listFiles(['src/*.cxx']))
 
 progEnv.Tool('TriggerLib')
+
 test_Trigger = progEnv.GaudiProgram('test_Trigger', listFiles(['src/test/*.cxx']), test = 1)
 
-progEnv.Tool('registerObjects', package = 'Trigger', libraries = [Trigger], testApps = [test_Trigger], includes = listFiles(['Trigger/*.h']))
-
-
-
+progEnv.Tool('registerTargets', package = 'Trigger',
+             libraryCxts = [[Trigger, libEnv]],
+             testAppCxts = [[test_Trigger, progEnv]],
+             includes = listFiles(['Trigger/*.h']))
 
