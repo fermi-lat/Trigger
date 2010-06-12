@@ -10,8 +10,8 @@ ApplicationMgr.ExtSvc += {"GlastDetSvc"};
 ApplicationMgr.DLLs += {"CalibSvc"};
 ApplicationMgr.ExtSvc += {"LivetimeSvc"};
   	 
-#include "$CALIBSVCROOT/src/defaultOptions.txt"
-#include "$CALXTALRESPONSEROOT/src/defaultOptions.txt"
+#include "$CALIBSVCJOBOPTIONSPATH/defaultOptions.txt"
+#include "$CALXTALRESPONSEJOBOPTIONSPATH/defaultOptions.txt"
 
 // For test use default tables
 TriggerInfoAlg.engine = "default";
