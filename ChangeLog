@@ -1,4 +1,18 @@
 ------------------------------------------------------------
+User: heather  Thu Sep  9 07:08:57 PDT 2010
+Trigger/src
+
+Modified Files:
+      Tag: GlastReleasev18r6p1
+	LivetimeSvc.cxx TriRowBitsAlg.cxx TriggerAlg.cxx 
+	TriggerInfoAlg.cxx 
+Removed Files:
+      Tag: GlastReleasev18r6p1
+	Trigger_dll.cxx Trigger_load.cxx 
+Log Message:
+updates for Gaudi v21r7
+    *
+------------------------------------------------------------
 User: heather  Thu Sep  9 07:08:54 PDT 2010
 Trigger/doc
 
