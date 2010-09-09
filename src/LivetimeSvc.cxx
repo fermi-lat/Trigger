@@ -2,7 +2,7 @@
  * @file LivetimeSvc.cxx
  * @brief declare, implement the class LivetimeSvc
  *
- * $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/LivetimeSvc.cxx,v 1.8 2008/01/18 22:43:35 kocian Exp $
+ * $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/LivetimeSvc.cxx,v 1.9 2008/06/17 22:20:40 kocian Exp $
  */
 
 #include "Trigger/ILivetimeSvc.h"
@@ -86,8 +86,9 @@ private:
 };
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // declare the service factories for the ntupleWriterSvc
-static SvcFactory<LivetimeSvc> a_factory;
-const ISvcFactory& LivetimeSvcFactory = a_factory;
+//static SvcFactory<LivetimeSvc> a_factory;
+//const ISvcFactory& LivetimeSvcFactory = a_factory;
+DECLARE_SERVICE_FACTORY(LivetimeSvc);
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //         Implementation of LivetimeSvc methods
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
