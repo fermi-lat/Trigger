@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Thu Sep  9 07:08:54 PDT 2010
+Trigger/cmt
+
+Modified Files:
+      Tag: GlastReleasev18r6p1
+	requirements 
+Log Message:
+updates for Gaudi v21r7
+    *
+------------------------------------------------------------
 TAG
 Tag name: Trigger-07-01-03, operation: add
 Package: Trigger
