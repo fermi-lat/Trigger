@@ -9,6 +9,8 @@ ApplicationMgr.DLLs += {"CalXtalResponse"};
 ApplicationMgr.ExtSvc += {"GlastDetSvc"};
 ApplicationMgr.DLLs += {"CalibSvc"};
 ApplicationMgr.ExtSvc += {"LivetimeSvc"};
+
+ApplicationMgr.HistogramPersistency = "NONE";
   	 
 #include "$CALIBSVCJOBOPTIONSPATH/defaultOptions.txt"
 #include "$CALXTALRESPONSEJOBOPTIONSPATH/defaultOptions.txt"
