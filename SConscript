@@ -1,7 +1,7 @@
 # -*- python -*-
-# $Header: /nfs/slac/g/glast/ground/cvs/Trigger/SConscript,v 1.13 2010/06/11 00:40:54 jrb Exp $ 
+# $Header: /nfs/slac/g/glast/ground/cvs/Trigger/SConscript,v 1.12.18.1 2010/09/20 16:21:08 heather Exp $ 
 # Authors: T. Burnett <tburnett@u.washington.edu>
-# Version: Trigger-07-01-03
+# Version: Trigger-07-01-03-gr01
 Import('baseEnv')
 Import('listFiles')
 Import('packages')

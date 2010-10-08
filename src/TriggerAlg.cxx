@@ -2,7 +2,7 @@
 *  @file TriggerAlg.cxx
 *  @brief Declaration and definition of the algorithm TriggerAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.103 2009/02/12 16:54:58 usher Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerAlg.cxx,v 1.104.20.1 2010/09/09 14:08:55 heather Exp $
 */
 
 
@@ -131,8 +131,9 @@ private:
 };
 
 //------------------------------------------------------------------------------
-static const AlgFactory<TriggerAlg>  Factory;
-const IAlgFactory& TriggerAlgFactory = Factory;
+//static const AlgFactory<TriggerAlg>  Factory;
+//const IAlgFactory& TriggerAlgFactory = Factory;
+DECLARE_ALGORITHM_FACTORY(TriggerAlg);
 //------------------------------------------------------------------------------
 /// 
 TriggerAlg::TriggerAlg(const std::string& name, ISvcLocator* pSvcLocator) 
