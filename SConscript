@@ -1,5 +1,5 @@
 # -*- python -*-
-# $Header: /nfs/slac/g/glast/ground/cvs/Trigger/SConscript,v 1.12.18.1 2010/09/20 16:21:08 heather Exp $ 
+# $Header: /nfs/slac/g/glast/ground/cvs/GlastRelease-scons/Trigger/SConscript,v 1.14.2.1 2010/10/08 16:46:57 heather Exp $ 
 # Authors: T. Burnett <tburnett@u.washington.edu>
 # Version: Trigger-07-01-03-gr01
 Import('baseEnv')
@@ -9,7 +9,7 @@ progEnv = baseEnv.Clone()
 libEnv = baseEnv.Clone()
 
 libEnv.Tool('addLinkDeps', package='Trigger', toBuild='component')
-Trigger = libEnv.SharedLibrary('Trigger',  listFiles(['src/*.cxx']))
+Trigger = libEnv.ComponentLibrary('Trigger',  listFiles(['src/*.cxx']))
 
 progEnv.Tool('TriggerLib')
 
