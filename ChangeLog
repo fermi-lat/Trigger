@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: jrb  Wed Oct 20 11:11:19 PDT 2010
+GlastRelease-scons/Trigger
+
+Modified Files:
+      Tag: GlastReleasev18r7p1
+	SConscript 
+Log Message:
+Get SCons to make rootmap
+    *
+------------------------------------------------------------
 TAG
 Tag name: Trigger-07-01-03-gr01, operation: add
 Package: Trigger
