@@ -6,6 +6,7 @@
   <pre>
  * EOH *
 
+ Trigger-07-01-04 01-Dec-2010    jrb Make new main branch tag for SCons RM
  Trigger-07-01-03 12-Jun-2010    jrb upgrades for SCons builds
  Trigger-07-01-02 11-Nov-2009    jrb Updates for SCons
  Trigger-07-01-01 09-Sep-2009  cohen fix a few warnings plus a bug in m_mask, to prepare for rhel4 build
