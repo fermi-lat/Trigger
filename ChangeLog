@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Fri May 20 09:07:11 PDT 2011
+Trigger
+
+Modified Files:
+	SConscript 
+Log Message:
+CLHEP 2.1.0.1
+    *
+------------------------------------------------------------
 TAG
 Tag name: Trigger-07-01-04, operation: add
 Package: Trigger
