@@ -1,5 +1,19 @@
 ------------------------------------------------------------
 TAG
+Tag name: GlastRelease-19-03-07, operation: add
+Package: Trigger
+User: heather  Wed Sep  7 10:31:05 2011
+Files:
+  Trigger/.cvsignore  1.3
+  Trigger/TriggerLib.py  1.3
+  Trigger/ChangeLog  1.578
+  Trigger/SConscript  1.16
+  Trigger/Trigger/ILivetimeSvc.h  1.5
+  Trigger/Trigger/TriRowBits.h  1.6
+
+    *
+------------------------------------------------------------
+TAG
 Tag name: GlastRelease-19-03-07, operation: del
 Package: Trigger
 User: glastrm  Tue Sep  6 14:15:48 2011
