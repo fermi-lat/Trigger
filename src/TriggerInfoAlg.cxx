@@ -2,7 +2,7 @@
 *  @file TriggerInfoAlg.cxx
 *  @brief Declaration and definition of the algorithm TriggerInfoAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerInfoAlg.cxx,v 1.2 2009/02/12 16:54:58 usher Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerInfoAlg.cxx,v 1.3 2009/09/09 15:06:15 cohen Exp $
 */
 
 #include "GaudiKernel/MsgStream.h"
@@ -29,6 +29,8 @@
 #include "ConfigSvc/IConfigSvc.h"
 
 #include "CalXtalResponse/ICalTrigTool.h"
+
+#include "facilities/Util.h"
 
 #include <cassert>
 #include <map>
@@ -104,6 +106,11 @@ private:
     EnginePrescaleCounter* m_pcounter;
     TrgRoi *m_roi;
 
+    // The following for test potential Compton Trigger options
+    StringProperty m_towersOnProperty;    // How we communicate from JO files
+    unsigned int   m_towersToTurnOn;      // The representation we use in the code
+    StringProperty m_bilayersOnProperty;  
+    unsigned int   m_bilayersToTurnOn;
 };
 
 //------------------------------------------------------------------------------
@@ -114,8 +121,10 @@ const IAlgFactory& TriggerInfoAlgFactory = Factory;
 TriggerInfoAlg::TriggerInfoAlg(const std::string& name, ISvcLocator* pSvcLocator) 
   : Algorithm(name, pSvcLocator), m_configSvc(0), m_calTrigTool(0), m_pcounter(0)
 {
-    declareProperty("engine",         m_table = "ConfigSvc");     // set to "default"  to use default engine table
-    declareProperty("prescale",       m_prescale=std::vector<int>());        // vector of prescale factors
+    declareProperty("engine",           m_table              = "ConfigSvc");        // set to "default"  to use default engine table
+    declareProperty("prescale",         m_prescale           = std::vector<int>()); // vector of prescale factors
+    declareProperty("TowersToTurnOn",   m_towersOnProperty   = "0x000");            // Turn "on" these towers...
+    declareProperty("BilayersToTurnOn", m_bilayersOnProperty = "0x000");            // Turn "on" these bilayers in the above towers
 
     for( int i=0; i<8; ++i) 
     { 
@@ -139,6 +148,10 @@ StatusCode TriggerInfoAlg::initialize()
 
     // Use the Job options service to set the Algorithm's parameters
     setProperties();
+
+    // Translate the tower/bilayer mask properties to numbers
+    m_towersToTurnOn   = facilities::Util::stringToUnsigned(m_towersOnProperty);
+    m_bilayersToTurnOn = facilities::Util::stringToUnsigned(m_bilayersOnProperty);
 
     sc = toolSvc()->retrieveTool("CalTrigTool", 
                                  "CalTrigTool",
@@ -301,6 +314,21 @@ unsigned int TriggerInfoAlg::tracker(unsigned short &tkrVector)
         layer_bits[std::make_pair(t.getTower(), t.getView())] |= layer_bit(t.getBilayer());
     }
 
+    // Are we modifying the tower/bilayer hit pattern?
+    if (m_towersToTurnOn && m_bilayersToTurnOn)
+    {
+        // Loop over all possible towers
+        for(int idx = 0; idx < 16; idx++)
+        {
+            // Is the tower mast bit set for this tower?
+            if (m_towersToTurnOn & 1<<idx)
+            {
+                // Turn on the bits for the bilayers in our "on" mask
+                layer_bits[std::make_pair(idents::TowerId(idx), idents::GlastAxis::X)] |= m_bilayersToTurnOn;
+                layer_bits[std::make_pair(idents::TowerId(idx), idents::GlastAxis::Y)] |= m_bilayersToTurnOn;
+            }
+        }
+    }
 
     bool tkr_trig_flag = false;
     tkrVector=0;
