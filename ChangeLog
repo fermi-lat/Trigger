@@ -1,22 +1,4 @@
 ------------------------------------------------------------
-User: usher  Fri Sep 30 09:56:55 PDT 2011
-Trigger
-
-Modified Files:
-	SConscript 
-Log Message:
-Preparing to tag Trigger-07-02-00
-    *
-------------------------------------------------------------
-User: usher  Tue Sep 27 13:12:37 PDT 2011
-Trigger/src
-
-Modified Files:
-	TriggerInfoAlg.cxx 
-Log Message:
-Adding in masks which will allow some testing of efficiency of 3-in-a-row trigger for low energy comptons. Two masks, one to select towers to look at, the other to or in layers to be "turned on".
-    *
-------------------------------------------------------------
 TAG
 Tag name: GlastRelease-17-35-24-gr07, operation: add
 Package: Trigger
