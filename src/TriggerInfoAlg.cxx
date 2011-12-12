@@ -2,7 +2,7 @@
 *  @file TriggerInfoAlg.cxx
 *  @brief Declaration and definition of the algorithm TriggerInfoAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerInfoAlg.cxx,v 1.3 2009/09/09 15:06:15 cohen Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/GlastRelease-scons/Trigger/src/TriggerInfoAlg.cxx,v 1.4 2011/09/27 20:12:37 usher Exp $
 */
 
 #include "GaudiKernel/MsgStream.h"
@@ -114,8 +114,9 @@ private:
 };
 
 //------------------------------------------------------------------------------
-static const AlgFactory<TriggerInfoAlg>  Factory;
-const IAlgFactory& TriggerInfoAlgFactory = Factory;
+//static const AlgFactory<TriggerInfoAlg>  Factory;
+//const IAlgFactory& TriggerInfoAlgFactory = Factory;
+DECLARE_ALGORITHM_FACTORY(TriggerInfoAlg);
 //------------------------------------------------------------------------------
 /// 
 TriggerInfoAlg::TriggerInfoAlg(const std::string& name, ISvcLocator* pSvcLocator) 

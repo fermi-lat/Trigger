@@ -1,8 +1,8 @@
 package Trigger
-version v7r2p0
+version v7r3p0
 
 author T. Burnett <tburnett@u.washington.edu>
-# $Id: requirements,v 1.97 2011/05/20 16:07:11 heather Exp $
+# $Id: requirements,v 1.98 2011/09/30 16:56:56 usher Exp $
 
 # --------------------------
 # define trigger algorithms
@@ -31,6 +31,7 @@ use Event *
 use OverlayEvent *
 use GlastSvc *
 use LdfEvent *
+use RootmapPolicy * GlastPolicy
 use gr_app *
 
 # get flags to build shared library
@@ -41,6 +42,8 @@ macro source "*.cxx" WIN32 "*.h *.cxx"
 library Trigger  \
   -s=../Trigger $(source)\
   -s=../src $(source)
+
+apply_pattern generate_rootmap library=Trigger
 
 apply_pattern package_test
 

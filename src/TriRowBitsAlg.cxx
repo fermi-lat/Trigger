@@ -2,7 +2,7 @@
 *  @file TriRowBitsAlg.cxx
 *  @brief Declaration and definition of the algorithm TriRowBitsAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriRowBitsAlg.cxx,v 1.1 2007/09/05 16:43:38 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/GlastRelease-scons/Trigger/src/TriRowBitsAlg.cxx,v 1.2.22.1 2010/10/08 16:46:57 heather Exp $
 */
 
 
@@ -75,8 +75,9 @@ private:
 };
 
 //------------------------------------------------------------------------------
-static const AlgFactory<TriRowBitsAlg>  Factory;
-const IAlgFactory& TriRowBitsAlgFactory = Factory;
+//static const AlgFactory<TriRowBitsAlg>  Factory;
+//const IAlgFactory& TriRowBitsAlgFactory = Factory;
+DECLARE_ALGORITHM_FACTORY(TriRowBitsAlg);
 //------------------------------------------------------------------------------
 /// 
 TriRowBitsAlg::TriRowBitsAlg(const std::string& name, ISvcLocator* pSvcLocator) 
