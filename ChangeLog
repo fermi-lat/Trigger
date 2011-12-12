@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: heather  Mon Dec 12 12:58:47 PST 2011
+GlastRelease-scons/Trigger/src/test
+
+Modified Files:
+	jobOptions.txt 
+Log Message:
+merge Gaudi v21r7
+    *
+------------------------------------------------------------
+User: heather  Mon Dec 12 12:58:47 PST 2011
 GlastRelease-scons/Trigger/src
 
 Modified Files:
