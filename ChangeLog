@@ -1,4 +1,16 @@
 ------------------------------------------------------------
+User: heather  Mon Dec 12 12:58:47 PST 2011
+GlastRelease-scons/Trigger/src
+
+Modified Files:
+	LivetimeSvc.cxx TriRowBitsAlg.cxx TriggerAlg.cxx 
+	TriggerInfoAlg.cxx 
+Removed Files:
+	Trigger_dll.cxx Trigger_load.cxx 
+Log Message:
+merge Gaudi v21r7
+    *
+------------------------------------------------------------
 User: heather  Mon Dec 12 12:58:46 PST 2011
 GlastRelease-scons/Trigger/doc
 
