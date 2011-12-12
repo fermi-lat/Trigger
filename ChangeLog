@@ -1,5 +1,14 @@
 ------------------------------------------------------------
 User: heather  Mon Dec 12 12:58:46 PST 2011
+GlastRelease-scons/Trigger/cmt
+
+Modified Files:
+	requirements 
+Log Message:
+merge Gaudi v21r7
+    *
+------------------------------------------------------------
+User: heather  Mon Dec 12 12:58:46 PST 2011
 GlastRelease-scons/Trigger
 
 Modified Files:
