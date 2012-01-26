@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: heather  Wed Jan 25 21:40:15 PST 2012
+Trigger
+
+Modified Files:
+      Tag: GlastRelease-17-35-24-br01
+	SConscript 
+Log Message:
+Gaudi v21r7
+    *
+------------------------------------------------------------
 TAG
 Tag name: GlastRelease-17-35-24-br01, operation: add
 Package: Trigger
