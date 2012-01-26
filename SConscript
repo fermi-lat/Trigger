@@ -1,7 +1,7 @@
 # -*- python -*-
-# $Header: /nfs/slac/g/glast/ground/cvs/Trigger/SConscript,v 1.14 2010/06/12 22:41:14 jrb Exp $ 
+# $Header: /nfs/slac/g/glast/ground/cvs/Trigger/SConscript,v 1.18 2011/12/12 20:58:46 heather Exp $ 
 # Authors: T. Burnett <tburnett@u.washington.edu>
-# Version: Trigger-07-01-04
+# Version: Trigger-07-01-04-gr01
 Import('baseEnv')
 Import('listFiles')
 Import('packages')
@@ -9,7 +9,7 @@ progEnv = baseEnv.Clone()
 libEnv = baseEnv.Clone()
 
 libEnv.Tool('addLinkDeps', package='Trigger', toBuild='component')
-Trigger = libEnv.SharedLibrary('Trigger',  listFiles(['src/*.cxx']))
+Trigger = libEnv.ComponentLibrary('Trigger',  listFiles(['src/*.cxx']))
 
 progEnv.Tool('TriggerLib')
 
