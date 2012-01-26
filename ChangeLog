@@ -1,5 +1,19 @@
 ------------------------------------------------------------
 User: heather  Wed Jan 25 21:40:16 PST 2012
+Trigger/src
+
+Modified Files:
+      Tag: GlastRelease-17-35-24-br01
+	LivetimeSvc.cxx TriRowBitsAlg.cxx TriggerAlg.cxx 
+	TriggerInfoAlg.cxx 
+Removed Files:
+      Tag: GlastRelease-17-35-24-br01
+	Trigger_dll.cxx Trigger_load.cxx 
+Log Message:
+Gaudi v21r7
+    *
+------------------------------------------------------------
+User: heather  Wed Jan 25 21:40:16 PST 2012
 Trigger/doc
 
 Modified Files:
