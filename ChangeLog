@@ -2,6 +2,14 @@
 TAG
 Tag name: GlastRelease-19-04-01-gr08, operation: add
 Package: Trigger
+User: heather  Thu Feb  9 16:05:50 2012
+Files:
+
+    *
+------------------------------------------------------------
+TAG
+Tag name: GlastRelease-19-04-01-gr08, operation: add
+Package: Trigger
 User: heather  Thu Feb  9 12:27:57 2012
 Files:
   Trigger/.cvsignore  1.3
