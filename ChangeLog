@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: lsrea  Wed Apr  4 16:03:48 PDT 2012
+Trigger/src
+
+Modified Files:
+      Tag: GlastReleasev19r4p1
+	TriggerInfoAlg.cxx 
+Log Message:
+Protect against null ACD digi pointer
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: GlastRelease-17-35-24-rp04, operation: add
 Package: Trigger
