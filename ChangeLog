@@ -1,4 +1,15 @@
 ------------------------------------------------------------
+User: lsrea  Tue Apr  3 17:30:25 PDT 2012
+Trigger/src
+
+Modified Files:
+      Tag: GlastRelease-17-35-24-br02
+	TriggerInfoAlg.cxx 
+Log Message:
+Test for null pointer to ACD tiles
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: GlastRelease-17-35-24-rp03, operation: add
 Package: Trigger
