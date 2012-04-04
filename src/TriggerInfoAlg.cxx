@@ -2,7 +2,7 @@
 *  @file TriggerInfoAlg.cxx
 *  @brief Declaration and definition of the algorithm TriggerInfoAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerInfoAlg.cxx,v 1.2 2009/02/12 16:54:58 usher Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/Trigger/src/TriggerInfoAlg.cxx,v 1.3 2009/09/09 15:06:15 cohen Exp $
 */
 
 #include "GaudiKernel/MsgStream.h"
@@ -344,8 +344,10 @@ unsigned int TriggerInfoAlg::anticoincidence(unsigned short& cnoVector, std::vec
 
     // Look up the ACD digi collection
     SmartDataPtr<Event::AcdDigiCol> tiles(eventSvc(), EventModel::Digi::AcdDigiCol);
-    if( tiles == 0 ) log << MSG::DEBUG << "No acd digis found" << endreq;
-
+    if( tiles == 0 ) {
+        log << MSG::DEBUG << "No acd digis found" << endreq;
+        return ret;
+    }
     log << MSG::DEBUG << tiles->size() << " tiles found with hits" << endreq;
 
     for( Event::AcdDigiCol::const_iterator it = tiles->begin(); it !=tiles->end(); ++it){
