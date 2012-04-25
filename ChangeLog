@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: heather  Tue Apr 24 21:53:29 PDT 2012
+Trigger
+
+Modified Files:
+	SConscript 
+Log Message:
+merge in P8 branch
+    *
+------------------------------------------------------------
 TAG
 Tag name: GlastRelease-17-35-24-gr28, operation: add
 Package: Trigger
