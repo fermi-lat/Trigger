@@ -6,7 +6,13 @@
   <pre>
  * EOH *
 
+ Trigger-07-04-00 25-Apr-2012   hmk Merge GlastReleasev19r4p1 branch
  Trigger-07-03-00 08-Dec-2011   hmk  Merge in Gaudi v21r7
+ -- End GlastReleasev19r4p1 branch
+ Trigger-07-02-00-gr01 11-Apr-2012 hmk renaming 02-20-02-gr01 tag which appears
+  to be in error
+ Trigger-02-20-02-gr01 04-Apr-2012  lsrea Protect against null ACD digi pointer
+ -- Start GlastReleasev19r4p1 branch
  Trigger-07-02-00 30-Sep-2011    TU  Add option to TriggerInfoAlg to "turn on" bilayers in towers for 3-in-a-row
  Trigger-07-01-05 20-May-2011    hmk CLHEP 2.1.0.1
  Trigger-07-01-04 01-Dec-2010    jrb Make new main branch tag for SCons RM
