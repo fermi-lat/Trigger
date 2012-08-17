@@ -1,4 +1,13 @@
 ------------------------------------------------------------
+User: jrb  Fri Aug 17 11:40:36 PDT 2012
+GlastRelease-scons/Trigger
+
+Modified Files:
+	TriggerLib.py 
+Log Message:
+patches for Windows no-install-headers
+    *
+------------------------------------------------------------
 TAG
 Tag name: GlastRelease-20-04-01, operation: add
 Package: Trigger
