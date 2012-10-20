@@ -6,6 +6,7 @@
   <pre>
  * EOH *
 
+ Trigger-07-05-01 19-Oct-2012  lsrea fix compile wrng; fix logic when processing real data
  Trigger-07-05-00 17-Aug-2012    jrb for Windows no-install-headers
  Trigger-07-04-00 25-Apr-2012   hmk Merge GlastReleasev19r4p1 branch
  Trigger-07-03-00 08-Dec-2011   hmk  Merge in Gaudi v21r7
