@@ -1,4 +1,14 @@
 ------------------------------------------------------------
+User: lsrea  Fri Oct 19 21:51:02 PDT 2012
+GlastRelease-scons/Trigger/src
+
+Modified Files:
+	TriRowBitsAlg.cxx 
+Log Message:
+Fix compile warning; Fix logic when processing real data to remove spurious warning
+
+    *
+------------------------------------------------------------
 TAG
 Tag name: GlastRelease-20-06-03, operation: add
 Package: Trigger
