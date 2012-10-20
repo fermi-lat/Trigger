@@ -2,7 +2,7 @@
 *  @file TriRowBitsAlg.cxx
 *  @brief Declaration and definition of the algorithm TriRowBitsAlg.
 *
-*  $Header: /nfs/slac/g/glast/ground/cvs/GlastRelease-scons/Trigger/src/TriRowBitsAlg.cxx,v 1.2.22.1 2010/10/08 16:46:57 heather Exp $
+*  $Header: /nfs/slac/g/glast/ground/cvs/GlastRelease-scons/Trigger/src/TriRowBitsAlg.cxx,v 1.3 2011/12/12 20:58:47 heather Exp $
 */
 
 
@@ -124,6 +124,13 @@ StatusCode TriRowBitsAlg::execute()
     StatusCode  sc = StatusCode::SUCCESS;
     MsgStream   log( msgSvc(), name() );
 
+    // testing for existing TriRowBits object in the TDS
+    SmartDataPtr<TriRowBitsTds::TriRowBits> trirowbits(eventSvc(), "/Event/TriRowBits");
+    if(trirowbits!=0) {
+        // nothing to do here
+        return StatusCode::SUCCESS;
+    }    
+
     SmartDataPtr<Event::TkrDigiCol> planes(eventSvc(), EventModel::Digi::TkrDigiCol);
     if( planes==0 ) {
         log << MSG::DEBUG << "No tkr digis found" << endreq;
@@ -132,8 +139,6 @@ StatusCode TriRowBitsAlg::execute()
 
     // purpose and method: determine if there is tracker trigger, any 3-in-a-row, 
     //and fill out the TDS class TriRowBits, with the complete 3-in-a-row information
-
-    using namespace Event;
 
     log << MSG::DEBUG << planes->size() << " tracker planes found with hits" << endreq;
 
@@ -144,22 +149,23 @@ StatusCode TriRowBitsAlg::execute()
 
     // this loop sorts the hits by setting appropriate bits in the tower-plane hit map
     for( Event::TkrDigiCol::const_iterator it = planes->begin(); it != planes->end(); ++it){
-        const TkrDigi& t = **it;
+        const Event::TkrDigi& t = **it;
         if( t.getNumHits()== 0) continue; // this can happen if there are dead strips 
         layer_bits[std::make_pair(t.getTower(), t.getView())] |= layer_bit(t.getBilayer());
     }
 
-    //!Creating Object in TDS.
+
+    //! Wasn't in TDS, so creating it.
     //!Documentation of three_in_a_row_bits available in Trigger/TriRowBits.h
     TriRowBitsTds::TriRowBits *rowbits= new TriRowBitsTds::TriRowBits;
     sc = eventSvc()->registerObject("/Event/TriRowBits", rowbits);
     if (sc.isFailure()) {
-        log << MSG::WARNING << "Failed to register TriRowBits on the TDS" << endreq;
-        log << MSG::WARNING << "Will not compute" << endreq;
-        return StatusCode::SUCCESS;
+        log << MSG::ERROR << "Failed to register TriRowBits on the TDS" << endreq;
+        log << MSG::ERROR << "This is an error that needs to be fixed" << endreq;
+        return StatusCode::FAILURE;
     }
 
-	//bool tkr_trig_flag = false;
+    //bool tkr_trig_flag = false;
     // now look for a three in a row in x-y coincidence
     for( Map::iterator itr = layer_bits.begin(); itr !=layer_bits.end(); ++ itr){
 
@@ -171,7 +177,7 @@ StatusCode TriRowBitsAlg::execute()
                 xbits = (*itr).second,
                 ybits = layer_bits[std::make_pair(tower, idents::GlastAxis::Y)];
 
-			//!Calculating the TriRowBits - 16 possible 3-in-a-row signals for 18 layers
+            //!Calculating the TriRowBits - 16 possible 3-in-a-row signals for 18 layers
             unsigned int bitword=three_in_a_row(xbits & ybits);
             rowbits->setDigiTriRowBits(tower.id(), bitword);
 
@@ -248,19 +254,20 @@ void TriRowBitsAlg::computeTrgReqTriRowBits(TriRowBitsTds::TriRowBits& rowbits)
     for(unsigned int twr=0;twr<NUM_TWR;twr++)
     {
         unsigned bitword=0;
+        unsigned bitwrd1=0;
         trgReq_bits_evenbilayers[twr]=0;
-        trgReq_bits_oddbilayers[twr]=0;
+        trgReq_bits_oddbilayers[twr] =0;
         trgReq_bits_evenbilayers[twr] = trgReq_bits[std::make_pair(twr,0)] & trgReq_bits[std::make_pair(twr,1)];
-        trgReq_bits_oddbilayers[twr] = trgReq_bits[std::make_pair(twr,2)] & trgReq_bits[std::make_pair(twr,3)];
+        trgReq_bits_oddbilayers[twr]  = trgReq_bits[std::make_pair(twr,2)] & trgReq_bits[std::make_pair(twr,3)];
         //and now compute the 3 in a row combinations:
         int comb = 0;
         while(comb<16)
         {  
             bitword |=(((trgReq_bits_evenbilayers[twr]&3)==3) & ((trgReq_bits_oddbilayers[twr]&1)==1))<<comb; 
-            bitword |=(((trgReq_bits_oddbilayers[twr]&3)==3) & ((trgReq_bits_evenbilayers[twr]&2)==2))<<comb+1; 
-
+            bitword |=(((trgReq_bits_oddbilayers[twr]&3)==3)  & ((trgReq_bits_evenbilayers[twr]&2)==2))<<(comb+1); 
+            
             trgReq_bits_evenbilayers[twr] >>= 1;
-            trgReq_bits_oddbilayers[twr] >>= 1;
+            trgReq_bits_oddbilayers[twr]  >>= 1;
             comb = comb+2;
         }
         rowbits.setTrgReqTriRowBits(twr, bitword);
