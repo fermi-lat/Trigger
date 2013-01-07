@@ -2,7 +2,7 @@ package Trigger
 version v7r5p1
 
 author T. Burnett <tburnett@u.washington.edu>
-# $Id: requirements,v 1.101 2012/08/18 00:12:23 jrb Exp $
+# $Id: requirements,v 1.102 2012/10/20 04:52:40 lsrea Exp $
 
 # --------------------------
 # define trigger algorithms
@@ -31,7 +31,7 @@ use Event *
 use OverlayEvent *
 use GlastSvc *
 use LdfEvent *
-use RootmapPolicy * GlastPolicy
+#use RootmapPolicy * GlastPolicy
 use gr_app *
 
 # get flags to build shared library
@@ -43,7 +43,7 @@ library Trigger  \
   -s=../Trigger $(source)\
   -s=../src $(source)
 
-apply_pattern generate_rootmap library=Trigger
+#apply_pattern generate_rootmap library=Trigger
 
 apply_pattern package_test
 
