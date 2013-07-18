@@ -2,6 +2,14 @@
 TAG
 Tag name: GlastRelease-17-35-24-lp48, operation: add
 Package: Trigger
+User: heather  Thu Jul 18 10:21:39 2013
+Files:
+
+    *
+------------------------------------------------------------
+TAG
+Tag name: GlastRelease-17-35-24-lp48, operation: add
+Package: Trigger
 User: heather  Thu Jul 18 09:58:29 2013
 Files:
   Trigger/.cvsignore  1.3
