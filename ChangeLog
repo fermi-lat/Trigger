@@ -1,5 +1,36 @@
 ------------------------------------------------------------
 TAG
+Tag name: GlastRelease-17-35-24-lp55, operation: add
+Package: Trigger
+User: heather  Fri Sep 20 09:37:08 2013
+Files:
+  Trigger/.cvsignore  1.3
+  Trigger/TriggerLib.py  1.3
+  Trigger/ChangeLog  1.577
+  Trigger/SConscript  1.15.36.1
+  Trigger/Trigger/ILivetimeSvc.h  1.5
+  Trigger/Trigger/TriRowBits.h  1.6
+  Trigger/cmt/.cvsignore  1.2
+  Trigger/cmt/requirements  1.96.36.1
+  Trigger/doc/release.notes  1.99.36.1
+  Trigger/src/Engine.cxx  1.4
+  Trigger/src/TriggerTables.cxx  1.8
+  Trigger/src/EnginePrescaleCounter.h  1.1
+  Trigger/src/TriRowBitsAlg.cxx  1.2.100.1
+  Trigger/src/LivetimeSvc.cxx  1.9.360.1
+  Trigger/src/mainpage.h  1.14
+  Trigger/src/jobOptions.txt  1.1.1.2
+  Trigger/src/TriggerTables.h  1.4
+  Trigger/src/Engine.h  1.3
+  Trigger/src/TriggerAlg.cxx  1.104.100.1
+  Trigger/src/EnginePrescaleCounter.cxx  1.2
+  Trigger/src/TriggerInfoAlg.cxx  1.3.96.1
+  Trigger/src/test/jobOptions.txt  1.9.80.1
+  Trigger/src/test/engine/testmain.cxx  1.2
+
+    *
+------------------------------------------------------------
+TAG
 Tag name: GlastRelease-17-35-24-lp54, operation: add
 Package: Trigger
 User: heather  Thu Sep 19 11:53:37 2013
